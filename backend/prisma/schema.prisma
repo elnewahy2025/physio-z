@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  THERAPIST
+  SECRETARY
+  PATIENT
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  BANK_TRANSFER
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  phone        String   @unique
+  email        String?  @unique
+  passwordHash String
+  role         Role     @default(PATIENT)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  patient           Patient?         @relation("PatientAccount")
+  appointments      Appointment[]    @relation("AppointmentTherapist")
+  therapySessions   TherapySession[] @relation("SessionTherapist")
+  invoicesCreated   Invoice[]        @relation("InvoiceCreator")
+}
+
+model Patient {
+  id             String    @id @default(cuid())
+  name           String
+  phone          String
+  email          String?
+  address        String?
+  dateOfBirth    DateTime?
+  medicalHistory String?
+  userId         String?   @unique
+  user           User?     @relation("PatientAccount", fields: [userId], references: [id], onDelete: SetNull)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  appointments Appointment[]
+  invoices     Invoice[]
+}
+
+model Room {
+  id     String @id @default(cuid())
+  number Int    @unique
+  name   String
+  appointments Appointment[]
+}
+
+model Appointment {
+  id          String            @id @default(cuid())
+  patientId   String
+  patient     Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  therapistId String
+  therapist   User              @relation("AppointmentTherapist", fields: [therapistId], references: [id])
+  roomId      String?
+  room        Room?             @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  dateTime    DateTime
+  duration    Int               @default(45)
+  status      AppointmentStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  therapySessions TherapySession[]
+  invoices        Invoice[]
+  @@index([dateTime])
+  @@index([therapistId, dateTime])
+  @@index([patientId, dateTime])
+  @@index([status, dateTime])
+}
+
+model TherapySession {
+  id            String      @id @default(cuid())
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  therapistId   String
+  therapist     User        @relation("SessionTherapist", fields: [therapistId], references: [id])
+  diagnosis     String
+  treatmentPlan String?
+  notes         String?
+  duration      Int
+  painLevel     Int?
+  createdAt     DateTime    @default(now())
+  @@index([appointmentId])
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  number        String        @unique
+  patientId     String
+  patient       Patient       @relation(fields: [patientId], references: [id])
+  appointmentId String?
+  appointment   Appointment?  @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  amount        Decimal       @db.Decimal(10, 2)
+  tax           Decimal       @db.Decimal(10, 2) @default(0)
+  total         Decimal       @db.Decimal(10, 2)
+  dueDate       DateTime?
+  status        InvoiceStatus @default(UNPAID)
+  paymentMethod PaymentMethod?
+  createdById   String
+  createdBy     User          @relation("InvoiceCreator", fields: [createdById], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  payments Payment[]
+  @@index([patientId, status])
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  amount        Decimal       @db.Decimal(10, 2)
+  method        PaymentMethod
+  status        PaymentStatus @default(COMPLETED)
+  transactionId String?
+  paymentDate   DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+  @@index([invoiceId])
+}
+
+model Settings {
+  id                      String   @id
+  centerName              String
+  centerLogo              String?
+  address                 String?
+  phone                   String?
+  email                   String?
+  googleMapsLink          String?
+  workingHours            Json?
+  sessionPrice            Decimal  @db.Decimal(10, 2)
+  currency                String   @default("EGP")
+  taxRate                 Decimal  @db.Decimal(5, 2) @default(0)
+  defaultLanguage         String   @default("ar")
+  whatsappMessageTemplate String?
+  updatedAt               DateTime @updatedAt
+}
