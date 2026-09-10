@@ -33,4 +33,3 @@ process.on('SIGINT', () => void shutdown('SIGINT'));
 
 process.on('SIGTERM', () => void shutdown('SIGTERM'));
 
-This keeps the existing server and Prisma shutdown behavior intact while ensuring the job scheduler starts with the API and stops cleanly on `SIGINT`/`SIGTERM`.

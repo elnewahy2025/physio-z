@@ -223,7 +223,7 @@ export default function Appointments() {
             showStatus={true}
             showTherapist={canManageTherapistFilter}
             therapists={therapists || []}
-            onFilterChange={setFilters}
+            onFilterChange={(f) => setFilters({ status: f.status || '', therapistId: f.therapistId || '' })}
           />
         </div>
 
@@ -580,16 +580,3 @@ function NewAppointmentForm({
     </form>
   );
 }
-```
-
-### Changes made
-
-1. Added `Repeat`:
-
-```tsx
-import {
-  Plus,
-  Repeat,
-  Calendar,
-  ...
-} from 'lucide-react';

@@ -10,8 +10,6 @@ import { InvoicePdfButton } from '../components/InvoiceActions';
 import { FilterBar } from '../components/FilterBar';
 import { ListSkeleton } from '../components/Skeletons';
 
-// Replace: if (isLoading) return <Spinner className="py-24" />;
-if (isLoading) return <ListSkeleton items={5} />;
 
 export default function Invoices() {
   const { t, lang } = useI18n();
@@ -49,7 +47,7 @@ export default function Invoices() {
   });
 
   if (isLoading) {
-    return <Spinner className="py-24" />;
+    return <ListSkeleton items={5} />;
   }
 
   const invoices: Invoice[] = data?.data || [];
@@ -362,7 +360,7 @@ function NewInvoiceForm({
           <label className="label">
             {lang === 'ar'
               ? `المبلغ (${currency})`
-              : `Amount (${currency)`} *
+              : `Amount (${currency})`} *
           </label>
 
           <input

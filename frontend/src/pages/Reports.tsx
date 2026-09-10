@@ -46,8 +46,8 @@ import {
   EmptyState,
   Spinner,
   Badge,
-  StarRating,
 } from '../components/ui';
+import { StarRating } from '../components/StarRating';
 
 const COLORS = [
   '#2563eb',
@@ -652,7 +652,7 @@ export default function Reports() {
                               financialData.byMethod,
                             ).map(([method, amount]) => ({
                               name: method.replace('_', ' '),
-                              value: Math.round(amount),
+                              value: Math.round(Number(amount)),
                             }))}
                             cx="50%"
                             cy="50%"

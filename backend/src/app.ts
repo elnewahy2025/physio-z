@@ -20,7 +20,6 @@ import { setCacheHeaders } from './middleware/cacheHeaders.js';
 import foundationRoutes from './routes/foundation.routes.js';
 import surveyRoutes from './routes/survey.routes.js';
 import phase2Routes from './routes/phase2.routes.js';
-import phase3Routes from './routes/phase3.routes.js';
 
 
 export function createApp() {
@@ -75,7 +74,6 @@ export function createApp() {
   app.use(notFoundHandler);
   app.use(errorHandler);
 app.use('/api/surveys', surveyRoutes);
-app.use('/api', phase3Routes);
 app.use('/api', phase2Routes);
   return app;
 }

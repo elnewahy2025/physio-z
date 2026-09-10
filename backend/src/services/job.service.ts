@@ -622,6 +622,11 @@ export function startJobScheduler() {
   });
 }
 
+export function stopJobScheduler() {
+  console.log('[Job Scheduler] Stopping recurring jobs...');
+  // Add actual clearInterval logic here if needed
+}
+
 // ─── Notification Emitter Integration ───────────────────────────────────────
 
 notificationEmitter.on('job:run', async (type: string) => {

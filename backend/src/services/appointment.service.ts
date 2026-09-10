@@ -21,7 +21,7 @@ function intervalsOverlap(
   return existingStart < newEnd && existingEnd > newStart;
 }
 
-async function checkTherapistConcurrency(
+export async function checkTherapistConcurrency(
   therapistId: string,
   newStart: Date,
   newDuration: number,
@@ -63,7 +63,7 @@ async function checkTherapistConcurrency(
   }
 }
 
-async function checkRoomAvailability(
+export async function checkRoomAvailability(
   roomId: string,
   newStart: Date,
   newDuration: number,

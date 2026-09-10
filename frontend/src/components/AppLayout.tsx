@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { KeyRound } from 'lucide-react';
 import ChangePasswordModal from './ChangePasswordModal';
-import { Package, Clock } from 'lucide-react';
+import { Package, Clock, TrendingDown, Boxes, Wrench } from 'lucide-react';
 
 
 import {

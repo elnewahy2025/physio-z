@@ -12,9 +12,6 @@ import { FilterBar } from '../components/FilterBar';
 import type { Appointment } from '../types';
 import { CalendarSkeleton } from '../components/Skeletons';
 
-// Replace: if (isLoading) return <Spinner className="py-24" />;
-if (isLoading) return <CalendarSkeleton />;
-
 export default function CalendarPage() {
   const { t, lang } = useI18n();
   const { user } = useAuthStore();
@@ -101,7 +98,7 @@ export default function CalendarPage() {
     setCurrentMonth(new Date());
   };
 
-  if (isLoading) return <Spinner className="py-24" />;
+  if (isLoading) return <CalendarSkeleton />;
 
   const list = appointments || [];
 
@@ -182,7 +179,7 @@ export default function CalendarPage() {
         showStatus={true}
         showTherapist={user?.role === 'OWNER' || user?.role === 'SECRETARY'}
         therapists={therapists || []}
-        onFilterChange={setFilters}
+        onFilterChange={(f) => setFilters({ status: f.status || '', therapistId: f.therapistId || '' })}
       />
 
       {/* Calendar */}
