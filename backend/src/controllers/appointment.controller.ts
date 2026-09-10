@@ -3,6 +3,8 @@ import { z } from 'zod';
 import * as appointmentService from '../services/appointment.service.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import { paginationSchema, appointmentStatusSchema, isoDateSchema } from '../lib/validation.js';
+import { prisma } from '../lib/prisma.js';
+import { HttpError } from '../lib/errors.js';
 
 const createAppointmentSchema = z.object({
   patientId: z.string().min(1, 'Patient is required'),
@@ -52,6 +54,19 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const data = createAppointmentSchema.parse(req.body);
+
+  // If patient is booking for themselves, use their own patient ID
+  if (req.userRole === 'PATIENT' && req.userId) {
+    const ownPatient = await prisma.patient.findFirst({
+      where: { userId: req.userId },
+    });
+    if (!ownPatient) {
+      throw new HttpError(404, 'No patient profile found for this account');
+    }
+    // Override patientId with their own
+    data.patientId = ownPatient.id;
+  }
+
   res.status(201).json(await appointmentService.createAppointment(data));
 });
 

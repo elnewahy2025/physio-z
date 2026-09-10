@@ -125,6 +125,15 @@ export default function Login() {
           </div>
         </form>
 
+        <div className="mt-6 border-t border-gray-100 pt-4 text-center">
+  <p className="text-sm text-gray-500">
+    {L('\u0644\u064a\u0633 \u0644\u062f\u064a\u0643 \u062d\u0633\u0627\u0628\u061f', "Don't have an account?")}{' '}
+    <Link to="/register" className="font-medium text-primary-600 hover:text-primary-700">
+      {L('\u0625\u0646\u0634\u0627\u0621 \u062d\u0633\u0627\u0628', 'Create account')}
+    </Link>
+  </p>
+</div>
+
         {/* Footer */}
         <p className="mt-6 text-center text-xs text-gray-400">
           {lang === 'ar' ? 'ظ…ط±ظƒط² ط§ظ„ط¹ظ„ط§ط¬ ط§ظ„ط·ط¨ظٹط¹ظٹ' : 'Physio Center'} آ© 2026

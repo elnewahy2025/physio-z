@@ -32,6 +32,16 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('user', JSON.stringify(user));
 
+      // If user is a PATIENT, fetch their patient record
+      if (user.role === 'PATIENT') {
+        try {
+          const patientRes = await api.get('/patients/me');
+          localStorage.setItem('patientId', patientRes.data.id);
+        } catch {
+          // Patient record might not exist yet — that's OK
+        }
+      }
+
       set({ user, isAuthenticated: true, isLoading: false, error: null });
     } catch (error: any) {
       const message =

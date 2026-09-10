@@ -13,6 +13,9 @@ import Settings from './pages/Settings';
 import Sessions from './pages/Sessions';
 import Users from './pages/Users';
 import Reports from './pages/Reports';
+import Register from './pages/Register';
+import InstallPrompt from './components/InstallPrompt';
+import OfflineIndicator from './components/OfflineIndicator';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
@@ -33,6 +36,8 @@ function App() {
 
   return (
     <I18nProvider>
+      <OfflineIndicator />
+      <InstallPrompt />
       <Routes>
         <Route
           path="/login"
@@ -40,6 +45,13 @@ function App() {
             isAuthenticated ? <Navigate to="/" replace /> : <Login />
           }
         />
+        <Route
+  path="/register"
+  element={
+    isAuthenticated ? <Navigate to="/" replace /> : <Register />
+  }
+/>
+
         <Route
           path="/"
           element={
