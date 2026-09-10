@@ -80,21 +80,25 @@ export function StatCard({
       'bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400',
   };
 
+  const safeTitle = typeof title === 'object' ? JSON.stringify(title) : title;
+  const safeValue = typeof value === 'object' ? JSON.stringify(value) : value;
+  const safeTrend = typeof trend === 'object' ? JSON.stringify(trend) : trend;
+
   return (
     <div className="card">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            {title}
+            {safeTitle}
           </p>
 
           <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">
-            {value}
+            {safeValue}
           </p>
 
-          {trend && (
+          {safeTrend && (
             <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-              {trend}
+              {safeTrend}
             </p>
           )}
         </div>
