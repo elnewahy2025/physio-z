@@ -430,7 +430,7 @@ export async function changeAppointmentStatus(
           userId: appointment.therapistId,
           type: 'PACKAGE_SESSION_USED',
           title: 'Package Session Used',
-          message: `Session deducted from ${packageResult.package.name}. ${packageResult.package.sessionsRemaining} remaining.`,
+          message: `Session deducted from ${packageResult.package?.name}. ${packageResult.package?.sessionsRemaining} remaining.`,
         },
       });
     }

@@ -40,7 +40,7 @@ async function handleReminder24h() {
         gte: tomorrow,
         lt: new Date(tomorrow.getTime() + 60 * 60 * 1000),
       },
-      status: 'SCHEDULED',
+      status: 'CONFIRMED',
     },
     include: {
       patient: {
@@ -87,7 +87,7 @@ async function handleReminder2h() {
         gte: inTwoHours,
         lt: new Date(inTwoHours.getTime() + 30 * 60 * 1000),
       },
-      status: 'SCHEDULED',
+      status: 'CONFIRMED',
     },
     include: {
       patient: {
