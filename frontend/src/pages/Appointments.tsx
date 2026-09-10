@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import RecurringAppointmentForm from '../components/RecurringAppointmentForm';
+
 import {
   Plus,
+  Repeat,
   Calendar,
   Clock,
   CheckCircle,
   XCircle,
   AlertCircle,
 } from 'lucide-react';
+import { ListSkeleton } from '../components/Skeletons';
 
 import api from '../lib/api';
 import { useI18n } from '../i18n';
@@ -33,6 +37,7 @@ export default function Appointments() {
   );
 
   const [showForm, setShowForm] = useState(false);
+  const [showRecurring, setShowRecurring] = useState(false);
 
   const [filters, setFilters] = useState({
     status: '',
@@ -48,6 +53,7 @@ export default function Appointments() {
       const res = await api.get('/users', {
         params: { role: 'THERAPIST' },
       });
+
       return res.data as any[];
     },
     enabled: canManageTherapistFilter,
@@ -99,6 +105,7 @@ export default function Appointments() {
     queryKey: ['rooms-list'],
     queryFn: async () => {
       const res = await api.get('/rooms');
+
       return res.data as any[];
     },
     enabled: showForm,
@@ -175,9 +182,30 @@ export default function Appointments() {
                     : 'New Appointment'}
                 </button>
               )}
+
+              {(user?.role === 'OWNER' ||
+                user?.role === 'SECRETARY') && (
+                <button
+                  onClick={() => setShowRecurring(!showRecurring)}
+                  className="btn-secondary"
+                >
+                  <Repeat size={16} />
+                  {lang === 'ar'
+                    ? 'موعد متكرر'
+                    : 'Recurring'}
+                </button>
+              )}
             </div>
           }
         />
+
+        {showRecurring && (
+          <Card className="mb-4">
+            <RecurringAppointmentForm
+              onClose={() => setShowRecurring(false)}
+            />
+          </Card>
+        )}
 
         {showForm && (
           <NewAppointmentForm
@@ -552,3 +580,16 @@ function NewAppointmentForm({
     </form>
   );
 }
+```
+
+### Changes made
+
+1. Added `Repeat`:
+
+```tsx
+import {
+  Plus,
+  Repeat,
+  Calendar,
+  ...
+} from 'lucide-react';

@@ -8,6 +8,10 @@ import { Card, CardHeader, Badge, EmptyState, Spinner } from '../components/ui';
 import type { Invoice } from '../types';
 import { InvoicePdfButton } from '../components/InvoiceActions';
 import { FilterBar } from '../components/FilterBar';
+import { ListSkeleton } from '../components/Skeletons';
+
+// Replace: if (isLoading) return <Spinner className="py-24" />;
+if (isLoading) return <ListSkeleton items={5} />;
 
 export default function Invoices() {
   const { t, lang } = useI18n();

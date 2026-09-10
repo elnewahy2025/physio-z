@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search, Phone, Mail, Calendar, AlertCircle } from 'lucide-react';
@@ -6,6 +7,8 @@ import { useI18n } from '../i18n';
 import { useAuthStore } from '../store/auth';
 import { Card, CardHeader, EmptyState, Spinner, Badge } from '../components/ui';
 import type { Patient } from '../types';
+import { ListSkeleton } from '../components/Skeletons';
+import ProgressChart from '../components/ProgressChart';
 
 export default function Patients() {
   const { t, lang } = useI18n();
@@ -14,6 +17,7 @@ export default function Patients() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['patients', search, page],
@@ -25,7 +29,7 @@ export default function Patients() {
     },
   });
 
-  if (isLoading) return <Spinner className="py-24" />;
+  if (isLoading) return <ListSkeleton items={6} />;
 
   const patients: Patient[] = data?.data || [];
   const pagination = data?.pagination;
@@ -72,44 +76,57 @@ export default function Patients() {
         ) : (
           <>
             <div className="divide-y divide-gray-100">
-              {patients.map((patient) => (
-                <div key={patient.id} className="flex items-center justify-between py-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 text-lg font-semibold text-primary-700">
-                      {patient.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{patient.name}</p>
-                      <div className="mt-1 flex items-center gap-4 text-sm text-gray-500">
-                        <span className="flex items-center gap-1">
-                          <Phone size={14} />
-                          {patient.phone}
-                        </span>
-                        {patient.email && (
+              {patients.map((patient) => {
+                const isSelected = selectedPatientId === patient.id;
+
+                return (
+                  <div
+                    key={patient.id}
+                    onClick={() => setSelectedPatientId(patient.id)}
+                    className={`flex cursor-pointer items-center justify-between py-4 transition-colors ${
+                      isSelected
+                        ? 'rounded-lg bg-primary-50'
+                        : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 text-lg font-semibold text-primary-700">
+                        {patient.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{patient.name}</p>
+                        <div className="mt-1 flex items-center gap-4 text-sm text-gray-500">
                           <span className="flex items-center gap-1">
-                            <Mail size={14} />
-                            {patient.email}
+                            <Phone size={14} />
+                            {patient.phone}
                           </span>
-                        )}
+                          {patient.email && (
+                            <span className="flex items-center gap-1">
+                              <Mail size={14} />
+                              {patient.email}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      <div className="text-end">
+                        <p className="text-sm font-medium text-gray-900">
+                          {patient._count?.appointments || 0}
+                        </p>
+                        <p className="text-xs text-gray-500">{t('appointments')}</p>
+                      </div>
+                      <div className="text-end">
+                        <p className="text-sm font-medium text-gray-900">
+                          {patient._count?.invoices || 0}
+                        </p>
+                        <p className="text-xs text-gray-500">{t('invoices')}</p>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-end">
-                      <p className="text-sm font-medium text-gray-900">
-                        {patient._count?.appointments || 0}
-                      </p>
-                      <p className="text-xs text-gray-500">{t('appointments')}</p>
-                    </div>
-                    <div className="text-end">
-                      <p className="text-sm font-medium text-gray-900">
-                        {patient._count?.invoices || 0}
-                      </p>
-                      <p className="text-xs text-gray-500">{t('invoices')}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {pagination && pagination.totalPages > 1 && (
@@ -136,6 +153,10 @@ export default function Patients() {
           </>
         )}
       </Card>
+
+      {selectedPatientId && (
+        <ProgressChart patientId={selectedPatientId} />
+      )}
     </div>
   );
 }
@@ -255,3 +276,4 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
     </form>
   );
 }
+

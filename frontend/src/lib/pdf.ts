@@ -1,18 +1,17 @@
 // frontend/src/lib/pdf.ts
 import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import html2canvas from 'html2canvas';
+import { generateInvoiceHTML, type TemplateData } from './invoice-template';
 
-interface InvoiceData {
+interface Invoice {
   id: string;
   number: string;
   patientId: string;
-  appointmentId: string | null;
   amount: number;
   tax: number;
   total: number;
   dueDate: string | null;
   status: string;
-  paymentMethod: string | null;
   createdAt: string;
   patient: { id: string; name: string; phone: string; email?: string | null };
   payments: Array<{
@@ -24,8 +23,9 @@ interface InvoiceData {
   }>;
 }
 
-interface SettingsData {
+interface Settings {
   centerName: string;
+  centerLogo: string | null;
   address: string | null;
   phone: string | null;
   email: string | null;
@@ -35,286 +35,317 @@ interface SettingsData {
   taxRate: number;
 }
 
-const STATUS_COLORS: Record<string, { bg: [number, number, number]; text: string; label: string }> = {
-  PAID: { bg: [16, 185, 129], text: 'PAID', label: 'Paid' },
-  UNPAID: { bg: [239, 68, 68], text: 'UNPAID', label: 'Unpaid' },
-  PARTIALLY_PAID: { bg: [245, 158, 11], text: 'PARTIALLY PAID', label: 'Partially Paid' },
-  OVERDUE: { bg: [220, 38, 38], text: 'OVERDUE', label: 'Overdue' },
-  CANCELLED: { bg: [107, 114, 128], text: 'CANCELLED', label: 'Cancelled' },
-};
+/**
+ * Converts invoice + settings data into template format.
+ */
+function prepareTemplateData(
+  invoice: Invoice,
+  settings: Settings,
+  lang: 'ar' | 'en',
+): TemplateData {
+  const isAr = lang === 'ar';
 
-export function generateInvoicePDF(invoice: InvoiceData, settings: SettingsData) {
-  const doc = new jsPDF({
+  const totalPaid = (invoice.payments || [])
+    .filter((p) => p.status === 'COMPLETED')
+    .reduce((sum, p) => sum + Number(p.amount), 0);
+
+  const remaining = Number(invoice.total) - totalPaid;
+
+  return {
+    centerName: settings.centerName || 'Physio Center',
+    centerLogo: settings.centerLogo,
+    address: settings.address,
+    phone: settings.phone,
+    email: settings.email,
+    googleMapsLink: settings.googleMapsLink,
+
+    invoiceNumber: invoice.number,
+    invoiceDate: new Date(invoice.createdAt).toLocaleDateString(
+      isAr ? 'ar-EG' : 'en-GB',
+      { day: '2-digit', month: 'long', year: 'numeric' },
+    ),
+    dueDate: invoice.dueDate
+      ? new Date(invoice.dueDate).toLocaleDateString(
+          isAr ? 'ar-EG' : 'en-GB',
+          { day: '2-digit', month: 'long', year: 'numeric' },
+        )
+      : null,
+    status: invoice.status,
+    currency: settings.currency || 'EGP',
+
+    patientName: invoice.patient.name,
+    patientPhone: invoice.patient.phone,
+    patientEmail: invoice.patient.email,
+
+    items: [
+      {
+        description: isAr ? 'جلسة علاج طبيعي' : 'Physiotherapy Session',
+        duration: '45 min',
+        amount: Number(invoice.amount),
+      },
+    ],
+    subtotal: Number(invoice.amount),
+    taxRate: Number(settings.taxRate) || 0,
+    tax: Number(invoice.tax),
+    total: Number(invoice.total),
+
+    payments: (invoice.payments || []).map((p) => ({
+      date: new Date(p.paymentDate).toLocaleDateString(
+        isAr ? 'ar-EG' : 'en-GB',
+        { day: '2-digit', month: 'short', year: 'numeric' },
+      ),
+      method: p.method.replace('_', ' '),
+      amount: Number(p.amount),
+      status: p.status,
+    })),
+    totalPaid,
+    remaining,
+  };
+}
+
+/**
+ * Renders the invoice HTML to a hidden container, captures it with html2canvas,
+ * and generates a PDF with jsPDF.
+ */
+async function renderToPDF(html: string, fileName: string): Promise<void> {
+  // Create a hidden container
+  const container = document.createElement('div');
+  container.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: -9999px;
+    width: 800px;
+    z-index: -1;
+    pointer-events: none;
+  `;
+
+  // Create an iframe for isolated rendering (fonts + styles work correctly)
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'width:800px;height:1200px;border:none;';
+  container.appendChild(iframe);
+  document.body.appendChild(container);
+
+  // Write HTML to iframe
+  const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+  if (!iframeDoc) {
+    document.body.removeChild(container);
+    throw new Error('Failed to create render context');
+  }
+
+  iframeDoc.open();
+  iframeDoc.write(html);
+  iframeDoc.close();
+
+  // Wait for fonts to load (critical for Arabic rendering)
+  await new Promise((resolve) => {
+    if (iframe.contentWindow?.document.fonts?.ready) {
+      iframe.contentWindow.document.fonts.ready.then(() => resolve(void 0));
+    } else {
+      setTimeout(resolve, 500);
+    }
+  });
+
+  // Extra wait for font rendering
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
+  // Capture the invoice element
+  const invoiceElement = iframeDoc.querySelector('.invoice-page') as HTMLElement;
+  if (!invoiceElement) {
+    document.body.removeChild(container);
+    throw new Error('Invoice element not found');
+  }
+
+  const canvas = await html2canvas(invoiceElement, {
+    scale: 2, // 2x resolution for crisp text
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    logging: false,
+    width: 800,
+    windowWidth: 800,
+  });
+
+  // Clean up
+  document.body.removeChild(container);
+
+  // Create PDF
+  const imgWidth = 210; // A4 width in mm
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  const pageHeight = 297; // A4 height in mm
+
+  const pdf = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
     format: 'a4',
   });
 
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 15;
-  const contentWidth = pageWidth - margin * 2;
+  // If content fits on one page
+  if (imgHeight <= pageHeight) {
+    pdf.addImage(canvas.toDataURL('image/png', 0.95), 'PNG', 0, 0, imgWidth, imgHeight);
+  } else {
+    // Multi-page: slice the canvas
+    const totalPages = Math.ceil(imgHeight / pageHeight);
+    let remainingHeight = imgHeight;
+    let position = 0;
 
-  // ─── Colors ───
-  const primary: [number, number, number] = [37, 99, 235]; // blue-600
-  const primaryLight: [number, number, number] = [219, 234, 254]; // blue-100
-  const darkGray: [number, number, number] = [31, 41, 55];
-  const gray: [number, number, number] = [107, 114, 128];
-  const lightGray: [number, number, number] = [243, 244, 246];
-  const borderGray: [number, number, number] = [229, 231, 235];
+    for (let i = 0; i < totalPages; i++) {
+      if (i > 0) pdf.addPage();
 
-  // ─── Header ───
-  doc.setFillColor(...primary);
-  doc.rect(0, 0, pageWidth, 42, 'F');
+      const pageCanvas = document.createElement('canvas');
+      const pageCanvasCtx = pageCanvas.getContext('2d');
+      if (!pageCanvasCtx) break;
 
-  // Center name
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(22);
-  doc.setTextColor(255, 255, 255);
-  doc.text(settings.centerName || 'Physio Center', pageWidth / 2, 18, { align: 'center' });
+      const sliceHeight = Math.min(
+        canvas.width * (pageHeight / imgWidth),
+        remainingHeight * (canvas.width / imgWidth),
+      );
 
-  // Center contact info
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  const contactParts = [
-    settings.address,
-    settings.phone && `Tel: ${settings.phone}`,
-    settings.email,
-  ].filter(Boolean);
-  doc.text(contactParts.join('  |  '), pageWidth / 2, 28, { align: 'center' });
+      pageCanvas.width = canvas.width;
+      pageCanvas.height = sliceHeight;
 
-  // Invoice title
-  doc.setFontSize(28);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...primary);
-  doc.text('INVOICE', margin, 60);
+      pageCanvasCtx.fillStyle = '#ffffff';
+      pageCanvasCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+      pageCanvasCtx.drawImage(
+        canvas,
+        0,
+        position * (canvas.width / imgWidth),
+        canvas.width,
+        sliceHeight,
+        0,
+        0,
+        canvas.width,
+        sliceHeight,
+      );
 
-  // Invoice number (right side)
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...darkGray);
-  doc.text(invoice.number, pageWidth - margin, 60, { align: 'right' });
+      pdf.addImage(
+        pageCanvas.toDataURL('image/png', 0.95),
+        'PNG',
+        0,
+        0,
+        imgWidth,
+        sliceHeight * (imgWidth / canvas.width),
+      );
 
-  // ─── Invoice Info Box ───
-  let yPos = 70;
-
-  // Left box: Invoice details
-  doc.setFillColor(...lightGray);
-  doc.roundedRect(margin, yPos, contentWidth / 2 - 5, 32, 2, 2, 'F');
-
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...gray);
-  doc.text('INVOICE DATE', margin + 5, yPos + 7);
-  doc.text('DUE DATE', margin + 5, yPos + 15);
-  doc.text('STATUS', margin + 5, yPos + 23);
-
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...darkGray);
-  const createdDate = new Date(invoice.createdAt).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-  doc.text(createdDate, margin + 40, yPos + 7);
-  doc.text(
-    invoice.dueDate
-      ? new Date(invoice.dueDate).toLocaleDateString('en-GB', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-        })
-      : '—',
-    margin + 40,
-    yPos + 15,
-  );
-
-  // Status badge
-  const statusInfo = STATUS_COLORS[invoice.status] || STATUS_COLORS['UNPAID'];
-  doc.setFillColor(...statusInfo.bg);
-  doc.roundedRect(margin + 40, yPos + 19, 45, 6, 1, 1, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.setTextColor(255, 255, 255);
-  doc.text(statusInfo.text, margin + 62.5, yPos + 23.5, { align: 'center' });
-
-  // Right box: Patient details
-  const rightBoxX = margin + contentWidth / 2 + 5;
-  doc.setFillColor(...primaryLight);
-  doc.roundedRect(rightBoxX, yPos, contentWidth / 2 - 5, 32, 2, 2, 'F');
-
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...gray);
-  doc.text('BILLED TO', rightBoxX + 5, yPos + 7);
-
-  doc.setFontSize(11);
-  doc.setTextColor(...darkGray);
-  doc.text(invoice.patient.name, rightBoxX + 5, yPos + 14);
-
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...gray);
-  doc.text(invoice.patient.phone, rightBoxX + 5, yPos + 21);
-  if (invoice.patient.email) {
-    doc.text(invoice.patient.email, rightBoxX + 5, yPos + 27);
-  }
-
-  yPos += 45;
-
-  // ─── Line Items Table ───
-  const currency = settings.currency || 'EGP';
-
-  autoTable(doc, {
-    startY: yPos,
-    head: [['#', 'Description', 'Duration', 'Amount']],
-    body: [
-      [
-        '1',
-        'Physiotherapy Session',
-        '45 min',
-        `${Number(invoice.amount).toFixed(2)} ${currency}`,
-      ],
-    ],
-    foot: [
-      ['', '', 'Subtotal', `${Number(invoice.amount).toFixed(2)} ${currency}`],
-      ['', '', 'Tax', `${Number(invoice.tax).toFixed(2)} ${currency}`],
-      ['', '', 'TOTAL', `${Number(invoice.total).toFixed(2)} ${currency}`],
-    ],
-    theme: 'grid',
-    styles: {
-      fontSize: 10,
-      cellPadding: 4,
-      lineColor: borderGray,
-      lineWidth: 0.1,
-    },
-    headStyles: {
-      fillColor: primary,
-      textColor: [255, 255, 255],
-      fontStyle: 'bold',
-      fontSize: 10,
-    },
-    footStyles: {
-      fillColor: [243, 244, 246],
-      textColor: darkGray,
-      fontStyle: 'bold',
-      fontSize: 10,
-    },
-    alternateRowStyles: {
-      fillColor: [250, 250, 250],
-    },
-    columnStyles: {
-      0: { cellWidth: 10, halign: 'center' },
-      1: { cellWidth: 'auto' },
-      2: { cellWidth: 25, halign: 'center' },
-      3: { cellWidth: 35, halign: 'right' },
-    },
-    margin: { left: margin, right: margin },
-  });
-
-  // Get the Y position after the table
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const afterTable = (doc as any).lastAutoTable.finalY + 10;
-
-  // ─── Payments History ───
-  if (invoice.payments && invoice.payments.length > 0) {
-    const totalPaid = invoice.payments
-      .filter((p) => p.status === 'COMPLETED')
-      .reduce((sum, p) => sum + Number(p.amount), 0);
-    const remaining = Number(invoice.total) - totalPaid;
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
-    doc.setTextColor(...darkGray);
-    doc.text('PAYMENT HISTORY', margin, afterTable);
-
-    autoTable(doc, {
-      startY: afterTable + 5,
-      head: [['Date', 'Method', 'Amount', 'Status']],
-      body: invoice.payments.map((p) => [
-        new Date(p.paymentDate).toLocaleDateString('en-GB'),
-        p.method.replace('_', ' '),
-        `${Number(p.amount).toFixed(2)} ${currency}`,
-        p.status,
-      ]),
-      theme: 'striped',
-      styles: {
-        fontSize: 9,
-        cellPadding: 3,
-      },
-      headStyles: {
-        fillColor: gray,
-        textColor: [255, 255, 255],
-        fontSize: 9,
-      },
-      columnStyles: {
-        3: { halign: 'right' },
-      },
-      margin: { left: margin, right: margin },
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const afterPayments = (doc as any).lastAutoTable.finalY + 10;
-
-    // Summary box
-    doc.setFillColor(...lightGray);
-    doc.roundedRect(margin, afterPayments, contentWidth, 20, 2, 2, 'F');
-
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...gray);
-    doc.text('Total Paid:', pageWidth - margin - 70, afterPayments + 8);
-    doc.text('Remaining:', pageWidth - margin - 70, afterPayments + 15);
-
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(16, 185, 129);
-    doc.text(`${totalPaid.toFixed(2)} ${currency}`, pageWidth - margin - 5, afterPayments + 8, {
-      align: 'right',
-    });
-
-    if (remaining > 0) {
-      doc.setTextColor(239, 68, 68);
-      doc.text(`${remaining.toFixed(2)} ${currency}`, pageWidth - margin - 5, afterPayments + 15, {
-        align: 'right',
-      });
-    } else {
-      doc.setTextColor(16, 185, 129);
-      doc.text('0.00 ' + currency, pageWidth - margin - 5, afterPayments + 15, {
-        align: 'right',
-      });
+      remainingHeight -= pageHeight;
+      position += pageHeight;
     }
   }
 
-  // ─── Footer ───
-  const footerY = pageHeight - 25;
-
-  doc.setDrawColor(...borderGray);
-  doc.setLineWidth(0.2);
-  doc.line(margin, footerY, pageWidth - margin, footerY);
-
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...gray);
-  doc.text(
-    'Thank you for choosing our physiotherapy center.',
-    pageWidth / 2,
-    footerY + 6,
-    { align: 'center' },
-  );
-
-  doc.setFontSize(7);
-  doc.text(
-    'This invoice was generated automatically. Please keep it for your records.',
-    pageWidth / 2,
-    footerY + 11,
-    { align: 'center' },
-  );
-
-  // ─── Save ───
-  doc.save(`${invoice.number}.pdf`);
+  // Save
+  pdf.save(fileName);
 }
 
-// ─── WhatsApp Link Generator ───
+/**
+ * Generates a bilingual invoice PDF (Arabic + English).
+ * Creates a single PDF with both versions on separate pages.
+ */
+export async function generateBilingualInvoicePDF(
+  invoice: Invoice,
+  settings: Settings,
+): Promise<void> {
+  const arabicData = prepareTemplateData(invoice, settings, 'ar');
+  const englishData = prepareTemplateData(invoice, settings, 'en');
+
+  const arabicHTML = generateInvoiceHTML(arabicData, 'ar');
+  const englishHTML = generateInvoiceHTML(englishData, 'en');
+
+  // Generate English first (page 1), then Arabic (page 2)
+  // Actually, let's generate Arabic first since it's the primary language
+  const arabicCanvas = await renderToCanvas(arabicHTML);
+  const englishCanvas = await renderToCanvas(englishHTML);
+
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+  });
+
+  // Page 1: Arabic
+  addCanvasToPDF(pdf, arabicCanvas, 0);
+
+  // Page 2: English
+  pdf.addPage();
+  addCanvasToPDF(pdf, englishCanvas, 1);
+
+  pdf.save(`${invoice.number}-bilingual.pdf`);
+}
+
+/**
+ * Generates a single-language invoice PDF.
+ */
+export async function generateInvoicePDF(
+  invoice: Invoice,
+  settings: Settings,
+  lang: 'ar' | 'en' = 'en',
+): Promise<void> {
+  const data = prepareTemplateData(invoice, settings, lang);
+  const html = generateInvoiceHTML(data, lang);
+  const suffix = lang === 'ar' ? 'AR' : 'EN';
+  await renderToPDF(html, `${invoice.number}-${suffix}.pdf`);
+}
+
+// ─── Helpers ───
+
+async function renderToCanvas(html: string): Promise<HTMLCanvasElement> {
+  const container = document.createElement('div');
+  container.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: -9999px;
+    width: 800px;
+    z-index: -1;
+  `;
+
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'width:800px;height:1200px;border:none;';
+  container.appendChild(iframe);
+  document.body.appendChild(container);
+
+  const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+  if (!iframeDoc) {
+    document.body.removeChild(container);
+    throw new Error('Failed to create render context');
+  }
+
+  iframeDoc.open();
+  iframeDoc.write(html);
+  iframeDoc.close();
+
+  // Wait for fonts
+  await new Promise((resolve) => {
+    if (iframe.contentWindow?.document.fonts?.ready) {
+      iframe.contentWindow.document.fonts.ready.then(() => resolve(void 0));
+    } else {
+      setTimeout(resolve, 500);
+    }
+  });
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
+  const invoiceElement = iframeDoc.querySelector('.invoice-page') as HTMLElement;
+  if (!invoiceElement) {
+    document.body.removeChild(container);
+    throw new Error('Invoice element not found');
+  }
+
+  const canvas = await html2canvas(invoiceElement, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    logging: false,
+    width: 800,
+    windowWidth: 800,
+  });
+
+  document.body.removeChild(container);
+  return canvas;
+}
+
+function addCanvasToPDF(pdf: jsPDF, canvas: HTMLCanvasElement, pageNum: number): void {
+  const imgWidth = 210;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  pdf.addImage(canvas.toDataURL('image/png', 0.95), 'PNG', 0, 0, imgWidth, Math.min(imgHeight, 297));
+}
+
+// ─── WhatsApp Link Generator (unchanged) ───
 export function generateWhatsAppLink(
   phone: string,
   template: string | null,
@@ -322,22 +353,13 @@ export function generateWhatsAppLink(
   dateTime: string,
   centerName: string,
 ): string {
-  // Clean phone number (remove +, spaces, dashes)
   const cleanPhone = phone.replace(/[^0-9]/g, '');
-
-  // Default template if none set
   let message =
     template ||
     'Hello {patient_name}, this is a reminder for your appointment on {date_time} at {center_name}.';
-
-  // Replace placeholders
   message = message
-    .replace('{patient_name}', patientName)
-    .replace('{date_time}', new Date(dateTime).toLocaleString('en-GB'))
-    .replace('{center_name}', centerName);
-
-  // Encode for URL
-  const encodedMessage = encodeURIComponent(message);
-
-  return `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+    .replace(/\{patient_name\}/g, patientName)
+    .replace(/\{date_time\}/g, new Date(dateTime).toLocaleString('en-GB'))
+    .replace(/\{center_name\}/g, centerName);
+  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 }

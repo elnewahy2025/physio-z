@@ -10,6 +10,11 @@ const envSchema = z.object({
   JWT_ACCESS_EXPIRES: z.coerce.number().default(900),
   JWT_REFRESH_EXPIRES: z.coerce.number().default(604800),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
+  SMTP_HOST: z.string().optional(),
+SMTP_PORT: z.coerce.number().optional(),
+SMTP_USER: z.string().optional(),
+SMTP_PASS: z.string().optional(),
+SMTP_FROM: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

@@ -101,3 +101,51 @@
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
 }
+/* ─── Print styles ─── */
+@media print {
+  /* Hide interactive elements */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Hide sidebar and header */
+  aside,
+  header {
+    display: none !important;
+  }
+
+  /* Reset main content positioning */
+  .ps-64 {
+    padding-start: 0 !important;
+  }
+
+  /* Reset background */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Cards: remove shadows and borders */
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+    break-inside: avoid;
+  }
+
+  /* Charts: ensure they fit */
+  .recharts-wrapper {
+    max-width: 100% !important;
+  }
+
+  /* Page setup */
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  /* Prevent page breaks inside cards */
+  .card,
+  .stat-card {
+    break-inside: avoid;
+  }
+}

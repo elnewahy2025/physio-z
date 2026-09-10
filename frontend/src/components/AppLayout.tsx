@@ -1,7 +1,12 @@
 import { type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { CreditCard } from 'lucide-react';
+import { useState } from 'react';
+import { KeyRound } from 'lucide-react';
+import ChangePasswordModal from './ChangePasswordModal';
+import { Package, Clock } from 'lucide-react';
+
+
 import {
   LayoutDashboard,
   Calendar,
@@ -16,6 +21,8 @@ import {
   CalendarPlus,
   Moon,
   Sun,
+  CalendarDays,
+  CreditCard,
 } from 'lucide-react';
 
 import NotificationBell from './NotificationBell';
@@ -39,9 +46,17 @@ interface NavItem {
  * relying directly on the i18n translation key.
  */
 const navLabels: Record<string, { en: string; ar: string }> = {
+  calendar: {
+    en: 'Calendar',
+    ar: 'التقويم',
+  },
   myRecords: {
     en: 'My Records',
     ar: 'سجلي الطبي',
+  },
+  myPayments: {
+    en: 'My Payments',
+    ar: 'مدفوعاتي',
   },
   book: {
     en: 'Book Appointment',
@@ -50,19 +65,85 @@ const navLabels: Record<string, { en: string; ar: string }> = {
 };
 
 const navItems: NavItem[] = [
-  { key: 'dashboard', icon: <LayoutDashboard size={20} />, path: '/', roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT'] },
-  { key: 'calendar', icon: <CalendarDays size={20} />, path: '/calendar', roles: ['OWNER', 'THERAPIST', 'SECRETARY'] }, // NEW
-  { key: 'book', icon: <CalendarPlus size={20} />, path: '/book', roles: ['PATIENT'] },
-  { key: 'appointments', icon: <Calendar size={20} />, path: '/appointments', roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT'] },
-  { key: 'myRecords', icon: <FileText size={20} />, path: '/my-records', roles: ['PATIENT'] },
-  { key: 'myPayments', icon: <CreditCard size={20} />, path: '/my-payments', roles: ['PATIENT'] }, // NEW
-  { key: 'patients', icon: <Users size={20} />, path: '/patients', roles: ['OWNER', 'THERAPIST', 'SECRETARY'] },
-  { key: 'sessions', icon: <Activity size={20} />, path: '/sessions', roles: ['OWNER', 'THERAPIST'] },
-  { key: 'invoices', icon: <FileText size={20} />, path: '/invoices', roles: ['OWNER', 'SECRETARY'] },
-  { key: 'reports', icon: <BarChart3 size={20} />, path: '/reports', roles: ['OWNER'] },
-  { key: 'users', icon: <Users size={20} />, path: '/users', roles: ['OWNER'] },
-  { key: 'settings', icon: <Settings size={20} />, path: '/settings', roles: ['OWNER'] },
+  {
+    key: 'dashboard',
+    icon: <LayoutDashboard size={20} />,
+    path: '/',
+    roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT'],
+  },
+  {
+    key: 'calendar',
+    icon: <CalendarDays size={20} />,
+    path: '/calendar',
+    roles: ['OWNER', 'THERAPIST', 'SECRETARY'],
+  },
+  {
+    key: 'book',
+    icon: <CalendarPlus size={20} />,
+    path: '/book',
+    roles: ['PATIENT'],
+  },
+  {
+    key: 'appointments',
+    icon: <Calendar size={20} />,
+    path: '/appointments',
+    roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT'],
+  },
+  {
+    key: 'myRecords',
+    icon: <FileText size={20} />,
+    path: '/my-records',
+    roles: ['PATIENT'],
+  },
+  {
+    key: 'myPayments',
+    icon: <CreditCard size={20} />,
+    path: '/my-payments',
+    roles: ['PATIENT'],
+  },
+  {
+    key: 'patients',
+    icon: <Users size={20} />,
+    path: '/patients',
+    roles: ['OWNER', 'THERAPIST', 'SECRETARY'],
+  },
+  {
+    key: 'sessions',
+    icon: <Activity size={20} />,
+    path: '/sessions',
+    roles: ['OWNER', 'THERAPIST'],
+  },
+  {
+    key: 'invoices',
+    icon: <FileText size={20} />,
+    path: '/invoices',
+    roles: ['OWNER', 'SECRETARY'],
+  },
+  {
+    key: 'reports',
+    icon: <BarChart3 size={20} />,
+    path: '/reports',
+    roles: ['OWNER'],
+  },
+  {
+    key: 'users',
+    icon: <Users size={20} />,
+    path: '/users',
+    roles: ['OWNER'],
+  },
+  { key: 'expenses', icon: <TrendingDown size={20} />, path: '/expenses', roles: ['OWNER'] },
+{ key: 'inventory', icon: <Boxes size={20} />, path: '/inventory', roles: ['OWNER', 'SECRETARY'] },
+{ key: 'equipment', icon: <Wrench size={20} />, path: '/equipment', roles: ['OWNER', 'SECRETARY'] },
+  { key: 'packages', icon: <Package size={20} />, path: '/packages', roles: ['OWNER', 'SECRETARY', 'THERAPIST'] },
+{ key: 'waitlist', icon: <Clock size={20} />, path: '/waitlist', roles: ['OWNER', 'SECRETARY'] },
+  {
+    key: 'settings',
+    icon: <Settings size={20} />,
+    path: '/settings',
+    roles: ['OWNER'],
+  },
 ];
+
 export default function AppLayout({
   children,
 }: {
@@ -74,6 +155,8 @@ export default function AppLayout({
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   const { data: settings } = useQuery({
     queryKey: ['settings'],
@@ -100,7 +183,9 @@ export default function AppLayout({
    * Returns the correct navigation label.
    *
    * Custom labels:
+   * - calendar -> Calendar / التقويم
    * - myRecords -> My Records / سجلي الطبي
+   * - myPayments -> My Payments / مدفوعاتي
    * - book -> Book Appointment / حجز موعد
    *
    * All other navigation items continue to use
@@ -173,30 +258,55 @@ export default function AppLayout({
           })}
         </nav>
 
-        {/* User / Logout */}
+        {/* User / Actions */}
         <div className="border-t border-gray-200 p-4 dark:border-gray-700">
-          <div className="flex items-center gap-3 px-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-sm font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-300">
-              {user.name.charAt(0).toUpperCase()}
+          <div className="space-y-2">
+            <div className="flex items-center gap-3 px-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-sm font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-300">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {user.name}
+                </p>
+
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {user.role}
+                </p>
+              </div>
             </div>
 
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
-                {user.name}
-              </p>
+            {/* Action buttons */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowChangePassword(true)}
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs font-medium text-gray-600 transition-colors hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:border-primary-500 dark:hover:bg-primary-900/30"
+                title={
+                  lang === 'ar'
+                    ? 'تغيير كلمة المرور'
+                    : 'Change Password'
+                }
+              >
+                <KeyRound size={14} />
 
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {user.role}
-              </p>
+                <span className="hidden sm:inline">
+                  {lang === 'ar' ? 'كلمة المرور' : 'Password'}
+                </span>
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
+                title={t('logout')}
+              >
+                <LogOut size={14} />
+
+                <span className="hidden sm:inline">
+                  {t('logout')}
+                </span>
+              </button>
             </div>
-
-            <button
-              onClick={handleLogout}
-              className="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
-              title={t('logout')}
-            >
-              <LogOut size={18} />
-            </button>
           </div>
         </div>
       </aside>
@@ -219,7 +329,11 @@ export default function AppLayout({
               onClick={toggle}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
               title={isDark ? 'Light mode' : 'Dark mode'}
-              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label={
+                isDark
+                  ? 'Switch to light mode'
+                  : 'Switch to dark mode'
+              }
             >
               {isDark ? (
                 <Sun size={16} className="text-amber-400" />
@@ -239,7 +353,10 @@ export default function AppLayout({
               }
             >
               <Languages size={16} />
-              <span>{lang === 'ar' ? 'English' : 'العربية'}</span>
+
+              <span>
+                {lang === 'ar' ? 'English' : 'العربية'}
+              </span>
             </button>
           </div>
         </header>
@@ -249,9 +366,13 @@ export default function AppLayout({
           <NotificationToast />
           {children}
         </main>
+
+        {/* Change Password Modal */}
+        <ChangePasswordModal
+          isOpen={showChangePassword}
+          onClose={() => setShowChangePassword(false)}
+        />
       </div>
     </div>
   );
 }
-
-

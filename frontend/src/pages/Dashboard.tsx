@@ -1,4 +1,8 @@
+// Replace: if (apptLoading) return <Spinner className="py-24" />;
+// With:
+import { DashboardSkeleton } from '../components/Skeletons';
 
+if (apptLoading) return <DashboardSkeleton />;
 import { useQuery } from '@tanstack/react-query';
 import { DirectionsButton } from '../components/GoogleMapsLink';
 

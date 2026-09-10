@@ -64,12 +64,27 @@ export async function createInvoice(data: {
   const total = Math.round((data.amount + tax) * 100) / 100;
   const number = await generateInvoiceNumber();
   return prisma.invoice.create({
-    data: {
+        data: {
       number, patientId: data.patientId, appointmentId: data.appointmentId ?? null,
       amount: data.amount, tax, total, dueDate: data.dueDate ?? null, createdById,
     },
     include: invoiceInclude,
   });
+    // Notify patient about new invoice
+  const patientWithUser = await prisma.patient.findUnique({
+    where: { id: data.patientId },
+    include: { user: true },
+  });
+
+  if (patientWithUser?.user) {
+    await createNotification({
+      userId: patientWithUser.user.id,
+      type: NOTIFICATION_TYPES.INVOICE_CREATED,
+      title: 'New Invoice',
+      message: `Invoice ${number} for ${total} has been created`,
+      link: '/invoices',
+    });
+  }
 }
 
 export async function updateInvoiceStatus(id: string, status: InvoiceStatus) {

@@ -20,6 +20,13 @@ import PatientBooking from './pages/PatientBooking';
 import MyRecords from './pages/MyRecords';
 import MyPayments from './pages/MyPayments';
 import CalendarPage from './pages/CalendarPage';
+import ErrorBoundary from './components/ErrorBoundary';
+import Packages from './pages/Packages';
+import Waitlist from './pages/Waitlist';
+import Expenses from './pages/Expenses';
+import Inventory from './pages/Inventory';
+import Equipment from './pages/Equipment';
+
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
@@ -39,122 +46,144 @@ function App() {
   }, [initialize]);
 
   return (
-    <I18nProvider>
-      <OfflineIndicator />
-      <InstallPrompt />
-      <Routes>
-        <Route
-          path="/login"
-          element={
-            isAuthenticated ? <Navigate to="/" replace /> : <Login />
-          }
-        />
-        <Route
-  path="/register"
-  element={
-    isAuthenticated ? <Navigate to="/" replace /> : <Register />
-  }
-/>
+    <ErrorBoundary>
+      <I18nProvider>
+        <OfflineIndicator />
+        <InstallPrompt />
 
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-  path="/calendar"
-  element={
-    <ProtectedRoute>
-      <CalendarPage />
-    </ProtectedRoute>
-  }
-/>
-        <Route
-          path="/appointments"
-          element={
-            <ProtectedRoute>
-              <Appointments />
-            </ProtectedRoute>
-          }
-        />
-  <Route
-  path="/my-payments"
-  element={
-    <ProtectedRoute>
-      <MyPayments />
-    </ProtectedRoute>
-  }
-/>
-        <Route
-  path="/book"
-  element={
-    <ProtectedRoute>
-      <PatientBooking />
-    </ProtectedRoute>
-  }
-/>
-        <Route
-          path="/patients"
-          element={
-            <ProtectedRoute>
-              <Patients />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/invoices"
-          element={
-            <ProtectedRoute>
-              <Invoices />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/sessions"
-          element={
-            <ProtectedRoute>
-              <Sessions />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/users"
-          element={
-            <ProtectedRoute>
-              <Users />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/reports"
-          element={
-            <ProtectedRoute>
-              <Reports />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <Settings />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/my-records"
-          element={
-         <ProtectedRoute>
-          <MyRecords />
-       </ProtectedRoute>
-           }
-      />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </I18nProvider>
+        <Routes>
+          <Route
+            path="/login"
+            element={
+              isAuthenticated ? <Navigate to="/" replace /> : <Login />
+            }
+          />
+
+          <Route
+            path="/register"
+            element={
+              isAuthenticated ? <Navigate to="/" replace /> : <Register />
+            }
+          />
+
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/calendar"
+            element={
+              <ProtectedRoute>
+                <CalendarPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/appointments"
+            element={
+              <ProtectedRoute>
+                <Appointments />
+              </ProtectedRoute>
+            }
+          />
+<Route path="/expenses" element={<ProtectedRoute><Expenses /></ProtectedRoute>} />
+<Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
+<Route path="/equipment" element={<ProtectedRoute><Equipment /></ProtectedRoute>} />
+          <Route
+            path="/my-payments"
+            element={
+              <ProtectedRoute>
+                <MyPayments />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/book"
+            element={
+              <ProtectedRoute>
+                <PatientBooking />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/patients"
+            element={
+              <ProtectedRoute>
+                <Patients />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/invoices"
+            element={
+              <ProtectedRoute>
+                <Invoices />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/sessions"
+            element={
+              <ProtectedRoute>
+                <Sessions />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute>
+                <Users />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute>
+                <Reports />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/my-records"
+            element={
+              <ProtectedRoute>
+                <MyRecords />
+              </ProtectedRoute>
+            }
+          />
+<Route path="/packages" element={<ProtectedRoute><Packages /></ProtectedRoute>} />
+<Route path="/waitlist" element={<ProtectedRoute><Waitlist /></ProtectedRoute>} />
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
+        </Routes>
+      </I18nProvider>
+    </ErrorBoundary>
   );
 }
 
