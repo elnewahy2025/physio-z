@@ -4,17 +4,14 @@
 
 @layer base {
   html {
-    /* Cairo for both Arabic AND English - it's a dual-script font */
     font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
   }
 
   html[dir='rtl'] {
-    /* Force RTL direction and NO letter-spacing (breaks Arabic connections) */
     direction: rtl;
   }
 
   html[dir='rtl'] * {
-    /* CRITICAL: letter-spacing disconnects Arabic letters */
     letter-spacing: 0 !important;
   }
 
@@ -27,13 +24,31 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Ensure text-align follows direction */
   html[dir='rtl'] body {
     text-align: right;
   }
 
   html[dir='ltr'] body {
     text-align: left;
+  }
+
+  /* ─── Dark mode base ─── */
+  html.dark body {
+    @apply bg-gray-950 text-gray-100;
+  }
+
+  html.dark ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  html.dark ::-webkit-scrollbar-track {
+    background: #111827;
+  }
+
+  html.dark ::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 4px;
   }
 }
 
@@ -50,16 +65,36 @@
     @apply btn bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-gray-400;
   }
 
+  .dark .btn-secondary {
+    @apply bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  }
+
   .input {
     @apply block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500;
+  }
+
+  .dark .input {
+    @apply bg-gray-800 border-gray-600 text-gray-100 placeholder-gray-500;
   }
 
   .label {
     @apply mb-1.5 block text-sm font-medium text-gray-700;
   }
 
+  .dark .label {
+    @apply text-gray-300;
+  }
+
   .card {
     @apply rounded-xl border border-gray-200 bg-white p-6 shadow-sm;
+  }
+
+  .dark .card {
+    @apply border-gray-700 bg-gray-800;
   }
 
   .badge {

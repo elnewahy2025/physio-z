@@ -13,12 +13,21 @@ declare global {
 
 export function requireAuth(req: Request, res: Response, next: NextFunction): void {
   const header = req.headers.authorization;
-  if (!header?.startsWith('Bearer ')) {
+
+  // SSE fallback: check query parameter (EventSource can't send headers)
+  let token: string | null = null;
+  if (header?.startsWith('Bearer ')) {
+    token = header.slice(7);
+  } else if (typeof req.query.token === 'string') {
+    token = req.query.token;
+  }
+
+  if (!token) {
     res.status(401).json({ message: 'Authentication required' });
     return;
   }
   try {
-    const payload = verifyAccessToken(header.slice(7));
+    const payload = verifyAccessToken(token);
     if (payload.type !== 'access') throw new Error('wrong token type');
     req.userId = payload.sub;
     req.userRole = payload.role;

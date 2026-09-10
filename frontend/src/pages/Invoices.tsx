@@ -6,11 +6,14 @@ import { useI18n } from '../i18n';
 import { useAuthStore } from '../store/auth';
 import { Card, CardHeader, Badge, EmptyState, Spinner } from '../components/ui';
 import type { Invoice } from '../types';
+import { InvoicePdfButton } from '../components/InvoiceActions';
+import { FilterBar } from '../components/FilterBar';
 
 export default function Invoices() {
   const { t, lang } = useI18n();
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
+
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
@@ -19,8 +22,15 @@ export default function Invoices() {
   const { data, isLoading } = useQuery({
     queryKey: ['invoices', statusFilter, page],
     queryFn: async () => {
-      const params: Record<string, string> = { limit: '20', page: String(page) };
-      if (statusFilter) params.status = statusFilter;
+      const params: Record<string, string> = {
+        limit: '20',
+        page: String(page),
+      };
+
+      if (statusFilter) {
+        params.status = statusFilter;
+      }
+
       const res = await api.get('/invoices', { params });
       return res.data;
     },
@@ -34,13 +44,19 @@ export default function Invoices() {
     },
   });
 
-  if (isLoading) return <Spinner className="py-24" />;
+  if (isLoading) {
+    return <Spinner className="py-24" />;
+  }
 
   const invoices: Invoice[] = data?.data || [];
   const pagination = data?.pagination;
   const currency = settings?.currency || 'EGP';
-  const canCreate = user?.role === 'OWNER' || user?.role === 'SECRETARY';
-  const canPay = user?.role === 'OWNER' || user?.role === 'SECRETARY';
+
+  const canCreate =
+    user?.role === 'OWNER' || user?.role === 'SECRETARY';
+
+  const canPay =
+    user?.role === 'OWNER' || user?.role === 'SECRETARY';
 
   const statusLabels: Record<string, string> = {
     UNPAID: t('unpaid'),
@@ -55,27 +71,44 @@ export default function Invoices() {
       <Card>
         <CardHeader
           title={t('invoices')}
-          subtitle={`${pagination?.total || 0} ${lang === 'ar' ? '???�???�?�?�' : 'invoices'}`}
+          subtitle={`${pagination?.total || 0} ${
+            lang === 'ar' ? 'فاتورة' : 'invoices'
+          }`}
           action={
             <div className="flex items-center gap-3">
-              <select
-                value={statusFilter}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value);
+              <FilterBar
+                showStatus={true}
+                statuses={[
+                  {
+                    value: 'UNPAID',
+                    label: t('unpaid'),
+                  },
+                  {
+                    value: 'PARTIALLY_PAID',
+                    label: t('partiallyPaid'),
+                  },
+                  {
+                    value: 'PAID',
+                    label: t('paid'),
+                  },
+                  {
+                    value: 'OVERDUE',
+                    label: t('overdue'),
+                  },
+                ]}
+                onFilterChange={(f) => {
+                  setStatusFilter(f.status || '');
                   setPage(1);
                 }}
-                className="input !w-auto"
-              >
-                <option value="">{lang === 'ar' ? '?�?� ?�?�?�?�?�?�??' : 'All statuses'}</option>
-                <option value="UNPAID">{t('unpaid')}</option>
-                <option value="PARTIALLY_PAID">{t('partiallyPaid')}</option>
-                <option value="PAID">{t('paid')}</option>
-                <option value="OVERDUE">{t('overdue')}</option>
-              </select>
+              />
+
               {canCreate && (
-                <button onClick={() => setShowInvoiceForm(!showInvoiceForm)} className="btn-primary">
+                <button
+                  onClick={() => setShowInvoiceForm(!showInvoiceForm)}
+                  className="btn-primary"
+                >
                   <Plus size={16} />
-                  {lang === 'ar' ? '???�???�?�?� ?�?�???�?�' : 'New Invoice'}
+                  {lang === 'ar' ? 'فاتورة جديدة' : 'New Invoice'}
                 </button>
               )}
             </div>
@@ -83,7 +116,10 @@ export default function Invoices() {
         />
 
         {showInvoiceForm && (
-          <NewInvoiceForm onClose={() => setShowInvoiceForm(false)} currency={currency} />
+          <NewInvoiceForm
+            onClose={() => setShowInvoiceForm(false)}
+            currency={currency}
+          />
         )}
 
         {paymentFor && (
@@ -97,53 +133,83 @@ export default function Invoices() {
         {invoices.length === 0 ? (
           <EmptyState message={t('noData')} />
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {invoices.map((inv) => {
               const totalPaid = (inv.payments || [])
                 .filter((p) => p.status === 'COMPLETED')
-                .reduce((sum, p) => sum + Number(p.amount), 0);
+                .reduce(
+                  (sum, p) => sum + Number(p.amount),
+                  0,
+                );
+
               const remaining = Number(inv.total) - totalPaid;
 
               return (
-                <div key={inv.id} className="flex items-center justify-between py-4">
+                <div
+                  key={inv.id}
+                  className="flex items-center justify-between py-4"
+                >
                   <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
                       <FileText size={20} />
                     </div>
+
                     <div>
-                      <p className="font-medium text-gray-900">{inv.number}</p>
-                      <p className="text-sm text-gray-500">{inv.patient.name}</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="font-medium text-gray-900 dark:text-gray-100">
+                        {inv.number}
+                      </p>
+
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {inv.patient.name}
+                      </p>
+
+                      <p className="text-xs text-gray-400 dark:text-gray-500">
                         {new Date(inv.createdAt).toLocaleDateString(
                           lang === 'ar' ? 'ar-EG' : 'en-US',
-                          { month: 'short', day: 'numeric', year: 'numeric' },
+                          {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          },
                         )}
                       </p>
                     </div>
                   </div>
+
                   <div className="flex items-center gap-4">
                     <div className="text-end">
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-gray-900 dark:text-gray-100">
                         {Number(inv.total).toFixed(0)} {currency}
                       </p>
+
                       {remaining > 0 && (
-                        <p className="text-xs text-red-500">
-                          {lang === 'ar' ? '?�?�?�???�?�??' : 'Remaining'}: {remaining.toFixed(0)} {currency}
+                        <p className="text-xs text-red-500 dark:text-red-400">
+                          {lang === 'ar' ? 'المتبقي' : 'Remaining'}:{' '}
+                          {remaining.toFixed(0)} {currency}
                         </p>
                       )}
                     </div>
+
                     <Badge status={inv.status}>
                       {statusLabels[inv.status] || inv.status}
                     </Badge>
-                    {canPay && inv.status !== 'PAID' && inv.status !== 'CANCELLED' && remaining > 0 && (
-                      <button
-                        onClick={() => setPaymentFor(inv)}
-                        className="btn-primary !py-1.5 !px-3 text-xs"
-                      >
-                        <CreditCard size={14} />
-                        {lang === 'ar' ? '?�???�' : 'Pay'}
-                      </button>
-                    )}
+
+                    <div className="flex items-center gap-2">
+                      <InvoicePdfButton invoice={inv} />
+
+                      {canPay &&
+                        inv.status !== 'PAID' &&
+                        inv.status !== 'CANCELLED' &&
+                        remaining > 0 && (
+                          <button
+                            onClick={() => setPaymentFor(inv)}
+                            className="btn-primary !px-3 !py-1.5 text-xs"
+                          >
+                            <CreditCard size={14} />
+                            {lang === 'ar' ? 'دفع' : 'Pay'}
+                          </button>
+                        )}
+                    </div>
                   </div>
                 </div>
               );
@@ -151,6 +217,36 @@ export default function Invoices() {
           </div>
         )}
       </Card>
+
+      {pagination && pagination.pages > 1 && (
+        <div className="flex items-center justify-center gap-2">
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page <= 1}
+            className="btn-secondary disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {lang === 'ar' ? 'السابق' : 'Previous'}
+          </button>
+
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            {lang === 'ar'
+              ? `صفحة ${page} من ${pagination.pages}`
+              : `Page ${page} of ${pagination.pages}`}
+          </span>
+
+          <button
+            type="button"
+            onClick={() =>
+              setPage((p) => Math.min(pagination.pages, p + 1))
+            }
+            disabled={page >= pagination.pages}
+            className="btn-secondary disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {lang === 'ar' ? 'التالي' : 'Next'}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -169,7 +265,10 @@ function NewInvoiceForm({
   const { data: patients } = useQuery({
     queryKey: ['patients-for-invoice'],
     queryFn: async () => {
-      const res = await api.get('/patients', { params: { limit: 100 } });
+      const res = await api.get('/patients', {
+        params: { limit: 100 },
+      });
+
       return res.data.data as any[];
     },
   });
@@ -180,18 +279,29 @@ function NewInvoiceForm({
   });
 
   const createInvoice = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: {
+      patientId: string;
+      amount: string;
+    }) => {
       await api.post('/invoices', {
         patientId: data.patientId,
         amount: parseFloat(data.amount),
       });
     },
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      queryClient.invalidateQueries({
+        queryKey: ['invoices'],
+      });
+
       onClose();
     },
+
     onError: (err: any) => {
-      setError(err.response?.data?.message || 'Failed to create invoice');
+      setError(
+        err.response?.data?.message ||
+          'Failed to create invoice',
+      );
     },
   });
 
@@ -202,36 +312,64 @@ function NewInvoiceForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 rounded-xl border border-primary-200 bg-primary-50/50 p-6">
+    <form
+      onSubmit={handleSubmit}
+      className="mb-6 rounded-xl border border-primary-200 bg-primary-50/50 p-6 dark:border-primary-800 dark:bg-primary-900/20"
+    >
       {error && (
-        <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
           <AlertCircle size={16} />
           <span>{error}</span>
         </div>
       )}
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="label">{t('patients')} *</label>
+          <label className="label">
+            {t('patients')} *
+          </label>
+
           <select
             value={formData.patientId}
-            onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                patientId: e.target.value,
+              })
+            }
             className="input"
             required
           >
-            <option value="">{lang === 'ar' ? '?�?�???� ?�?�???�' : 'Select patient'}</option>
+            <option value="">
+              {lang === 'ar'
+                ? 'اختر المريض'
+                : 'Select patient'}
+            </option>
+
             {(patients || []).map((p) => (
-              <option key={p.id} value={p.id}>{p.name} - {p.phone}</option>
+              <option key={p.id} value={p.id}>
+                {p.name} - {p.phone}
+              </option>
             ))}
           </select>
         </div>
+
         <div>
           <label className="label">
-            {lang === 'ar' ? `?�?�?�?�?�?? (${currency})` : `Amount (${currency})`} *
+            {lang === 'ar'
+              ? `المبلغ (${currency})`
+              : `Amount (${currency)`} *
           </label>
+
           <input
             type="number"
             value={formData.amount}
-            onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                amount: e.target.value,
+              })
+            }
             className="input"
             required
             min="1"
@@ -240,12 +378,24 @@ function NewInvoiceForm({
           />
         </div>
       </div>
+
       <div className="mt-4 flex justify-end gap-3">
-        <button type="button" onClick={onClose} className="btn-secondary">
+        <button
+          type="button"
+          onClick={onClose}
+          className="btn-secondary"
+        >
           {t('cancel')}
         </button>
-        <button type="submit" disabled={createInvoice.isPending} className="btn-primary">
-          {createInvoice.isPending ? t('loading') : t('save')}
+
+        <button
+          type="submit"
+          disabled={createInvoice.isPending}
+          className="btn-primary"
+        >
+          {createInvoice.isPending
+            ? t('loading')
+            : t('save')}
         </button>
       </div>
     </form>
@@ -263,13 +413,18 @@ function PaymentForm({
 }) {
   const { t, lang } = useI18n();
   const queryClient = useQueryClient();
+
   const [error, setError] = useState<string | null>(null);
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState('CASH');
 
   const totalPaid = (invoice.payments || [])
     .filter((p) => p.status === 'COMPLETED')
-    .reduce((sum, p) => sum + Number(p.amount), 0);
+    .reduce(
+      (sum, p) => sum + Number(p.amount),
+      0,
+    );
+
   const remaining = Number(invoice.total) - totalPaid;
 
   const recordPayment = useMutation({
@@ -280,12 +435,20 @@ function PaymentForm({
         method,
       });
     },
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      queryClient.invalidateQueries({
+        queryKey: ['invoices'],
+      });
+
       onClose();
     },
+
     onError: (err: any) => {
-      setError(err.response?.data?.message || 'Payment failed');
+      setError(
+        err.response?.data?.message ||
+          'Payment failed',
+      );
     },
   });
 
@@ -296,28 +459,44 @@ function PaymentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50/50 p-6">
+    <form
+      onSubmit={handleSubmit}
+      className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50/50 p-6 dark:border-emerald-800 dark:bg-emerald-900/20"
+    >
       {error && (
-        <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
           <AlertCircle size={16} />
           <span>{error}</span>
         </div>
       )}
-      <h3 className="mb-4 text-lg font-semibold">
-        {lang === 'ar' ? '???�?�???� ?�???�?�' : 'Record Payment'} - {invoice.number}
+
+      <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+        {lang === 'ar'
+          ? 'تسجيل دفعة'
+          : 'Record Payment'}{' '}
+        - {invoice.number}
       </h3>
-      <p className="mb-4 text-sm text-gray-600">
-        {lang === 'ar' ? '?�?�?�???�?�??' : 'Remaining'}: {remaining.toFixed(0)} {currency}
+
+      <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">
+        {lang === 'ar' ? 'المتبقي' : 'Remaining'}:{' '}
+        {remaining.toFixed(0)} {currency}
       </p>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label className="label">
-            {lang === 'ar' ? `?�?�?�?�?�?? (${currency})` : `Amount (${currency})`} *
+            {lang === 'ar'
+              ? `المبلغ (${currency})`
+              : `Amount (${currency})`}{' '}
+            *
           </label>
+
           <input
             type="number"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) =>
+              setAmount(e.target.value)
+            }
             className="input"
             required
             min="1"
@@ -326,26 +505,59 @@ function PaymentForm({
             placeholder={String(remaining)}
           />
         </div>
+
         <div>
-          <label className="label">{lang === 'ar' ? '?�?�???�?� ?�?�?�???�' : 'Payment Method'}</label>
+          <label className="label">
+            {lang === 'ar'
+              ? 'طريقة الدفع'
+              : 'Payment Method'}
+          </label>
+
           <select
             value={method}
-            onChange={(e) => setMethod(e.target.value)}
+            onChange={(e) =>
+              setMethod(e.target.value)
+            }
             className="input"
           >
-            <option value="CASH">{lang === 'ar' ? '?�?�?�??' : 'Cash'}</option>
-            <option value="CARD">{lang === 'ar' ? '?�?�?�?�?�' : 'Card'}</option>
-            <option value="BANK_TRANSFER">{lang === 'ar' ? '???�?�???� ?�?�?�??' : 'Bank Transfer'}</option>
+            <option value="CASH">
+              {lang === 'ar' ? 'نقدي' : 'Cash'}
+            </option>
+
+            <option value="CARD">
+              {lang === 'ar' ? 'بطاقة' : 'Card'}
+            </option>
+
+            <option value="BANK_TRANSFER">
+              {lang === 'ar'
+                ? 'تحويل بنكي'
+                : 'Bank Transfer'}
+            </option>
           </select>
         </div>
       </div>
+
       <div className="mt-4 flex justify-end gap-3">
-        <button type="button" onClick={onClose} className="btn-secondary">
+        <button
+          type="button"
+          onClick={onClose}
+          className="btn-secondary"
+        >
           {t('cancel')}
         </button>
-        <button type="submit" disabled={recordPayment.isPending} className="btn-primary">
+
+        <button
+          type="submit"
+          disabled={recordPayment.isPending}
+          className="btn-primary"
+        >
           <DollarSign size={16} />
-          {recordPayment.isPending ? t('loading') : lang === 'ar' ? '???�?�???� ?�?�?�???�' : 'Confirm Payment'}
+
+          {recordPayment.isPending
+            ? t('loading')
+            : lang === 'ar'
+              ? 'تأكيد الدفع'
+              : 'Confirm Payment'}
         </button>
       </div>
     </form>

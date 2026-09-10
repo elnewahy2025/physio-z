@@ -1,6 +1,7 @@
 import { prisma } from '../lib/prisma.js';
 import { HttpError } from '../lib/errors.js';
 import type { InvoiceStatus, PaymentMethod } from '@prisma/client';
+import { createNotification, notifyRole, NOTIFICATION_TYPES } from './notification.service.js';
 
 async function generateInvoiceNumber(): Promise<string> {
   const year = new Date().getFullYear();
@@ -112,6 +113,19 @@ export async function recordPayment(data: {
   await prisma.invoice.update({
     where: { id: data.invoiceId },
     data: { status: newStatus, ...(newStatus === 'PAID' && { paymentMethod: data.method }) },
+  });
+    // ─── Send notification ───
+  await notifyRole('OWNER', {
+    type: NOTIFICATION_TYPES.PAYMENT_RECEIVED,
+    title: 'Payment Received',
+    message: `Payment of ${data.amount} received for invoice ${invoice.number} (${invoice.patient.name})`,
+    link: '/invoices',
+  });
+  await notifyRole('SECRETARY', {
+    type: NOTIFICATION_TYPES.PAYMENT_RECEIVED,
+    title: 'Payment Received',
+    message: `Payment of ${data.amount} for invoice ${invoice.number} (${invoice.patient.name})`,
+    link: '/invoices',
   });
   return {
     payment,

@@ -16,6 +16,10 @@ import Reports from './pages/Reports';
 import Register from './pages/Register';
 import InstallPrompt from './components/InstallPrompt';
 import OfflineIndicator from './components/OfflineIndicator';
+import PatientBooking from './pages/PatientBooking';
+import MyRecords from './pages/MyRecords';
+import MyPayments from './pages/MyPayments';
+import CalendarPage from './pages/CalendarPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
@@ -61,6 +65,14 @@ function App() {
           }
         />
         <Route
+  path="/calendar"
+  element={
+    <ProtectedRoute>
+      <CalendarPage />
+    </ProtectedRoute>
+  }
+/>
+        <Route
           path="/appointments"
           element={
             <ProtectedRoute>
@@ -68,6 +80,22 @@ function App() {
             </ProtectedRoute>
           }
         />
+  <Route
+  path="/my-payments"
+  element={
+    <ProtectedRoute>
+      <MyPayments />
+    </ProtectedRoute>
+  }
+/>
+        <Route
+  path="/book"
+  element={
+    <ProtectedRoute>
+      <PatientBooking />
+    </ProtectedRoute>
+  }
+/>
         <Route
           path="/patients"
           element={
@@ -116,6 +144,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/my-records"
+          element={
+         <ProtectedRoute>
+          <MyRecords />
+       </ProtectedRoute>
+           }
+      />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </I18nProvider>

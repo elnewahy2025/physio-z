@@ -4,6 +4,8 @@ import { Save, Building2, Phone, Mail, MapPin, Globe, DollarSign, AlertCircle } 
 import api from '../lib/api';
 import { useI18n } from '../i18n';
 import { Card, CardHeader, Spinner } from '../components/ui';
+import LogoUpload from '../components/LogoUpload';
+import { MapCard } from '../components/GoogleMapsLink';
 
 export default function Settings() {
   const { t, lang } = useI18n();
@@ -101,6 +103,16 @@ export default function Settings() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+  {/* ─── Logo Upload (NEW) ─── */}
+  <section>
+    <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700">
+      <Building2 size={16} />
+      {L('\u0634\u0639\u0627\u0631 \u0627\u0644\u0645\u0631\u0643\u0632', 'Center Logo')}
+    </h3>
+    <LogoUpload currentLogo={settings?.centerLogo || null} />
+  </section>
+
           {/* Center Info */}
           <section>
             <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700">
@@ -246,6 +258,14 @@ export default function Settings() {
             </button>
           </div>
         </form>
+        {/* ─── Google Maps (NEW) ─── */}
+<div className="mt-6">
+  <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700">
+    <MapPin size={16} />
+    {L('\u0627\u0644\u0645\u0648\u0642\u0639 \u0639\u0644\u0649 \u0627\u0644\u062e\u0631\u064a\u0637\u0629', 'Location on Map')}
+  </h3>
+  <MapCard />
+</div>
       </Card>
     </div>
   );

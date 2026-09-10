@@ -43,3 +43,55 @@ export const getOwn = asyncHandler(async (req: Request, res: Response) => {
   if (!req.userId) throw new Error('Not authenticated');
   res.json(await patientService.getPatientByUserId(req.userId));
 });
+// Add this export at the end:
+
+export const getMyRecords = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.userId) throw new Error('Not authenticated');
+
+  const { prisma } = await import('../lib/prisma.js');
+
+  // Find the patient linked to this user
+  const patient = await prisma.patient.findFirst({
+    where: { userId: req.userId },
+  });
+  if (!patient) throw new HttpError(404, 'No patient profile found');
+
+  // Fetch all appointments with session notes, ratings, and invoices
+  const records = await prisma.appointment.findMany({
+    where: { patientId: patient.id },
+    include: {
+      therapist: { select: { id: true, name: true } },
+      room: { select: { number: true, name: true } },
+      therapySessions: {
+        select: {
+          id: true,
+          diagnosis: true,
+          treatmentPlan: true,
+          notes: true,
+          duration: true,
+          painLevel: true,
+          createdAt: true,
+        },
+      },
+      invoices: {
+        select: {
+          id: true,
+          number: true,
+          total: true,
+          status: true,
+        },
+      },
+      rating: {
+        select: {
+          id: true,
+          rating: true,
+          comment: true,
+          createdAt: true,
+        },
+      },
+    },
+    orderBy: { dateTime: 'desc' },
+  });
+
+  res.json(records);
+});

@@ -12,6 +12,8 @@ import settingsRoutes from './routes/settings.routes.js';
 import roomRoutes from './routes/room.routes.js';
 import reportRoutes from './routes/report.routes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import notificationRoutes from './routes/notification.routes.js';
+import ratingRoutes from './routes/rating.routes.js';
 
 export function createApp() {
   const app = express();
@@ -28,7 +30,9 @@ export function createApp() {
   app.use('/api/settings', settingsRoutes);
   app.use('/api/rooms', roomRoutes);
   app.use('/api/reports', reportRoutes);
+  app.use('/api/notifications', notificationRoutes);
   app.use(notFoundHandler);
   app.use(errorHandler);
+  app.use('/api/ratings', ratingRoutes);
   return app;
 }

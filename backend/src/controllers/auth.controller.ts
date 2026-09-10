@@ -1,11 +1,24 @@
+
 import type { Request, Response } from 'express';
+
 import { z } from 'zod';
+
 import * as authService from '../services/auth.service.js';
+
 import { asyncHandler } from '../middleware/errorHandler.js';
+
 import bcrypt from 'bcryptjs';
+
 import { prisma } from '../lib/prisma.js';
+
 import { HttpError } from '../lib/errors.js';
+
 import { signAccessToken, signRefreshToken } from '../lib/tokens.js';
+
+import {
+  notifyRole,
+  NOTIFICATION_TYPES,
+} from '../services/notification.service.js';
 
 const loginSchema = z.object({
   identifier: z.string().min(3, 'Phone or email is required'),
@@ -16,11 +29,13 @@ const refreshSchema = z.object({ refreshToken: z.string().min(1) });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { identifier, password } = loginSchema.parse(req.body);
+
   res.json(await authService.login(identifier, password));
 });
 
 export const refresh = asyncHandler(async (req: Request, res: Response) => {
   const { refreshToken } = refreshSchema.parse(req.body);
+
   res.json(await authService.refresh(refreshToken));
 });
 
@@ -28,8 +43,7 @@ export const logout = (_req: Request, res: Response) => {
   res.status(204).send();
 };
 
-// Add this to the existing file (after the existing exports)
-
+// Patient self-registration
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   phone: z.string().min(8, 'Phone must be at least 8 digits').max(15),
@@ -43,20 +57,33 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const data = registerSchema.parse(req.body);
 
   // Check if phone already exists
-  const existingUser = await prisma.user.findUnique({ where: { phone: data.phone } });
+  const existingUser = await prisma.user.findUnique({
+    where: { phone: data.phone },
+  });
+
   if (existingUser) {
-    throw new HttpError(409, 'An account with this phone number already exists');
+    throw new HttpError(
+      409,
+      'An account with this phone number already exists',
+    );
   }
 
   if (data.email) {
-    const existingEmail = await prisma.user.findUnique({ where: { email: data.email } });
+    const existingEmail = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
     if (existingEmail) {
-      throw new HttpError(409, 'An account with this email already exists');
+      throw new HttpError(
+        409,
+        'An account with this email already exists',
+      );
     }
   }
 
   // Create user with PATIENT role
   const passwordHash = await bcrypt.hash(data.password, 10);
+
   const user = await prisma.user.create({
     data: {
       name: data.name,
@@ -79,6 +106,21 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
+  // Notify staff about new patient registration
+  await notifyRole('SECRETARY', {
+    type: NOTIFICATION_TYPES.PATIENT_REGISTERED,
+    title: 'New Patient Registered',
+    message: `${data.name} (${data.phone}) registered online`,
+    link: '/patients',
+  });
+
+  await notifyRole('OWNER', {
+    type: NOTIFICATION_TYPES.PATIENT_REGISTERED,
+    title: 'New Patient',
+    message: `${data.name} (${data.phone}) registered online`,
+    link: '/patients',
+  });
+
   // Return tokens so they're logged in immediately after registration
   const accessToken = signAccessToken(user.id, user.role);
   const refreshToken = signRefreshToken(user.id);
@@ -91,11 +133,14 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
       email: user.email,
       role: user.role,
     },
+
     patient: {
       id: patient.id,
       name: patient.name,
     },
+
     accessToken,
     refreshToken,
   });
 });
+

@@ -1,6 +1,7 @@
 import { prisma } from '../lib/prisma.js';
 import { HttpError } from '../lib/errors.js';
 import type { AppointmentStatus, Prisma } from '@prisma/client';
+import { createNotification, notifyRole, NOTIFICATION_TYPES } from './notification.service.js';
 
 export interface CreateAppointmentData {
   patientId: string;
@@ -130,13 +131,44 @@ export async function createAppointment(data: CreateAppointmentData) {
   if (data.roomId) {
     await checkRoomAvailability(data.roomId, appointmentStart, duration);
   }
-  return prisma.appointment.create({
+    const appointment = await prisma.appointment.create({
     data: {
-      patientId: data.patientId, therapistId: data.therapistId, roomId: data.roomId ?? null,
-      dateTime: appointmentStart, duration, notes: data.notes ?? null, status: 'PENDING',
+      patientId: data.patientId,
+      therapistId: data.therapistId,
+      roomId: data.roomId ?? null,
+      dateTime: appointmentStart,
+      duration,
+      notes: data.notes ?? null,
+      status: 'PENDING',
     },
     include: appointmentInclude,
   });
+
+  // ─── Send notifications ───
+  // Notify the therapist
+  await createNotification({
+    userId: data.therapistId,
+    type: NOTIFICATION_TYPES.APPOINTMENT_BOOKED,
+    title: 'New Appointment Booked',
+    message: `${patient.name} booked an appointment on ${appointmentStart.toLocaleString()}`,
+    link: '/appointments',
+  });
+
+  // Notify all secretaries and owners
+  await notifyRole('SECRETARY', {
+    type: NOTIFICATION_TYPES.APPOINTMENT_BOOKED,
+    title: 'New Appointment',
+    message: `${patient.name} with ${therapist.name} on ${appointmentStart.toLocaleString()}`,
+    link: '/appointments',
+  });
+  await notifyRole('OWNER', {
+    type: NOTIFICATION_TYPES.APPOINTMENT_BOOKED,
+    title: 'New Appointment',
+    message: `${patient.name} with ${therapist.name} on ${appointmentStart.toLocaleString()}`,
+    link: '/appointments',
+  });
+
+  return appointment;
 }
 
 export async function updateAppointment(id: string, data: Partial<CreateAppointmentData> & { status?: AppointmentStatus }) {

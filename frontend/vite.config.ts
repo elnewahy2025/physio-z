@@ -92,7 +92,8 @@ export default defineConfig({
         ],
       },
       devOptions: {
-        enabled: false, // Disable SW in dev to avoid caching issues
+        enabled: true,
+        type: 'module',
       },
     }),
   ],
