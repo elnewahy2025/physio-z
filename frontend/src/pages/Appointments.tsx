@@ -6,6 +6,7 @@ import { useI18n } from '../i18n';
 import { useAuthStore } from '../store/auth';
 import { Card, CardHeader, Badge, EmptyState, Spinner } from '../components/ui';
 import type { Appointment } from '../types';
+import { WhatsAppButton } from '../components/InvoiceActions';
 
 export default function Appointments() {
   const { t, lang } = useI18n();
@@ -138,32 +139,33 @@ export default function Appointments() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge status={appt.status}>
-                    {statusLabels[appt.status] || appt.status}
-                  </Badge>
-                  {appt.status === 'PENDING' && (
-                    <button
-                      onClick={() =>
-                        changeStatus.mutate({ id: appt.id, status: 'CONFIRMED' })
-                      }
-                      className="rounded-lg p-2 text-green-600 hover:bg-green-50"
-                      title={t('confirmed')}
-                    >
-                      <CheckCircle size={18} />
-                    </button>
-                  )}
-                  {(appt.status === 'PENDING' || appt.status === 'CONFIRMED') && (
-                    <button
-                      onClick={() =>
-                        changeStatus.mutate({ id: appt.id, status: 'CANCELLED' })
-                      }
-                      className="rounded-lg p-2 text-red-600 hover:bg-red-50"
-                      title={t('cancelled')}
-                    >
-                      <XCircle size={18} />
-                    </button>
-                  )}
-                </div>
+  <Badge status={appt.status}>
+    {statusLabels[appt.status] || appt.status}
+  </Badge>
+  {appt.status === 'PENDING' && (
+    <button
+      onClick={() => changeStatus.mutate({ id: appt.id, status: 'CONFIRMED' })}
+      className="rounded-lg p-2 text-green-600 hover:bg-green-50"
+      title={t('confirmed')}
+    >
+      <CheckCircle size={18} />
+    </button>
+  )}
+  {(appt.status === 'PENDING' || appt.status === 'CONFIRMED') && (
+    <button
+      onClick={() => changeStatus.mutate({ id: appt.id, status: 'CANCELLED' })}
+      className="rounded-lg p-2 text-red-600 hover:bg-red-50"
+      title={t('cancelled')}
+    >
+      <XCircle size={18} />
+    </button>
+  )}
+  <WhatsAppButton
+    phone={appt.patient.phone}
+    patientName={appt.patient.name}
+    dateTime={appt.dateTime}
+  />
+</div>
               </div>
             ))}
           </div>

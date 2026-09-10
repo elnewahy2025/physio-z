@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import {
   LayoutDashboard,
   Calendar,
@@ -9,6 +10,8 @@ import {
   LogOut,
   Languages,
   Stethoscope,
+  Activity,
+  BarChart3,
 } from 'lucide-react';
 import { useAuthStore } from '../store/auth';
 import { useI18n } from '../i18n';
@@ -25,7 +28,10 @@ const navItems: NavItem[] = [
   { key: 'dashboard', icon: <LayoutDashboard size={20} />, path: '/', roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT'] },
   { key: 'appointments', icon: <Calendar size={20} />, path: '/appointments', roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT'] },
   { key: 'patients', icon: <Users size={20} />, path: '/patients', roles: ['OWNER', 'THERAPIST', 'SECRETARY'] },
+  { key: 'sessions', icon: <Activity size={20} />, path: '/sessions', roles: ['OWNER', 'THERAPIST'] },
   { key: 'invoices', icon: <FileText size={20} />, path: '/invoices', roles: ['OWNER', 'SECRETARY', 'PATIENT'] },
+  { key: 'reports', icon: <BarChart3 size={20} />, path: '/reports', roles: ['OWNER'] },
+  { key: 'users', icon: <Users size={20} />, path: '/users', roles: ['OWNER'] },
   { key: 'settings', icon: <Settings size={20} />, path: '/settings', roles: ['OWNER'] },
 ];
 
