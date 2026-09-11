@@ -11,7 +11,7 @@ Write-Host "============================================================" -Foreg
 
 # 1. Environment & Dependencies
 Write-Host "`n🔍 Verifying Environment & Dependencies..." -ForegroundColor Cyan
-cd backend
+Set-Location backend
 npx prisma validate
 if ($LASTEXITCODE -ne 0) { throw "Prisma validation failed" }
 Write-Host "✅ Prisma schema is valid" -ForegroundColor Green
@@ -21,14 +21,14 @@ Write-Host "`n🔍 Verifying Backend Unit Tests..." -ForegroundColor Cyan
 pnpm test --passWithNoTests
 if ($LASTEXITCODE -ne 0) { Write-Host "⚠️ Backend tests failed or not configured yet" -ForegroundColor Yellow }
 else { Write-Host "✅ Backend tests passed" -ForegroundColor Green }
-cd ..
+Set-Location ..
 
 # 3. Frontend Tests Execution
 Write-Host "`n🔍 Verifying Frontend Tests..." -ForegroundColor Cyan
-cd frontend
+Set-Location frontend
 pnpm vitest run --passWithNoTests
 if ($LASTEXITCODE -ne 0) { Write-Host "⚠️ Frontend tests failed or not configured yet" -ForegroundColor Yellow }
 else { Write-Host "✅ Frontend tests passed" -ForegroundColor Green }
-cd ..
+Set-Location ..
 
 Write-Host "`n✅ Verification Complete!" -ForegroundColor Green

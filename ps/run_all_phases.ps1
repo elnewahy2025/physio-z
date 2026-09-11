@@ -30,7 +30,7 @@ foreach ($script in $scripts) {
             & pwsh.exe -ExecutionPolicy Bypass -NonInteractive -File $script
             $exitCode = $LASTEXITCODE
             
-            if ($exitCode -eq 0 -or $exitCode -eq $null) {
+            if ($exitCode -eq 0 -or $null -eq $exitCode) {
                 Write-Host "SUCCESS: $script" -ForegroundColor Green
                 $report += "| $script | ✅ SUCCESS |"
             } else {
