@@ -37,3 +37,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 export const deactivate = asyncHandler(async (req: Request, res: Response) => {
   res.json(await userService.deactivateUser(req.params.id));
 });
+
+export const remove = asyncHandler(async (req: Request, res: Response) => {
+  res.json(await userService.deleteUser(req.params.id));
+});

@@ -9,4 +9,5 @@ router.get('/:id', requireRole('OWNER', 'SECRETARY'), controller.getById);
 router.post('/', requireRole('OWNER'), controller.create);
 router.put('/:id', requireRole('OWNER'), controller.update);
 router.patch('/:id/deactivate', requireRole('OWNER'), controller.deactivate);
+router.delete('/:id', requireRole('OWNER'), controller.remove);
 export default router;

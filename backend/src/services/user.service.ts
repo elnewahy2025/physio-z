@@ -16,7 +16,7 @@ const userSelect = {
 } as const;
 
 export async function listUsers(role?: Role, search?: string) {
-  const where: Record<string, unknown> = {};
+  const where: Record<string, unknown> = { isDeleted: false };
   if (role) where.role = role;
   if (search) {
     where.OR = [
@@ -72,8 +72,34 @@ export async function deactivateUser(id: string) {
   const user = await prisma.user.findUnique({ where: { id } });
   if (!user) throw new HttpError(404, 'User not found');
   if (user.role === 'OWNER' && user.isActive) {
-    const activeOwners = await prisma.user.count({ where: { role: 'OWNER', isActive: true } });
+    const activeOwners = await prisma.user.count({ where: { role: 'OWNER', isActive: true, isDeleted: false } });
     if (activeOwners <= 1) throw new HttpError(400, 'Cannot deactivate the last active owner');
   }
   return prisma.user.update({ where: { id }, data: { isActive: false }, select: userSelect });
+}
+
+export async function deleteUser(id: string) {
+  const user = await prisma.user.findUnique({ where: { id } });
+  if (!user) throw new HttpError(404, 'User not found');
+  if (user.role === 'OWNER') {
+    const activeOwners = await prisma.user.count({ where: { role: 'OWNER', isActive: true, isDeleted: false } });
+    if (activeOwners <= 1) throw new HttpError(400, 'Cannot delete the last owner');
+  }
+
+  const scrubbedName = `${user.name} - deleted`;
+  const scrubbedPhone = `deleted-${Date.now()}-${id.substring(0, 5)}`;
+  const scrubbedPassword = await bcrypt.hash(`deleted-${Date.now()}`, 10);
+
+  return prisma.user.update({
+    where: { id },
+    data: {
+      name: scrubbedName,
+      phone: scrubbedPhone,
+      email: null,
+      passwordHash: scrubbedPassword,
+      isActive: false,
+      isDeleted: true,
+    },
+    select: userSelect,
+  });
 }

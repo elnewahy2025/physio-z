@@ -10,6 +10,7 @@ import {
   Stethoscope,
   ClipboardList,
   AlertCircle,
+  Trash2,
 } from 'lucide-react';
 import api from '../lib/api';
 import { useI18n } from '../i18n';
@@ -47,6 +48,7 @@ export default function Users() {
   const [roleFilter, setRoleFilter] = useState('');
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const L = (arText: string, enText: string) => (lang === 'ar' ? arText : enText);
 
   const { data: users, isLoading } = useQuery({
@@ -69,6 +71,16 @@ export default function Users() {
     },
   });
 
+  const deleteUser = useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/users/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      setDeleteConfirmId(null);
+    },
+  });
+
   if (isLoading) return <Spinner className="py-24" />;
 
   const roleLabels: Record<string, string> = {
@@ -79,6 +91,90 @@ export default function Users() {
   };
 
   const list = users || [];
+  const activeUsers = list.filter(u => u.isActive);
+  const inactiveUsers = list.filter(u => !u.isActive);
+
+  const renderUser = (user: User) => (
+    <div key={user.id} className="flex items-center justify-between py-4 px-2 hover:bg-gray-50/50 transition-colors rounded-lg">
+      <div className="flex items-center gap-4">
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-lg ${
+            roleColors[user.role] || 'bg-gray-50 text-gray-600'
+          }`}
+        >
+          {roleIcons[user.role]}
+        </div>
+
+        <div>
+          <p className="font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
+
+          <p className="text-sm text-gray-500" dir="ltr">
+            {user.phone}
+            {user.email && ` · ${user.email}`}
+          </p>
+
+          <div className="mt-1 flex items-center gap-2">
+            <Badge
+              status={
+                user.role === 'OWNER' ? 'CONFIRMED' : 'PENDING'
+              }
+            >
+              {roleLabels[user.role] || user.role}
+            </Badge>
+
+            {!user.isActive && (
+              <Badge status="CANCELLED">
+                {L('\u063a\u064a\u0631 \u0646\u0634\u0637', 'Inactive')}
+              </Badge>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-gray-400">
+          {new Date(user.createdAt).toLocaleDateString(
+            lang === 'ar' ? 'ar-EG' : 'en-US',
+            { month: 'short', year: 'numeric' },
+          )}
+        </span>
+
+        <ResetPasswordButton
+          userId={user.id}
+          userName={user.name}
+          currentRole={user.role}
+        />
+
+        {user.role !== 'OWNER' && (
+          <ChangeRoleButton
+            userId={user.id}
+            userName={user.name}
+            currentRole={user.role}
+          />
+        )}
+
+        {user.isActive && user.role !== 'OWNER' && (
+          <button
+            onClick={() => deactivateUser.mutate(user.id)}
+            className="rounded-lg p-2 text-red-500 hover:bg-red-50"
+            title={L('\u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u062a\u0646\u0634\u064a\u0637', 'Deactivate')}
+          >
+            <UserX size={18} />
+          </button>
+        )}
+
+        {!user.isActive && user.role !== 'OWNER' && (
+          <button
+            onClick={() => setDeleteConfirmId(user.id)}
+            className="rounded-lg p-2 text-red-600 hover:bg-red-50"
+            title={L('حذف', 'Delete')}
+          >
+            <Trash2 size={18} />
+          </button>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -131,81 +227,68 @@ export default function Users() {
         {list.length === 0 ? (
           <EmptyState message={t('noData')} />
         ) : (
-          <div className="divide-y divide-gray-100">
-            {list.map((user) => (
-              <div key={user.id} className="flex items-center justify-between py-4">
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-lg ${
-                      roleColors[user.role] || 'bg-gray-50 text-gray-600'
-                    }`}
-                  >
-                    {roleIcons[user.role]}
-                  </div>
-
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
-
-                    <p className="text-sm text-gray-500" dir="ltr">
-                      {user.phone}
-                      {user.email && ` · ${user.email}`}
-                    </p>
-
-                    <div className="mt-1 flex items-center gap-2">
-                      <Badge
-                        status={
-                          user.role === 'OWNER' ? 'CONFIRMED' : 'PENDING'
-                        }
-                      >
-                        {roleLabels[user.role] || user.role}
-                      </Badge>
-
-                      {!user.isActive && (
-                        <Badge status="CANCELLED">
-                          {L('\u063a\u064a\u0631 \u0646\u0634\u0637', 'Inactive')}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
+          <div className="flex flex-col gap-8 pb-4">
+            {activeUsers.length > 0 && (
+              <div className="divide-y divide-gray-100">
+                {activeUsers.map(renderUser)}
+              </div>
+            )}
+            
+            {inactiveUsers.length > 0 && (
+              <div>
+                <div className="mb-4 flex items-center gap-2 px-2">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500">
+                    {L('المستخدمين غير النشطين', 'Inactive Users')}
+                  </h3>
+                  <div className="h-px flex-1 bg-gray-200"></div>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400">
-                    {new Date(user.createdAt).toLocaleDateString(
-                      lang === 'ar' ? 'ar-EG' : 'en-US',
-                      { month: 'short', year: 'numeric' },
-                    )}
-                  </span>
-
-                  <ResetPasswordButton
-                    userId={user.id}
-                    userName={user.name}
-                    currentRole={user.role}
-                  />
-
-                  {user.role !== 'OWNER' && (
-                    <ChangeRoleButton
-                      userId={user.id}
-                      userName={user.name}
-                      currentRole={user.role}
-                    />
-                  )}
-
-                  {user.isActive && user.role !== 'OWNER' && (
-                    <button
-                      onClick={() => deactivateUser.mutate(user.id)}
-                      className="rounded-lg p-2 text-red-500 hover:bg-red-50"
-                      title={L('\u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u062a\u0646\u0634\u064a\u0637', 'Deactivate')}
-                    >
-                      <UserX size={18} />
-                    </button>
-                  )}
+                <div className="divide-y divide-gray-100 opacity-60 grayscale-[0.3]">
+                  {inactiveUsers.map(renderUser)}
                 </div>
               </div>
-            ))}
+            )}
           </div>
         )}
       </Card>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800">
+            <div className="mb-4 flex items-center gap-3 text-red-600">
+              <AlertCircle size={24} />
+              <h3 className="text-lg font-bold">
+                {L('حذف المستخدم', 'Delete User')}
+              </h3>
+            </div>
+            
+            <p className="mb-6 text-gray-600 dark:text-gray-300">
+              {L(
+                'هل أنت متأكد من حذف هذا المستخدم نهائياً؟ لا يمكن التراجع عن هذا الإجراء.',
+                'Are you sure you want to permanently delete this user? This action cannot be undone.'
+              )}
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="btn-secondary"
+                disabled={deleteUser.isPending}
+              >
+                {t('cancel')}
+              </button>
+              
+              <button
+                onClick={() => deleteUser.mutate(deleteConfirmId)}
+                className="rounded-lg bg-red-600 px-4 py-2 font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+                disabled={deleteUser.isPending}
+              >
+                {deleteUser.isPending ? L('جاري الحذف...', 'Deleting...') : L('تأكيد الحذف', 'Confirm Delete')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -235,7 +318,7 @@ function NewUserForm({ onClose }: { onClose: () => void }) {
     mutationFn: async (data: any) => {
       const payload = { ...data };
       if (!payload.email) payload.email = null;
-      await api.post('/users', payload);
+      await api.post('/users', payload, { timeout: 10000 });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -368,7 +451,7 @@ function NewUserForm({ onClose }: { onClose: () => void }) {
           disabled={createUser.isPending}
           className="btn-primary"
         >
-          {createUser.isPending ? t('loading') : t('save')}
+          {createUser.isPending ? L('جاري الحفظ...', 'Saving...') : t('save')}
         </button>
       </div>
     </form>

@@ -194,7 +194,7 @@ function NewAppointmentForm({
     mutationFn: async (data: any) => {
       await api.post('/appointments', {
         ...data, duration: parseInt(data.duration), roomId: data.roomId || undefined,
-      });
+      }, { timeout: 10000 });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
@@ -292,7 +292,7 @@ function NewAppointmentForm({
       <div className="mt-4 flex justify-end gap-3">
         <button type="button" onClick={onClose} className="btn-secondary">{t('cancel')}</button>
         <button type="submit" disabled={createAppointment.isPending} className="btn-primary">
-          {createAppointment.isPending ? t('loading') : t('save')}
+          {createAppointment.isPending ? L('جاري الحفظ...', 'Saving...') : t('save')}
         </button>
       </div>
     </form>
