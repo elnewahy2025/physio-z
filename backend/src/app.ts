@@ -1,5 +1,6 @@
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger';
+import phase6Routes from './routes/phase6.routes';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -83,5 +84,6 @@ app.use('/api/surveys', surveyRoutes);
 app.use('/api', phase2Routes);
   return app;
 }
+
 
 
