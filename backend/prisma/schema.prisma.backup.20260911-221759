@@ -1,0 +1,957 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  THERAPIST
+  SECRETARY
+  PATIENT
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  BANK_TRANSFER
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id                String           @id @default(cuid())
+  name              String
+  phone             String           @unique
+  email             String?          @unique
+  passwordHash      String
+  role              Role             @default(PATIENT)
+  isActive          Boolean          @default(true)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  filesUploaded     File[]           @relation("FileUploader")
+  blockedSlots      BlockedSlot[]
+  expensesCreated   Expense[]        @relation("ExpenseCreator")
+  patient           Patient?         @relation("PatientAccount")
+  appointments      Appointment[]    @relation("AppointmentTherapist")
+  therapySessions   TherapySession[] @relation("SessionTherapist")
+  invoicesCreated   Invoice[]        @relation("InvoiceCreator")
+  notifications     Notification[]   @relation("UserNotifications")
+  therapistRatings  Rating[]         @relation("TherapistRatings")
+  surveyTherapist   Survey[]         @relation("SurveyTherapist")
+  packagesSold      PatientPackage[] @relation("PackageSeller")
+  waitlistTherapist WaitlistEntry[]  @relation("WaitlistTherapist")
+   inventoryRecords InventoryTransaction[] @relation("InventoryRecorder")
+  maintenanceRecords MaintenanceLog[]     @relation("MaintenanceRecorder")
+  medicalFilesUploaded MedicalFile[]    @relation("MedicalFileUploader")
+  progressPhotosTaken  ProgressPhoto[]  @relation("PhotoTaker")
+  patientCareAudits    PatientCareAudit[] @relation("AuditUser")
+}
+
+model Patient {
+  id              String           @id @default(cuid())
+  name            String
+  phone           String
+  email           String?
+  address         String?
+  dateOfBirth     DateTime?
+  medicalHistory  String?
+  userId          String?          @unique
+  user            User?            @relation("PatientAccount", fields: [userId], references: [id], onDelete: SetNull)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  appointments    Appointment[]
+  invoices        Invoice[]
+  ratings         Rating[]         @relation("PatientRatings")
+  surveys         Survey[]
+  patientPackages PatientPackage[]
+  waitlistEntries WaitlistEntry[]
+  files           File[]
+  patientForms    PatientForm[]
+  consentForms    ConsentForm[]
+  painMaps        PainMap[]
+  medicalFiles    MedicalFile[]
+  progressPhotos  ProgressPhoto[]
+}
+
+model Room {
+  id           String        @id @default(cuid())
+  number       Int           @unique
+  name         String
+   equipment Equipment[]
+  appointments Appointment[]
+}
+
+model Appointment {
+  id                  String            @id @default(cuid())
+  patientId           String
+  patient             Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  therapistId         String
+  therapist           User              @relation("AppointmentTherapist", fields: [therapistId], references: [id])
+  roomId              String?
+  room                Room?             @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  dateTime            DateTime
+  duration            Int               @default(45)
+  status              AppointmentStatus @default(PENDING)
+  notes               String?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  therapySessions     TherapySession[]
+  invoices            Invoice[]
+  rating              Rating?           @relation("AppointmentRating")
+  survey              Survey?           @relation("AppointmentSurvey")
+  recurringPatternId  String?
+  painMaps            PainMap[]
+  medicalFiles        MedicalFile[]
+  progressPhotos      ProgressPhoto[]
+
+  // Note: We don't create a direct relation to avoid circular reference
+  @@index([dateTime])
+  @@index([therapistId, dateTime])
+  @@index([patientId, dateTime])
+  @@index([status, dateTime])
+}
+
+model TherapySession {
+  id            String      @id @default(cuid())
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  therapistId   String
+  therapist     User        @relation("SessionTherapist", fields: [therapistId], references: [id])
+  diagnosis     String
+  treatmentPlan String?
+  notes         String?
+  duration      Int
+  painLevel     Int?
+  createdAt     DateTime    @default(now())
+
+  @@index([appointmentId])
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  number        String        @unique
+  patientId     String
+  patient       Patient       @relation(fields: [patientId], references: [id])
+  appointmentId String?
+  appointment   Appointment?  @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  amount        Decimal       @db.Decimal(10, 2)
+  tax           Decimal       @db.Decimal(10, 2) @default(0)
+  total         Decimal       @db.Decimal(10, 2)
+  dueDate       DateTime?
+  status        InvoiceStatus @default(UNPAID)
+  paymentMethod PaymentMethod?
+  createdById   String
+  createdBy     User          @relation("InvoiceCreator", fields: [createdById], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  payments      Payment[]
+
+  @@index([patientId, status])
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  amount        Decimal       @db.Decimal(10, 2)
+  method        PaymentMethod
+  status        PaymentStatus @default(COMPLETED)
+  transactionId String?
+  paymentDate   DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+
+  @@index([invoiceId])
+}
+
+model Settings {
+  id                      String   @id
+  centerName              String
+  centerLogo              String?
+  address                 String?
+  phone                   String?
+  email                   String?
+  googleMapsLink          String?
+  workingHours            Json?
+  sessionPrice            Decimal  @db.Decimal(10, 2)
+  currency                String   @default("EGP")
+  taxRate                 Decimal  @db.Decimal(5, 2) @default(0)
+  defaultLanguage         String   @default("ar")
+  whatsappMessageTemplate String?
+  updatedAt               DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+}
+
+model Rating {
+  id            String      @id @default(cuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation("AppointmentRating", fields: [appointmentId], references: [id], onDelete: Cascade)
+  patientId     String
+  patient       Patient     @relation("PatientRatings", fields: [patientId], references: [id])
+  therapistId   String
+  therapist     User        @relation("TherapistRatings", fields: [therapistId], references: [id])
+  rating        Int
+  comment       String?
+  createdAt     DateTime    @default(now())
+
+  @@index([therapistId])
+  @@index([patientId])
+}
+
+// ─── Foundation: File Upload ───
+model File {
+  id           String   @id @default(cuid())
+  filename     String
+  mimeType     String
+  size         Int
+  data         String   @db.Text
+  category     String
+  uploadedById String
+  uploadedBy   User     @relation("FileUploader", fields: [uploadedById], references: [id])
+  patientId    String?
+  patient      Patient? @relation(fields: [patientId], references: [id])
+  createdAt    DateTime @default(now())
+
+  @@index([category])
+  @@index([patientId])
+}
+
+// ─── Foundation: Background Jobs ───
+model Job {
+  id          String    @id @default(cuid())
+  type        String
+  status      String    @default("PENDING")
+  scheduledAt DateTime
+  executedAt  DateTime?
+  payload     Json?
+  result      Json?
+  error       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status, scheduledAt])
+  @@index([type, scheduledAt])
+}
+
+// ─── Q2: Schedule Blocking ───
+model BlockedSlot {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+  dayOfWeek    Int
+  startTime    String
+  endTime      String
+  reason       String?
+  isRecurring  Boolean   @default(true)
+  specificDate DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([userId, dayOfWeek])
+}
+
+// ─── Q3: P&L Expenses ───
+model Expense {
+  id            String   @id @default(cuid())
+  category      String
+  description   String
+  amount        Decimal  @db.Decimal(10, 2)
+  date          DateTime
+  paymentMethod String?
+  notes         String?
+  createdById   String
+  createdBy     User     @relation("ExpenseCreator", fields: [createdById], references: [id])
+  createdAt     DateTime @default(now())
+
+  @@index([date])
+  @@index([category])
+}
+
+// ─── Q7: Satisfaction Survey ───
+model Survey {
+  id            String      @id @default(cuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation("AppointmentSurvey", fields: [appointmentId], references: [id], onDelete: Cascade)
+  patientId     String
+  patient       Patient     @relation(fields: [patientId], references: [id])
+  therapistId   String
+  therapist     User        @relation("SurveyTherapist", fields: [therapistId], references: [id])
+  rating        Int
+  feedback      String?
+  submittedAt   DateTime    @default(now())
+
+  @@index([therapistId])
+  @@index([patientId])
+}
+
+// ─── S1: Recurring Appointments ───
+model RecurringPattern {
+  id                  String   @id @default(cuid())
+  frequency           String   // WEEKLY | BIWEEKLY
+  daysOfWeek          Int[]    // [1, 3, 5] = Mon, Wed, Fri
+  sessionCount        Int      // Total appointments to create
+  startDate           DateTime
+  endDate             DateTime?
+  parentAppointmentId String?
+  createdAt           DateTime @default(now())
+}
+
+// ─── S2: Treatment Packages ───
+model Package {
+  id              String          @id @default(cuid())
+  name            String
+  description     String?
+  sessionCount    Int
+  price           Decimal         @db.Decimal(10, 2)
+  durationDays    Int?            // Expiry in days (null = no expiry)
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  patientPackages PatientPackage[]
+}
+
+model PatientPackage {
+  id            String   @id @default(cuid())
+  patientId     String
+  patient       Patient  @relation(fields: [patientId], references: [id])
+  packageId     String
+  package       Package  @relation(fields: [packageId], references: [id])
+  sessionsUsed  Int      @default(0)
+  sessionsTotal Int
+  purchasePrice Decimal  @db.Decimal(10, 2)
+  purchaseDate  DateTime @default(now())
+  expiryDate    DateTime?
+  status        String   @default("ACTIVE") // ACTIVE | EXPIRED | COMPLETED | CANCELLED
+  createdById   String
+  createdBy     User     @relation("PackageSeller", fields: [createdById], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([patientId, status])
+  @@index([status, expiryDate])
+}
+
+// ─── S3: Discounts ───
+model Discount {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  type      String   // PERCENT | FIXED
+  value     Decimal  @db.Decimal(10, 2)
+  minAmount Decimal? @db.Decimal(10, 2)
+  maxUses   Int?
+  usedCount Int      @default(0)
+  startsAt  DateTime
+  expiresAt DateTime?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([code, isActive])
+}
+
+// ─── S4: Waitlist ───
+model WaitlistEntry {
+  id                  String    @id @default(cuid())
+  patientId           String
+  patient             Patient   @relation(fields: [patientId], references: [id])
+  preferredDate       DateTime
+  preferredTimeStart  String
+  preferredTimeEnd    String
+  therapistId         String?
+  therapist           User?     @relation("WaitlistTherapist", fields: [therapistId], references: [id])
+  priority            Int       @default(0)
+  status              String    @default("WAITING")
+  notifiedAt          DateTime?
+  bookedAppointmentId String?
+  notes               String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@index([status, preferredDate])
+  @@index([patientId])
+}
+// ─── F5: Inventory Management ───
+model InventoryItem {
+  id          String   @id @default(cuid())
+  name        String
+  category    String   // SUPPLIES | MEDICATION | EQUIPMENT_PARTS | OFFICE | CLEANING
+  unit        String   // "box", "bottle", "piece", "roll", "pack"
+  quantity    Int      @default(0)
+  minQuantity Int      @default(5)
+  maxQuantity Int      @default(100)
+  unitCost    Decimal? @db.Decimal(10, 2)
+  supplier    String?
+  location    String?  // "Room 1", "Storage", "Reception"
+  notes       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  transactions InventoryTransaction[]
+
+  @@index([category])
+  @@index([isActive, quantity])
+}
+
+model InventoryTransaction {
+  id           String        @id @default(cuid())
+  itemId       String
+  item         InventoryItem @relation(fields: [itemId], references: [id])
+  type         String        // IN | OUT | ADJUST
+  quantity     Int
+  reason       String?
+  date         DateTime      @default(now())
+  recordedById String
+  recordedBy   User          @relation("InventoryRecorder", fields: [recordedById], references: [id])
+  createdAt    DateTime      @default(now())
+
+  @@index([itemId, date])
+}
+
+// ─── F6: Equipment Maintenance ───
+model Equipment {
+  id                    String    @id @default(cuid())
+  name                  String
+  category              String    // TREATMENT | DIAGNOSTIC | EXERCISE | FURNITURE | OTHER
+  serialNumber          String?
+  roomId                String?
+  room                  Room?     @relation(fields: [roomId], references: [id])
+  purchaseDate          DateTime?
+  purchaseCost          Decimal?  @db.Decimal(10, 2)
+  lastMaintenanceDate   DateTime?
+  maintenanceIntervalDays Int?
+  status                String    @default("ACTIVE") // ACTIVE | UNDER_MAINTENANCE | RETIRED
+  notes                 String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  maintenanceLogs       MaintenanceLog[]
+
+  @@index([status])
+}
+
+model MaintenanceLog {
+  id          String    @id @default(cuid())
+  equipmentId String
+  equipment   Equipment @relation(fields: [equipmentId], references: [id])
+  type        String    // ROUTINE | REPAIR | INSPECTION | CALIBRATION
+  description String
+  cost        Decimal?  @db.Decimal(10, 2)
+  performedBy String?
+  date        DateTime
+  nextDueDate DateTime?
+  createdById String
+  createdBy   User      @relation("MaintenanceRecorder", fields: [createdById], references: [id])
+  createdAt   DateTime  @default(now())
+
+  @@index([equipmentId, date])
+}
+// ─── Dynamic Provider Management System ───
+
+// Provider types
+enum ProviderType {
+  WHATSAPP
+  PAYMENT
+  VIDEO
+  SMS
+  EMAIL
+  CUSTOM
+}
+
+// Provider authentication methods
+enum AuthMethod {
+  BEARER_TOKEN
+  API_KEY_HEADER
+  BASIC_AUTH
+  OAUTH2
+  QUERY_PARAM
+  CUSTOM_HEADERS
+  NONE
+}
+
+// Main service provider model
+model ServiceProvider {
+  id              String       @id @default(cuid())
+  name            String       // User-friendly name
+  providerType    ProviderType
+  providerSubtype String?      // e.g., "whatsapp_business", "myfawry", "instapay"
+  description     String?
+  
+  // Status and priority
+  isActive        Boolean      @default(true)
+  isDefault       Boolean      @default(false)
+  priority        Int          @default(100) // Lower = higher priority for fallback
+  
+  // API Configuration
+  baseUrl         String       // e.g., "https://graph.facebook.com/v18.0"
+  apiVersion      String?
+  
+  // Authentication
+  authMethod      AuthMethod   @default(BEARER_TOKEN)
+  credentials     String       // Encrypted JSON credentials
+  
+  // Request configuration
+  requestConfig   Json         // Default headers, timeout, retries
+  
+  // Webhook configuration
+  webhookUrl      String?
+  webhookSecret   String?
+  
+  // Provider-specific settings
+  settings        Json?
+  
+  // Usage tracking
+  lastTestedAt    DateTime?
+  lastTestSuccess Boolean?
+  totalRequests   Int          @default(0)
+  successfulRequests Int       @default(0)
+  failedRequests  Int          @default(0)
+  
+  // Relations
+  capabilities    ProviderCapability[]
+  usageLogs       ProviderUsageLog[]
+  
+  // Audit
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  @@unique([name, providerType])
+  @@index([providerType, isActive, priority])
+  @@index([isDefault])
+}
+
+// Provider capabilities (what this provider can do)
+model ProviderCapability {
+  id          String @id @default(cuid())
+  providerId  String
+  provider    ServiceProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  
+  capability  String // SEND_MESSAGE, CREATE_PAYMENT, CREATE_ROOM, etc.
+  name        String // Display name for UI
+  
+  // Request configuration
+  endpoint    String // API endpoint (can use template variables)
+  method      String // GET, POST, PUT, DELETE
+  
+  // Request template with variables: {{variable_name}}
+  requestTemplate Json // Full request structure with templates
+  
+  // Response parsing
+  responseMapping Json // How to extract data from response
+  errorMapping     Json // How to detect errors
+  
+  // Configuration
+  timeout     Int @default(30000) // milliseconds
+  retries     Int @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([providerId, capability])
+  @@index([capability])
+}
+
+// Usage logging (simple success/failure)
+model ProviderUsageLog {
+  id          String   @id @default(cuid())
+  providerId  String
+  provider    ServiceProvider @relation(fields: [providerId], references: [id])
+  
+  capability  String
+  success     Boolean
+  errorMessage String?
+  duration    Int?     // milliseconds
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([providerId, createdAt])
+  @@index([success, createdAt])
+}
+
+// Provider templates (pre-built configurations)
+model ProviderTemplate {
+  id              String @id @default(cuid())
+  name            String // Display name
+  providerType    ProviderType
+  providerSubtype String
+  description     String
+  
+  // Template configuration
+  baseUrl         String
+  authMethod      AuthMethod
+  credentialsTemplate Json // What credentials are needed
+  capabilitiesTemplate Json // Pre-built capabilities
+  settingsTemplate     Json
+  
+  // UI
+  icon            String? // Icon identifier
+  category        String // EGYPTIAN_PAYMENTS, INTERNATIONAL_PAYMENTS, etc.
+  isPopular       Boolean @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([name, providerType])
+  @@index([providerType])
+  @@index([category])
+}
+
+// ─── Phase 4: Patient Care Models ───
+
+// P1: Patient Intake Forms
+model FormTemplate {
+  id          String   @id @default(cuid())
+  type        String   // initial_assessment, medical_history, insurance, consent
+  title       String
+  titleAr     String   // Arabic title for RTL
+  description String
+  schema      Json     // JSON schema for form fields
+  version     String   @default("1.0")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  patientForms PatientForm[]
+  
+  @@index([type, isActive])
+  @@index([version])
+}
+
+model PatientForm {
+  id          String   @id @default(cuid())
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  templateId  String
+  template    FormTemplate @relation(fields: [templateId], references: [id])
+  formData    Json     // Submitted form data
+  status      String   @default("pending") // pending, in_progress, completed
+  startedAt   DateTime?
+  completedAt DateTime?
+  pdfUrl      String?  // Generated PDF URL
+  ipAddress   String?  // For audit trail
+  userAgent   String?  // For audit trail
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([patientId, status])
+  @@index([templateId])
+  @@index([status, createdAt])
+}
+
+// P2: Consent Forms with Digital Signature
+model ConsentTemplate {
+  id           String   @id @default(cuid())
+  type         String   // treatment, procedure, privacy, financial
+  title        String
+  titleAr      String
+  content      String   // HTML content
+  contentAr    String   // Arabic content for RTL
+  version      String   @default("1.0")
+  requiresWitness Boolean @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  consents     ConsentForm[]
+  
+  @@index([type, isActive])
+}
+
+model ConsentForm {
+  id           String   @id @default(cuid())
+  patientId    String
+  patient      Patient  @relation(fields: [patientId], references: [id])
+  templateId   String
+  template     ConsentTemplate @relation(fields: [templateId], references: [id])
+  consentText  String   // The text that was agreed to
+  signatureData String   // Base64 encoded signature image
+  signedAt     DateTime
+  witnessName  String?  // If witness required
+  ipAddress    String?
+  userAgent    String?
+  pdfUrl       String?
+  version      String   // Template version at signing
+  createdAt    DateTime @default(now())
+  
+  @@index([patientId, signedAt])
+  @@index([templateId])
+}
+
+// P4: Body Diagram (Pain Mapping)
+model PainMap {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  bodyView        String   // front, back, left, right
+  xCoordinate     Float    // 0-100 percentage
+  yCoordinate     Float    // 0-100 percentage
+  painIntensity   Int      // 0-10 scale
+  painType        String   // sharp, dull, burning, throbbing, numbness, tingling
+  painDescription String?
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  
+  @@index([patientId, createdAt])
+  @@index([appointmentId])
+  @@index([bodyView])
+}
+
+// P3/P5: Medical Files and Photos (Extending File model)
+model MedicalFile {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  fileName        String
+  originalName    String
+  mimeType        String
+  size            Int
+  data            String   @db.Text // Base64 encoded
+  category        String   // xray, mri, ct_scan, referral, lab_report, doctor_note, other
+  description     String?
+  uploadedById    String
+  uploadedBy      User     @relation("MedicalFileUploader", fields: [uploadedById], references: [id])
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  isActive        Boolean  @default(true)
+  
+  @@index([patientId, category])
+  @@index([category, createdAt])
+  @@index([uploadedById])
+}
+
+model ProgressPhoto {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  photoDate       DateTime
+  photoType       String   // before, during, after
+  bodyPart        String?  // full_body, head_neck, shoulder, arm, hand, chest, back, abdomen, hip, leg, knee, foot
+  imageData       String   @db.Text // Base64 encoded
+  thumbnailData   String?  @db.Text // Base64 encoded thumbnail
+  notes           String?
+  takenById       String
+  takenBy         User     @relation("PhotoTaker", fields: [takenById], references: [id])
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  
+  @@index([patientId, photoDate])
+  @@index([photoType])
+  @@index([bodyPart])
+}
+
+// Audit Log for Phase 4 actions (preparation for Phase 7)
+model PatientCareAudit {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation("AuditUser", fields: [userId], references: [id])
+  action       String   // VIEW, UPLOAD, DOWNLOAD, SIGN, CREATE, UPDATE, DELETE
+  entityType   String   // medical_file, progress_photo, intake_form, consent_form, pain_map
+  entityId     String
+  details      Json?    // Additional context
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+  @@index([action, createdAt])
+}
+
+// ─── Phase 4: Patient Care Models ───
+
+// P1: Patient Intake Forms
+model FormTemplate {
+  id          String   @id @default(cuid())
+  type        String   // initial_assessment, medical_history, insurance, consent
+  title       String
+  titleAr     String   // Arabic title for RTL
+  description String
+  schema      Json     // JSON schema for form fields
+  version     String   @default("1.0")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  patientForms PatientForm[]
+  
+  @@index([type, isActive])
+  @@index([version])
+}
+
+model PatientForm {
+  id          String   @id @default(cuid())
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  templateId  String
+  template    FormTemplate @relation(fields: [templateId], references: [id])
+  formData    Json     // Submitted form data
+  status      String   @default("pending") // pending, in_progress, completed
+  startedAt   DateTime?
+  completedAt DateTime?
+  pdfUrl      String?  // Generated PDF URL
+  ipAddress   String?  // For audit trail
+  userAgent   String?  // For audit trail
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([patientId, status])
+  @@index([templateId])
+  @@index([status, createdAt])
+}
+
+// P2: Consent Forms with Digital Signature
+model ConsentTemplate {
+  id           String   @id @default(cuid())
+  type         String   // treatment, procedure, privacy, financial
+  title        String
+  titleAr      String
+  content      String   // HTML content
+  contentAr    String   // Arabic content for RTL
+  version      String   @default("1.0")
+  requiresWitness Boolean @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  consents     ConsentForm[]
+  
+  @@index([type, isActive])
+}
+
+model ConsentForm {
+  id           String   @id @default(cuid())
+  patientId    String
+  patient      Patient  @relation(fields: [patientId], references: [id])
+  templateId   String
+  template     ConsentTemplate @relation(fields: [templateId], references: [id])
+  consentText  String   // The text that was agreed to
+  signatureData String   // Base64 encoded signature image
+  signedAt     DateTime
+  witnessName  String?  // If witness required
+  ipAddress    String?
+  userAgent    String?
+  pdfUrl       String?
+  version      String   // Template version at signing
+  createdAt    DateTime @default(now())
+  
+  @@index([patientId, signedAt])
+  @@index([templateId])
+}
+
+// P4: Body Diagram (Pain Mapping)
+model PainMap {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  bodyView        String   // front, back, left, right
+  xCoordinate     Float    // 0-100 percentage
+  yCoordinate     Float    // 0-100 percentage
+  painIntensity   Int      // 0-10 scale
+  painType        String   // sharp, dull, burning, throbbing, numbness, tingling
+  painDescription String?
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  
+  @@index([patientId, createdAt])
+  @@index([appointmentId])
+  @@index([bodyView])
+}
+
+// P3/P5: Medical Files and Photos (Extending File model)
+model MedicalFile {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  fileName        String
+  originalName    String
+  mimeType        String
+  size            Int
+  data            String   @db.Text // Base64 encoded
+  category        String   // xray, mri, ct_scan, referral, lab_report, doctor_note, other
+  description     String?
+  uploadedById    String
+  uploadedBy      User     @relation("MedicalFileUploader", fields: [uploadedById], references: [id])
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  isActive        Boolean  @default(true)
+  
+  @@index([patientId, category])
+  @@index([category, createdAt])
+  @@index([uploadedById])
+}
+
+model ProgressPhoto {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  photoDate       DateTime
+  photoType       String   // before, during, after
+  bodyPart        String?  // full_body, head_neck, shoulder, arm, hand, chest, back, abdomen, hip, leg, knee, foot
+  imageData       String   @db.Text // Base64 encoded
+  thumbnailData   String?  @db.Text // Base64 encoded thumbnail
+  notes           String?
+  takenById       String
+  takenBy         User     @relation("PhotoTaker", fields: [takenById], references: [id])
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  
+  @@index([patientId, photoDate])
+  @@index([photoType])
+  @@index([bodyPart])
+}
+
+// Audit Log for Phase 4 actions (preparation for Phase 7)
+model PatientCareAudit {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation("AuditUser", fields: [userId], references: [id])
+  action       String   // VIEW, UPLOAD, DOWNLOAD, SIGN, CREATE, UPDATE, DELETE
+  entityType   String   // medical_file, progress_photo, intake_form, consent_form, pain_map
+  entityId     String
+  details      Json?    // Additional context
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+  @@index([action, createdAt])
+}

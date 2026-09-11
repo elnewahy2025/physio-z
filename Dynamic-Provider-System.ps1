@@ -2850,4 +2850,4 @@ Write-Host "  • Enterprise-grade security for credentials" -ForegroundColor Gr
 Write-Host "  • Professional admin interface" -ForegroundColor Green
 
 Write-Host "`nPress any key to exit..." -ForegroundColor Gray
- $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# ReadKey removed for automation

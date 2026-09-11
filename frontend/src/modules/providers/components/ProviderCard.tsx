@@ -72,7 +72,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           </div>
         </div>
 
-        <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
+        <h3 className="mt-4 text-lg font-medium text-gray-900">
           {provider.name}
         </h3>
         

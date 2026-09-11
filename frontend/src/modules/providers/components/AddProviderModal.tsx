@@ -118,7 +118,7 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
           {/* Header */}
           <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div className="flex items-start justify-between">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-medium text-gray-900">
                 إضافة مزود خدمة جديد
               </h3>
               <button
@@ -136,7 +136,7 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
               /* Template Selection */
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">
                     اختر قالب مزود الخدمة
                   </h4>
                   <p className="text-sm text-gray-500 mb-4">
@@ -158,7 +158,7 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
                         >
                           <div className="flex items-center justify-between">
                             <div>
-                              <h6 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              <h6 className="text-sm font-medium text-gray-900">
                                 {template.name}
                               </h6>
                               <p className="text-xs text-gray-500 mt-1">
@@ -184,7 +184,7 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <h4 className="text-sm font-medium text-gray-900">
                         {selectedTemplate.name}
                       </h4>
                       <p className="text-xs text-gray-500 mt-1">
@@ -218,7 +218,7 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
 
                 {/* Credentials */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">
                     بيانات الاعتماد
                   </h4>
                   <div className="space-y-4">

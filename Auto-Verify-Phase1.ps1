@@ -134,7 +134,7 @@ function Invoke-ErrorPrompt {
         Write-Host "  └─────────────────────────────────────────────────────────┘" -ForegroundColor Yellow
         Write-Host ""
         
-        $choice = Read-Host "  Enter your choice [A/C/R]"
+        $choice = "C" # Auto-continue
         
         switch ($choice.ToUpper()) {
             'A' {
@@ -212,7 +212,7 @@ function Invoke-NpmCommand {
     Set-Location $Directory
     
     try {
-        $process = Start-Process -FilePath "cmd" -ArgumentList "/c", "npm $Command 2>&1" -NoNewWindow -PassThru -RedirectStandardOutput "npm-output.tmp" -RedirectStandardError "npm-error.tmp"
+        $process = Start-Process -FilePath "cmd" -ArgumentList "/c", "pnpm $Command 2>&1" -NoNewWindow -PassThru -RedirectStandardOutput "pnpm-output.tmp" -RedirectStandardError "pnpm-error.tmp"
         
         $process | Wait-Process -Timeout $TimeoutSeconds -ErrorAction SilentlyContinue
         
@@ -222,11 +222,11 @@ function Invoke-NpmCommand {
             return $false
         }
         
-        $output = Get-Content "npm-output.tmp" -Raw -ErrorAction SilentlyContinue
-        $errorOutput = Get-Content "npm-error.tmp" -ErrorAction SilentlyContinue
+        $output = Get-Content "pnpm-output.tmp" -Raw -ErrorAction SilentlyContinue
+        $errorOutput = Get-Content "pnpm-error.tmp" -ErrorAction SilentlyContinue
         
         # Clean up temp files
-        Remove-Item "npm-output.tmp", "npm-error.tmp" -Force -ErrorAction SilentlyContinue
+        Remove-Item "pnpm-output.tmp", "pnpm-error.tmp" -Force -ErrorAction SilentlyContinue
         
         if ($process.ExitCode -eq 0) {
             Add-Result $Description $true "Command executed successfully"
@@ -346,20 +346,20 @@ try {
     $preFlightPassed = $false
 }
 
-# Check npm
+# Check pnpm
 try {
-    $npmVersion = npm --version 2>&1
-    Write-Log "  ✓ npm version: $npmVersion" "SUCCESS"
-    Add-Result "npm Installed" $true "Version: $npmVersion"
+    $npmVersion = pnpm --version 2>&1
+    Write-Log "  ✓ pnpm version: $npmVersion" "SUCCESS"
+    Add-Result "pnpm Installed" $true "Version: $npmVersion"
 } catch {
-    Write-Log "  ✗ npm not found!" "ERROR"
-    Add-Result "npm Installed" $false "npm not found"
+    Write-Log "  ✗ pnpm not found!" "ERROR"
+    Add-Result "pnpm Installed" $false "pnpm not found"
     $preFlightPassed = $false
 }
 
 if (-not $preFlightPassed) {
     Write-Log "`n❌ PRE-FLIGHT CHECKS FAILED!" "ERROR"
-    Write-Log "   Cannot continue without Node.js and npm." "ERROR"
+    Write-Log "   Cannot continue without Node.js and pnpm." "ERROR"
     exit 1
 }
 
@@ -630,7 +630,7 @@ if (Test-Path $coverageDir) {
     }
 } else {
     Add-Result "Coverage report generated" $false "Coverage directory not found"
-    Add-Warning "Run 'npm run test:cov' to generate coverage"
+    Add-Warning "Run 'pnpm run test:cov' to generate coverage"
 }
 
 # ============================================================

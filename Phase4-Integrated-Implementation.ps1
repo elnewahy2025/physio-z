@@ -3521,4 +3521,4 @@ Write-Host "  - Patient authorization is enforced (patients see only their data)
 Write-Host "  - Audit trail is created for all actions" -ForegroundColor Gray
 
 Write-Host "`nPress any key to exit..." -ForegroundColor Gray
- $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# ReadKey removed for automation

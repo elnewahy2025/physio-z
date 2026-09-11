@@ -845,7 +845,7 @@ export class HealthController {
 - **Setup**:
   ```bash
   cd backend
-  npm install @sentry/node
+  pnpm install @sentry/node
   ```
 '@
     

@@ -77,7 +77,7 @@ if (-not $SkipBackend) {
     
     # Install Jest and testing utilities
     Write-Host "  📦 Installing Jest and testing utilities..." -ForegroundColor Gray
-    npm install --save-dev @nestjs/testing supertest @types/jest @types/supertest jest ts-jest
+    pnpm install --save-dev @nestjs/testing supertest @types/jest @types/supertest jest ts-jest
     
     if ($LASTEXITCODE -ne 0) {
         Write-Host "  ❌ Failed to install testing dependencies!" -ForegroundColor Red
@@ -641,7 +641,7 @@ if (-not $SkipBackend) {
     Write-Host "`n  📦 Installing Swagger dependencies..." -ForegroundColor Yellow
     
     Push-Location "backend"
-    npm install --save @nestjs/swagger swagger-ui-express
+    pnpm install --save @nestjs/swagger swagger-ui-express
     
     if ($LASTEXITCODE -ne 0) {
         Write-Host "  ❌ Failed to install Swagger dependencies!" -ForegroundColor Red
@@ -1055,7 +1055,7 @@ if (-not $SkipFrontend) {
     
     # Install Vitest and Testing Library
     Write-Host "  📦 Installing Vitest and Testing Library..." -ForegroundColor Gray
-    npm install --save-dev vitest jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event
+    pnpm install --save-dev vitest jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event
     
     if ($LASTEXITCODE -ne 0) {
         Write-Host "  ❌ Failed to install testing dependencies!" -ForegroundColor Red

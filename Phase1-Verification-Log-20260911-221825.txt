@@ -1,0 +1,106 @@
+[2026-09-11 22:18:25] [STEP] Starting Phase 1 Automated Verification
+[2026-09-11 22:18:25] [INFO] Project Root: .
+[2026-09-11 22:18:25] [STEP] ╔══════════════════════════════════════════════════════════╗
+[2026-09-11 22:18:25] [STEP] ║  STEP 1: PRE-FLIGHT CHECKS                                 ║
+[2026-09-11 22:18:25] [STEP] ╚══════════════════════════════════════════════════════════╝
+[2026-09-11 22:18:25] [SUCCESS]   ✓ Node.js version: v22.19.0
+[2026-09-11 22:18:25] [SUCCESS]   ✓ Node.js Installed
+[2026-09-11 22:18:25] [INFO]     Version: v22.19.0
+[2026-09-11 22:18:26] [SUCCESS]   ✓ pnpm version: 11.22.0
+[2026-09-11 22:18:26] [SUCCESS]   ✓ pnpm Installed
+[2026-09-11 22:18:26] [INFO]     Version: 11.22.0
+[2026-09-11 22:18:26] [SUCCESS]   ✓ Pre-flight checks completed successfully
+[2026-09-11 22:18:26] [STEP] ╔══════════════════════════════════════════════════════════╗
+[2026-09-11 22:18:26] [STEP] ║  STEP 2: BACKEND VERIFICATION                              ║
+[2026-09-11 22:18:26] [STEP] ╚══════════════════════════════════════════════════════════╝
+[2026-09-11 22:18:26] [ERROR]   ✗ Backend package.json exists
+[2026-09-11 22:18:26] [ERROR]     Error: Expected: physio-z-backend
+[2026-09-11 22:18:26] [ERROR]   ✗ Jest configuration file
+[2026-09-11 22:18:26] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:26] [ERROR]   ✗ Jest configured for TypeScript
+[2026-09-11 22:18:26] [ERROR]   ✗ Backend test script defined
+[2026-09-11 22:18:26] [ERROR]   ✗ Backend coverage script defined
+[2026-09-11 22:18:26] [SUCCESS]   ✓ NestJS Testing module
+[2026-09-11 22:18:26] [INFO]     Module installed: backend/node_modules/@nestjs/testing
+[2026-09-11 22:18:26] [SUCCESS]   ✓ Jest testing framework
+[2026-09-11 22:18:26] [INFO]     Module installed: backend/node_modules/jest
+[2026-09-11 22:18:26] [SUCCESS]   ✓ TypeScript Jest transformer
+[2026-09-11 22:18:26] [INFO]     Module installed: backend/node_modules/ts-jest
+[2026-09-11 22:18:26] [SUCCESS]   ✓ Supertest for E2E testing
+[2026-09-11 22:18:26] [INFO]     Module installed: backend/node_modules/supertest
+[2026-09-11 22:18:26] [ERROR]   ✗ NestJS Swagger module
+[2026-09-11 22:18:26] [ERROR]   ✗ Swagger UI Express
+[2026-09-11 22:18:26] [ERROR]   ✗ Auth tests directory
+[2026-09-11 22:18:26] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:26] [ERROR]   ✗ Patients tests directory
+[2026-09-11 22:18:26] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:26] [ERROR]   ✗ Appointments tests directory
+[2026-09-11 22:18:26] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:26] [ERROR]   ✗ Auth service tests file
+[2026-09-11 22:18:26] [ERROR]   ✗ Patient service tests file
+[2026-09-11 22:18:26] [ERROR]   ✗ Appointment service tests file
+[2026-09-11 22:18:26] [ERROR]   ✗ Swagger configured in main.ts
+[2026-09-11 22:18:26] [ERROR]   ✗ DocumentBuilder in main.ts
+[2026-09-11 22:18:26] [ERROR]   ✗ API title configured
+[2026-09-11 22:18:26] [ERROR]   ✗ E2E test configuration
+[2026-09-11 22:18:26] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:26] [STEP] 
+  🧪 Running Backend Unit Tests...
+[2026-09-11 22:18:27] [STEP] ╔══════════════════════════════════════════════════════════╗
+[2026-09-11 22:18:27] [STEP] ║  STEP 3: SWAGGER VERIFICATION                             ║
+[2026-09-11 22:18:27] [STEP] ╚══════════════════════════════════════════════════════════╝
+[2026-09-11 22:18:27] [ERROR]   ✗ Swagger: main.ts exists
+[2026-09-11 22:18:27] [ERROR]   ✗ Patients controller exists
+[2026-09-11 22:18:27] [ERROR]   ✗ Swagger configuration valid
+[2026-09-11 22:18:27] [STEP] ╔══════════════════════════════════════════════════════════╗
+[2026-09-11 22:18:27] [STEP] ║  STEP 4: FRONTEND VERIFICATION                             ║
+[2026-09-11 22:18:27] [STEP] ╚══════════════════════════════════════════════════════════╝
+[2026-09-11 22:18:27] [ERROR]   ✗ Frontend package.json exists
+[2026-09-11 22:18:27] [ERROR]     Error: Expected: physio-z-frontend
+[2026-09-11 22:18:27] [SUCCESS]   ✓ Vite config file
+[2026-09-11 22:18:27] [INFO]     Path exists: frontend/vite.config.ts
+[2026-09-11 22:18:27] [ERROR]   ✗ Vitest configured
+[2026-09-11 22:18:27] [ERROR]     Error: Expected: vitest
+[2026-09-11 22:18:27] [ERROR]   ✗ jsdom environment configured
+[2026-09-11 22:18:27] [ERROR]     Error: Expected: jsdom
+[2026-09-11 22:18:27] [ERROR]   ✗ Frontend test setup file
+[2026-09-11 22:18:27] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:27] [ERROR]   ✗ Vitest testing framework
+[2026-09-11 22:18:27] [ERROR]   ✗ jsdom for DOM testing
+[2026-09-11 22:18:27] [ERROR]   ✗ Testing Library for React
+[2026-09-11 22:18:27] [ERROR]   ✗ jest-dom matchers
+[2026-09-11 22:18:27] [ERROR]   ✗ PatientCard test file
+[2026-09-11 22:18:27] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:27] [ERROR]   ✗ Frontend test script defined
+[2026-09-11 22:18:28] [STEP] 
+  🧪 Running Frontend Tests...
+[2026-09-11 22:18:28] [STEP] ╔══════════════════════════════════════════════════════════╗
+[2026-09-11 22:18:28] [STEP] ║  STEP 5: DOCUMENTATION VERIFICATION                        ║
+[2026-09-11 22:18:28] [STEP] ╚══════════════════════════════════════════════════════════╝
+[2026-09-11 22:18:28] [ERROR]   ✗ Main README.md
+[2026-09-11 22:18:28] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:28] [ERROR]   ✗ Project name in README
+[2026-09-11 22:18:28] [ERROR]   ✗ Arabic content in README
+[2026-09-11 22:18:28] [ERROR]   ✗ English content in README
+[2026-09-11 22:18:28] [SUCCESS]   ✓ Documentation directory
+[2026-09-11 22:18:28] [INFO]     Path exists: docs
+[2026-09-11 22:18:28] [ERROR]   ✗ Architecture documentation
+[2026-09-11 22:18:28] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:28] [ERROR]   ✗ Developer guides
+[2026-09-11 22:18:28] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:28] [ERROR]   ✗ User guides
+[2026-09-11 22:18:28] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:28] [ERROR]   ✗ Runbooks
+[2026-09-11 22:18:28] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:28] [ERROR]   ✗ Troubleshooting guides
+[2026-09-11 22:18:28] [ERROR]     Error: Directory does not exist
+[2026-09-11 22:18:28] [ERROR]   ✗ Architecture documentation
+[2026-09-11 22:18:28] [ERROR]   ✗ Developer guide
+[2026-09-11 22:18:28] [STEP] ╔══════════════════════════════════════════════════════════╗
+[2026-09-11 22:18:28] [STEP] ║  STEP 6: TEST COVERAGE ANALYSIS                            ║
+[2026-09-11 22:18:28] [STEP] ╚══════════════════════════════════════════════════════════╝
+[2026-09-11 22:18:28] [ERROR]   ✗ Coverage report generated
+[2026-09-11 22:18:28] [WARNING]   ⚠ Run 'pnpm run test:cov' to generate coverage
+[2026-09-11 22:18:28] [STEP] ╔══════════════════════════════════════════════════════════╗
+[2026-09-11 22:18:28] [STEP] ║  GENERATING FINAL REPORT                                   ║
+[2026-09-11 22:18:28] [STEP] ╚══════════════════════════════════════════════════════════╝

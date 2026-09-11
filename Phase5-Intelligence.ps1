@@ -2381,4 +2381,4 @@ Write-Host "  - Full RTL support for Arabic interface" -ForegroundColor Gray
 Write-Host "  - No new database models required" -ForegroundColor Gray
 
 Write-Host "`nPress any key to exit..." -ForegroundColor Gray
- $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# ReadKey removed for automation

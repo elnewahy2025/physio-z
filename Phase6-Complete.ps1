@@ -1877,4 +1877,4 @@ Write-Host "  • Testing (17 tests)" -ForegroundColor Gray
 Write-Host "  • Production Prep (9 items)" -ForegroundColor Gray
 
 Write-Host "`nPress any key to exit..." -ForegroundColor Gray
- $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# ReadKey removed for automation

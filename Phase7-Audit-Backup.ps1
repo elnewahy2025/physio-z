@@ -2430,4 +2430,4 @@ Write-Host "  - All configuration comes from Settings model (no hardcoded values
 Write-Host "  - Full RTL support for Arabic interface" -ForegroundColor Gray
 
 Write-Host "`nPress any key to exit..." -ForegroundColor Gray
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# ReadKey removed for automation

@@ -1,0 +1,11 @@
+[2026-09-11 22:18:28] [ERROR]   ✗ Frontend component tests execution
+[2026-09-11 22:18:28] [ERROR]     Error: Exit code: 1
+[2026-09-11 22:18:28] [INFO] 
+
+[2026-09-11 22:18:28] [ERROR] ╔══════════════════════════════════════════════════════════╗
+[2026-09-11 22:18:28] [ERROR] ║                    ⚠️  ERROR DETECTED                      ║
+[2026-09-11 22:18:28] [ERROR] ╚══════════════════════════════════════════════════════════╝
+[2026-09-11 22:18:28] [ERROR] 
+[2026-09-11 22:18:28] [ERROR]   Section: Frontend component tests execution
+[2026-09-11 22:18:28] [ERROR]   Error: Exit code: 1
+[2026-09-11 22:18:28] [WARNING]   User chose to CONTINUE

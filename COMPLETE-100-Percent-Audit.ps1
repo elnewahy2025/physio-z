@@ -614,7 +614,7 @@ if ($RunTests) {
     Write-Host "`n🧪 Running Backend Tests..." -ForegroundColor Yellow
     
     Push-Location "backend"
-    $backendTestResult = npm test 2>&1
+    $backendTestResult = pnpm test 2>&1
     $backendTestExit = $LASTEXITCODE
     Pop-Location
     
@@ -633,7 +633,7 @@ if ($RunTests) {
     Write-Host "`n🧪 Running Frontend Tests..." -ForegroundColor Yellow
     
     Push-Location "frontend"
-    $frontendTestResult = npm test 2>&1
+    $frontendTestResult = pnpm test 2>&1
     $frontendTestExit = $LASTEXITCODE
     Pop-Location
     
@@ -979,4 +979,4 @@ if ($completionRate -lt 100) {
 }
 
 Write-Host "`nPress any key to exit..." -ForegroundColor Gray
- $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# ReadKey removed for automation

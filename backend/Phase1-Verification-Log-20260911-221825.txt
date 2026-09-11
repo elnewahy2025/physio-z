@@ -1,0 +1,11 @@
+[2026-09-11 22:18:27] [ERROR]   ✗ Backend unit tests execution
+[2026-09-11 22:18:27] [ERROR]     Error: Exit code: 1
+[2026-09-11 22:18:27] [INFO] 
+
+[2026-09-11 22:18:27] [ERROR] ╔══════════════════════════════════════════════════════════╗
+[2026-09-11 22:18:27] [ERROR] ║                    ⚠️  ERROR DETECTED                      ║
+[2026-09-11 22:18:27] [ERROR] ╚══════════════════════════════════════════════════════════╝
+[2026-09-11 22:18:27] [ERROR] 
+[2026-09-11 22:18:27] [ERROR]   Section: Backend unit tests execution
+[2026-09-11 22:18:27] [ERROR]   Error: Exit code: 1
+[2026-09-11 22:18:27] [WARNING]   User chose to CONTINUE
