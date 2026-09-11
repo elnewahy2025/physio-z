@@ -77,7 +77,7 @@ const VideoConsultation: React.FC<VideoConsultationProps> = ({ appointmentId }) 
   return (
     <div className="space-y-4" dir="rtl">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
           استشارات الفيديو
         </h3>
         <button
@@ -91,9 +91,9 @@ const VideoConsultation: React.FC<VideoConsultationProps> = ({ appointmentId }) 
 
       {/* Add Video Link Form */}
       {showAddForm && (
-        <form onSubmit={handleAddVideoLink} className="bg-gray-50 p-4 rounded-lg space-y-3">
+        <form onSubmit={handleAddVideoLink} className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               رابط الفيديو *
             </label>
             <input
@@ -108,7 +108,7 @@ const VideoConsultation: React.FC<VideoConsultationProps> = ({ appointmentId }) 
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 كلمة المرور (اختياري)
               </label>
               <input
@@ -120,7 +120,7 @@ const VideoConsultation: React.FC<VideoConsultationProps> = ({ appointmentId }) 
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 ملاحظات
               </label>
               <input
@@ -137,7 +137,7 @@ const VideoConsultation: React.FC<VideoConsultationProps> = ({ appointmentId }) 
             <button
               type="button"
               onClick={() => setShowAddForm(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-900"
             >
               إلغاء
             </button>
@@ -153,37 +153,37 @@ const VideoConsultation: React.FC<VideoConsultationProps> = ({ appointmentId }) 
 
       {/* Video Links List */}
       {videoLinks.length === 0 ? (
-        <p className="text-sm text-gray-500 text-center py-4">
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
           لا توجد روابط فيديو
         </p>
       ) : (
         <div className="space-y-3">
           {videoLinks.map((video) => (
-            <div key={video.id} className="bg-white border border-gray-200 rounded-lg p-4">
+            <div key={video.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center">
                     <span className="text-2xl ml-2">{getPlatformIcon(video.platform)}</span>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {video.platform === 'ZOOM' ? 'Zoom' :
                          video.platform === 'GOOGLE_MEET' ? 'Google Meet' :
                          video.platform === 'TEAMS' ? 'Microsoft Teams' : 'Platform'}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         أضيف بواسطة {video.createdBy.name}
                       </p>
                     </div>
                   </div>
                   
                   {video.password && (
-                    <p className="mt-2 text-sm text-gray-600">
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                       كلمة المرور: {video.password}
                     </p>
                   )}
                   
                   {video.notes && (
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                       {video.notes}
                     </p>
                   )}

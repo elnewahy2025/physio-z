@@ -31,24 +31,24 @@ const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({ exercise, onC
           className="fixed inset-0 transition-opacity"
           onClick={onClose}
         >
-          <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+          <div className="absolute inset-0 bg-gray-50 dark:bg-gray-9000 opacity-75"></div>
         </div>
 
         {/* Modal */}
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+        <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
           {/* Header */}
-          <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   {exercise.nameAr || exercise.name}
                 </h3>
                 <div className="mt-1 flex items-center space-x-2 space-x-reverse">
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
                     {categoryLabels[exercise.category] || exercise.category}
                   </span>
                   <span>•</span>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
                     {difficultyLabels[exercise.difficulty] || exercise.difficulty}
                   </span>
                 </div>
@@ -56,7 +56,7 @@ const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({ exercise, onC
               
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-gray-400 hover:text-gray-500 dark:text-gray-400"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -87,14 +87,14 @@ const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({ exercise, onC
           )}
 
           {/* Tabs */}
-          <div className="border-b border-gray-200 px-4 sm:px-6">
+          <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6">
             <nav className="-mb-px flex space-x-8 space-x-reverse">
               <button
                 onClick={() => setActiveTab('details')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'details'
                     ? 'border-primary-500 text-primary-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
                 }`}
               >
                 التفاصيل
@@ -104,7 +104,7 @@ const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({ exercise, onC
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'instructions'
                     ? 'border-primary-500 text-primary-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300'
                 }`}
               >
                 التعليمات
@@ -118,36 +118,36 @@ const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({ exercise, onC
               <div className="space-y-4">
                 {/* Description */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                     الوصف
                   </h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     {exercise.descriptionAr || exercise.description}
                   </p>
                 </div>
 
                 {/* Parameters */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                     المعايير
                   </h4>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-50 p-3 rounded-md">
-                      <p className="text-xs text-gray-500">المجموعات</p>
+                    <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-md">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">المجموعات</p>
                       <p className="text-sm font-medium">{exercise.defaultSets}</p>
                     </div>
-                    <div className="bg-gray-50 p-3 rounded-md">
-                      <p className="text-xs text-gray-500">التكرارات</p>
+                    <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-md">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">التكرارات</p>
                       <p className="text-sm font-medium">{exercise.defaultReps}</p>
                     </div>
                     {exercise.defaultHoldTime && (
-                      <div className="bg-gray-50 p-3 rounded-md">
-                        <p className="text-xs text-gray-500">مدة الثبات (ثانية)</p>
+                      <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-md">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">مدة الثبات (ثانية)</p>
                         <p className="text-sm font-medium">{exercise.defaultHoldTime}</p>
                       </div>
                     )}
-                    <div className="bg-gray-50 p-3 rounded-md">
-                      <p className="text-xs text-gray-500">الراحة (ثانية)</p>
+                    <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-md">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">الراحة (ثانية)</p>
                       <p className="text-sm font-medium">{exercise.defaultRestTime}</p>
                     </div>
                   </div>
@@ -156,7 +156,7 @@ const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({ exercise, onC
                 {/* Body Parts */}
                 {exercise.bodyParts && exercise.bodyParts.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                       أجزاء الجسم المستهدفة
                     </h4>
                     <div className="flex flex-wrap gap-2">
@@ -202,11 +202,11 @@ const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({ exercise, onC
               <div className="space-y-4">
                 {/* Instructions */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                     خطوات الأداء
                   </h4>
                   <div className="prose prose-sm max-w-none">
-                    <pre className="whitespace-pre-wrap text-sm text-gray-600 font-sans">
+                    <pre className="whitespace-pre-wrap text-sm text-gray-600 dark:text-gray-400 font-sans">
                       {exercise.instructionsAr || exercise.instructions}
                     </pre>
                   </div>
@@ -215,10 +215,10 @@ const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({ exercise, onC
                 {/* Common Errors */}
                 {exercise.commonErrors && (
                   <div>
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                       أخطاء شائعة
                     </h4>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       {exercise.commonErrors}
                     </p>
                   </div>

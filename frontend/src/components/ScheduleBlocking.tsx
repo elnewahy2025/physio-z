@@ -210,7 +210,7 @@ export default function ScheduleBlocking() {
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {slot.user.name}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     {DAYS.find((d) => d.value === slot.dayOfWeek)?.[lang === 'ar' ? 'ar' : 'en']} ·{' '}
                     {slot.startTime} — {slot.endTime}
                     {slot.reason && ` · ${slot.reason}`}

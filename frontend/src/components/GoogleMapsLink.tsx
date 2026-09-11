@@ -121,7 +121,7 @@ export function MapCard() {
           <div>
             <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{settings.centerName}</p>
             {settings.address && (
-              <p className="mt-0.5 text-xs text-gray-500">{settings.address}</p>
+              <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{settings.address}</p>
             )}
           </div>
         </div>

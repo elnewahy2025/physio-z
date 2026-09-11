@@ -480,7 +480,7 @@ export default function Reports() {
         {/* Date range */}
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {L('من', 'From')}:
             </span>
 
@@ -495,7 +495,7 @@ export default function Reports() {
           <span className="text-gray-400">→</span>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {L('إلى', 'To')}:
             </span>
 
@@ -514,7 +514,7 @@ export default function Reports() {
                 <button
                   key={range}
                   onClick={() => setQuickRange(range)}
-                  className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                 >
                   {range === 'week'
                     ? L('أسبوع', 'Week')
@@ -540,7 +540,7 @@ export default function Reports() {
                 ${
                   activeTab === tab.key
                     ? 'bg-primary-600 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 }
               `}
             >
@@ -708,7 +708,7 @@ export default function Reports() {
                               {inv.number}
                             </p>
 
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                               {inv.patientName}
                             </p>
                           </div>
@@ -771,7 +771,7 @@ export default function Reports() {
                                 </p>
 
                                 <p
-                                  className="text-sm text-gray-500"
+                                  className="text-sm text-gray-500 dark:text-gray-400"
                                   dir="ltr"
                                 >
                                   {patient.phone}
@@ -905,7 +905,7 @@ export default function Reports() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-gray-200 text-start text-xs text-gray-500 dark:border-gray-700">
+                        <tr className="border-b border-gray-200 dark:border-gray-700 text-start text-xs text-gray-500 dark:text-gray-400 dark:border-gray-700">
                           <th className="pb-3 text-start">
                             {L('الاسم', 'Name')}
                           </th>
@@ -940,7 +940,7 @@ export default function Reports() {
                           (t: any) => (
                             <tr
                               key={t.therapistId}
-                              className="border-b border-gray-100 dark:border-gray-800"
+                              className="border-b border-gray-100 dark:border-gray-700 dark:border-gray-800"
                             >
                               <td className="py-3 font-medium text-gray-900 dark:text-gray-100">
                                 {t.therapistName}
@@ -1440,7 +1440,7 @@ export default function Reports() {
                             {room.roomName}
                           </p>
 
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {room.appointmentCount}{' '}
                             {L('موعد', 'appointments')}
                           </p>
@@ -1448,7 +1448,7 @@ export default function Reports() {
                       </div>
 
                       <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
                           {room.bookedHours}h
                         </span>
 
@@ -1540,7 +1540,7 @@ export default function Reports() {
                   />
 
                   <div className="space-y-4">
-                    <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+                    <div className="rounded-lg bg-gray-50 dark:bg-gray-900 p-4 dark:bg-gray-800">
                       <div className="flex justify-between py-2">
                         <span>
                           {L(
@@ -1574,7 +1574,7 @@ export default function Reports() {
                         </span>
                       </div>
 
-                      <div className="flex justify-between border-t border-gray-200 py-2 pt-4 dark:border-gray-700">
+                      <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 py-2 pt-4 dark:border-gray-700">
                         <span className="font-semibold">
                           {L(
                             'الإيرادات الصافية (قبل الضريبة)',
@@ -1626,7 +1626,7 @@ export default function Reports() {
                       {plData.profit.net.toFixed(0)} {currency}
                     </p>
 
-                    <p className="mt-2 text-sm text-gray-500">
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                       {plData.profit.status === 'PROFIT'
                         ? L('ربح صافي', 'Net Profit')
                         : L('خسارة صافية', 'Net Loss')}
@@ -1734,7 +1734,7 @@ export default function Reports() {
                               {exp.description}
                             </p>
 
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                               {exp.category} ·{' '}
                               {new Date(
                                 exp.date,
@@ -1823,7 +1823,7 @@ export default function Reports() {
                           </span>
                         </div>
                         {s.feedback && (
-                          <p className="mt-2 text-sm text-gray-600">"{s.feedback}"</p>
+                          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">"{s.feedback}"</p>
                         )}
                       </div>
                     ))}

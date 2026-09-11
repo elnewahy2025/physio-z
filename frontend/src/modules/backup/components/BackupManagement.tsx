@@ -77,7 +77,7 @@ const BackupManagement: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      PENDING: 'bg-gray-100 text-gray-800',
+      PENDING: 'bg-gray-100 text-gray-800 dark:text-gray-200',
       IN_PROGRESS: 'bg-blue-100 text-blue-800',
       COMPLETED: 'bg-green-100 text-green-800',
       FAILED: 'bg-red-100 text-red-800',
@@ -107,15 +107,15 @@ const BackupManagement: React.FC = () => {
     <div className="space-y-6" dir="rtl">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">إدارة النسخ الاحتياطية</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">إدارة النسخ الاحتياطية</h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           إنشاء وإدارة النسخ الاحتياطية للبيانات
         </p>
       </div>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -124,14 +124,14 @@ const BackupManagement: React.FC = () => {
                 </svg>
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">إجمالي النسخ</p>
-                <p className="text-lg font-semibold text-gray-900">{statistics?.totalBackups || 0}</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">إجمالي النسخ</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{statistics?.totalBackups || 0}</p>
               </div>
             </div>
           </div>
         </div>
         
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -140,14 +140,14 @@ const BackupManagement: React.FC = () => {
                 </svg>
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">نسخ ناجحة</p>
-                <p className="text-lg font-semibold text-gray-900">{statistics?.successfulBackups || 0}</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">نسخ ناجحة</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{statistics?.successfulBackups || 0}</p>
               </div>
             </div>
           </div>
         </div>
         
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -156,14 +156,14 @@ const BackupManagement: React.FC = () => {
                 </svg>
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">نسخ فاشلة</p>
-                <p className="text-lg font-semibold text-gray-900">{statistics?.failedBackups || 0}</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">نسخ فاشلة</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{statistics?.failedBackups || 0}</p>
               </div>
             </div>
           </div>
         </div>
         
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -172,8 +172,8 @@ const BackupManagement: React.FC = () => {
                 </svg>
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">الحجم الإجمالي</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">الحجم الإجمالي</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {formatSize(statistics?.totalSize || 0)}
                 </p>
               </div>
@@ -183,8 +183,8 @@ const BackupManagement: React.FC = () => {
       </div>
 
       {/* Create Backup */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">إنشاء نسخة احتياطية</h3>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">إنشاء نسخة احتياطية</h3>
         <div className="flex items-center space-x-4 space-x-reverse">
           <select
             value={backupType}
@@ -207,51 +207,51 @@ const BackupManagement: React.FC = () => {
       </div>
 
       {/* Backup History */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">سجل النسخ الاحتياطية</h3>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">سجل النسخ الاحتياطية</h3>
         </div>
         
         {backups.length === 0 ? (
-          <div className="p-6 text-center text-gray-500">
+          <div className="p-6 text-center text-gray-500 dark:text-gray-400">
             لا توجد نسخ احتياطية بعد
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     اسم الملف
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     النوع
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     الحجم
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     الحالة
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     التاريخ
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     الإجراءات
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
                 {backups.map((backup) => (
                   <tr key={backup.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                       {backup.filename}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {backup.type === 'FULL' ? 'كامل' : 
                        backup.type === 'DATABASE_ONLY' ? 'قاعدة بيانات' : 'ملفات'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {formatSize(backup.size)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -261,7 +261,7 @@ const BackupManagement: React.FC = () => {
                          backup.status === 'FAILED' ? 'فشلت' : 'في الانتظار'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {new Date(backup.createdAt).toLocaleString('ar-EG')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

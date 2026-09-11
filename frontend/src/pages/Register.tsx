@@ -85,7 +85,7 @@ export default function Register() {
       {/* Language toggle */}
       <button
         onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
-        className="absolute top-6 end-6 rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50"
+        className="absolute top-6 end-6 rounded-lg bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 shadow-sm hover:bg-gray-50 dark:bg-gray-900"
       >
         {lang === 'ar' ? 'English' : 'العربية'}
       </button>
@@ -99,7 +99,7 @@ export default function Register() {
           <h1 className="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-100">
             {L('إنشاء حساب مريض', 'Create Patient Account')}
           </h1>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             {L('سجل للحصول على مواعيدك وسجلك الطبي', 'Register to book appointments and access your records')}
           </p>
         </div>
@@ -108,7 +108,7 @@ export default function Register() {
         <div className="mb-6 flex items-center justify-center gap-2">
           <div
             className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold ${
-              step >= 1 ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-500'
+              step >= 1 ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-500 dark:text-gray-400'
             }`}
           >
             1
@@ -116,7 +116,7 @@ export default function Register() {
           <div className={`h-1 w-16 ${step >= 2 ? 'bg-primary-600' : 'bg-gray-200'}`} />
           <div
             className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold ${
-              step >= 2 ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-500'
+              step >= 2 ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-500 dark:text-gray-400'
             }`}
           >
             2
@@ -199,7 +199,7 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-400 hover:text-gray-600"
+                    className="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-400 hover:text-gray-600 dark:text-gray-400"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -294,8 +294,8 @@ export default function Register() {
             </div>
           )}
 
-          <div className="mt-6 border-t border-gray-100 pt-4 text-center">
-            <p className="text-sm text-gray-500">
+          <div className="mt-6 border-t border-gray-100 dark:border-gray-700 pt-4 text-center">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               {L('لديك حساب بالفعل؟', 'Already have an account?')}{' '}
               <Link to="/login" className="font-medium text-primary-600 hover:text-primary-700">
                 {L('تسجيل الدخول', 'Sign In')}

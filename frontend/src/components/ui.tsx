@@ -17,7 +17,7 @@ export function Card({
   return (
     <div
       className={cn(
-        'rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800',
+        'rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800',
         className,
       )}
     >
@@ -97,7 +97,7 @@ export function StatCard({
           </p>
 
           {safeTrend && (
-            <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-400 dark:text-gray-500 dark:text-gray-400">
               {safeTrend}
             </p>
           )}
@@ -128,7 +128,7 @@ const badgeColors: Record<string, string> = {
     'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
 
   NO_SHOW:
-    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+    'bg-gray-100 text-gray-800 dark:text-gray-200 dark:bg-gray-700 dark:text-gray-300',
 
   UNPAID:
     'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
@@ -155,7 +155,7 @@ export function Badge({
       className={cn(
         'badge',
         badgeColors[status] ||
-          'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+          'bg-gray-100 text-gray-800 dark:text-gray-200 dark:bg-gray-700 dark:text-gray-300',
       )}
     >
       {children ?? status}
@@ -168,7 +168,7 @@ export function EmptyState({ message }: { message: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <svg
-        className="h-12 w-12 text-gray-300 dark:text-gray-600"
+        className="h-12 w-12 text-gray-300 dark:text-gray-600 dark:text-gray-400"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -192,7 +192,7 @@ export function EmptyState({ message }: { message: string }) {
 export function Spinner({ className }: { className?: string }) {
   return (
     <div className={cn('flex items-center justify-center', className)}>
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-primary-600 dark:border-gray-700 dark:border-t-primary-400" />
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 dark:border-gray-700 border-t-primary-600 dark:border-gray-700 dark:border-t-primary-400" />
     </div>
   );
 }

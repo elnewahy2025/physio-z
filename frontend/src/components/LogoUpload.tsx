@@ -156,7 +156,7 @@ export default function LogoUpload({ currentLogo }: { currentLogo: string | null
 
       <div className="flex items-start gap-6">
         {/* Preview */}
-        <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50">
+        <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
           {preview ? (
             <img
               src={preview}

@@ -29,11 +29,11 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
     VIDEO: 'bg-purple-100 text-purple-800',
     SMS: 'bg-yellow-100 text-yellow-800',
     EMAIL: 'bg-red-100 text-red-800',
-    CUSTOM: 'bg-gray-100 text-gray-800',
+    CUSTOM: 'bg-gray-100 text-gray-800 dark:text-gray-200',
   };
 
   return (
-    <div className="bg-white overflow-hidden shadow rounded-lg">
+    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
       <div className="p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
@@ -50,14 +50,14 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <div className="flex items-center space-x-2 space-x-reverse">
             <button
               onClick={onTest}
-              className="text-gray-400 hover:text-gray-500"
+              className="text-gray-400 hover:text-gray-500 dark:text-gray-400"
               title="اختبار الاتصال"
             >
               <BeakerIcon className="h-5 w-5" />
             </button>
             <button
               onClick={onEdit}
-              className="text-gray-400 hover:text-gray-500"
+              className="text-gray-400 hover:text-gray-500 dark:text-gray-400"
               title="تعديل"
             >
               <CogIcon className="h-5 w-5" />
@@ -72,26 +72,26 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           </div>
         </div>
 
-        <h3 className="mt-4 text-lg font-medium text-gray-900">
+        <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
           {provider.name}
         </h3>
         
         {provider.description && (
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {provider.description}
           </p>
         )}
 
         {/* Capabilities */}
         <div className="mt-4">
-          <p className="text-xs font-medium text-gray-500 mb-2">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
             القدرات:
           </p>
           <div className="flex flex-wrap gap-1">
             {provider.capabilities?.map((cap: any) => (
               <span
                 key={cap.capability}
-                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600"
+                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 dark:text-gray-400"
               >
                 {cap.name}
               </span>
@@ -100,7 +100,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         </div>
 
         {/* Stats */}
-        <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
+        <div className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
           <span>
             طلبات: {provider.totalRequests}
           </span>

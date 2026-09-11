@@ -73,7 +73,7 @@ export default function Equipment() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {L('الأجهزة والصيانة', 'Equipment & Maintenance')}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {L('إدارة الأجهزة وجدولة الصيانة', 'Manage equipment and maintenance schedule')}
           </p>
         </div>
@@ -172,7 +172,7 @@ export default function Equipment() {
 
                     <div>
                       <p className="font-medium text-gray-900 dark:text-gray-100">{eq.name}</p>
-                      <div className="flex items-center gap-3 text-sm text-gray-500">
+                      <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
                         <span>
                           {lang === 'ar' ? CATEGORY_LABELS[eq.category]?.ar : CATEGORY_LABELS[eq.category]?.en}
                         </span>
@@ -204,10 +204,10 @@ export default function Equipment() {
 
                 {/* Expanded details */}
                 {expandedId === eq.id && (
-                  <div className="mt-4 space-y-4 border-t border-gray-100 pt-4">
+                  <div className="mt-4 space-y-4 border-t border-gray-100 dark:border-gray-700 pt-4">
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                       <div>
-                        <p className="text-xs text-gray-500">{L('آخر صيانة', 'Last Maintenance')}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{L('آخر صيانة', 'Last Maintenance')}</p>
                         <p className="mt-1 text-sm font-medium">
                           {eq.lastMaintenanceDate
                             ? new Date(eq.lastMaintenanceDate).toLocaleDateString()
@@ -215,7 +215,7 @@ export default function Equipment() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500">{L('فاصل الصيانة', 'Interval')}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{L('فاصل الصيانة', 'Interval')}</p>
                         <p className="mt-1 text-sm font-medium">
                           {eq.maintenanceIntervalDays
                             ? `${eq.maintenanceIntervalDays} ${L('يوم', 'days')}`
@@ -223,13 +223,13 @@ export default function Equipment() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500">{L('تكلفة الشراء', 'Purchase Cost')}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{L('تكلفة الشراء', 'Purchase Cost')}</p>
                         <p className="mt-1 text-sm font-medium">
                           {eq.purchaseCost ? `${Number(eq.purchaseCost).toFixed(0)} ${currency}` : '—'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500">{L('الحالة', 'Status')}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{L('الحالة', 'Status')}</p>
                         <p className="mt-1 text-sm font-medium">{eq.status}</p>
                       </div>
                     </div>
@@ -464,7 +464,7 @@ function MaintenanceModal({
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
+      <div className="relative w-full max-w-md rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
         <button
           onClick={onClose}
           className="absolute end-4 top-4 rounded-lg p-2 text-gray-400 hover:bg-gray-100"
@@ -586,14 +586,14 @@ function MaintenanceHistory({ equipmentId }: { equipmentId: string }) {
 
   return (
     <div>
-      <p className="mb-2 text-sm font-semibold text-gray-700">
+      <p className="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
         {L('سجل الصيانة', 'Maintenance History')}
       </p>
       <div className="space-y-2">
         {history.map((log: any) => (
           <div
             key={log.id}
-            className="flex items-center justify-between rounded-lg bg-gray-50 p-3 text-sm"
+            className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-900 p-3 text-sm"
           >
             <div className="flex items-center gap-3">
               <div
@@ -607,7 +607,7 @@ function MaintenanceHistory({ equipmentId }: { equipmentId: string }) {
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{log.description}</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {new Date(log.date).toLocaleDateString()} ·{' '}
                   {lang === 'ar' ? MAINTENANCE_TYPES[log.type]?.ar : MAINTENANCE_TYPES[log.type]?.en}
                   {log.performedBy && ` · ${log.performedBy}`}
@@ -615,7 +615,7 @@ function MaintenanceHistory({ equipmentId }: { equipmentId: string }) {
               </div>
             </div>
             {log.cost && (
-              <span className="font-medium text-gray-600">
+              <span className="font-medium text-gray-600 dark:text-gray-400">
                 {Number(log.cost).toFixed(0)}
               </span>
             )}

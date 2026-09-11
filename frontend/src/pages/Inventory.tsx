@@ -74,7 +74,7 @@ export default function Inventory() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {L('المخزون', 'Inventory')}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {L('إدارة المخزون والتنبيهات', 'Manage stock and alerts')}
           </p>
         </div>
@@ -177,7 +177,7 @@ export default function Inventory() {
 
                     <div>
                       <p className="font-medium text-gray-900 dark:text-gray-100">{item.name}</p>
-                      <div className="flex items-center gap-3 text-sm text-gray-500">
+                      <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
                         <span>
                           {lang === 'ar' ? CATEGORY_LABELS[item.category]?.ar : CATEGORY_LABELS[item.category]?.en}
                         </span>
@@ -470,7 +470,7 @@ function StockAdjustmentModal({
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
+      <div className="relative w-full max-w-lg rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
         <button
           onClick={onClose}
           className="absolute end-4 top-4 rounded-lg p-2 text-gray-400 hover:bg-gray-100"
@@ -481,7 +481,7 @@ function StockAdjustmentModal({
         <h2 className="mb-2 text-xl font-bold text-gray-900 dark:text-gray-100">
           {item?.name || L('تعديل المخزون', 'Adjust Stock')}
         </h2>
-        <p className="mb-4 text-sm text-gray-500">
+        <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
           {L('الكمية الحالية', 'Current quantity')}: {item?.quantity} {item?.unit}
         </p>
 
@@ -502,7 +502,7 @@ function StockAdjustmentModal({
                 flex flex-1 items-center justify-center gap-2 rounded-lg border-2 py-3 text-sm font-semibold transition-all
                 ${type === 'IN'
                   ? 'border-green-500 bg-green-50 text-green-700'
-                  : 'border-gray-200 text-gray-500'
+                  : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400'
                 }
               `}
             >
@@ -516,7 +516,7 @@ function StockAdjustmentModal({
                 flex flex-1 items-center justify-center gap-2 rounded-lg border-2 py-3 text-sm font-semibold transition-all
                 ${type === 'OUT'
                   ? 'border-red-500 bg-red-50 text-red-700'
-                  : 'border-gray-200 text-gray-500'
+                  : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400'
                 }
               `}
             >
@@ -566,8 +566,8 @@ function StockAdjustmentModal({
 
         {/* Transaction history */}
         {(history || []).length > 0 && (
-          <div className="mt-6 border-t border-gray-100 pt-4">
-            <p className="mb-2 text-sm font-semibold text-gray-700">
+          <div className="mt-6 border-t border-gray-100 dark:border-gray-700 pt-4">
+            <p className="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
               {L('سجل الحركة', 'Transaction History')}
             </p>
             <div className="max-h-40 space-y-2 overflow-y-auto">
@@ -575,7 +575,7 @@ function StockAdjustmentModal({
                 <div key={tx.id} className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <span className={`h-2 w-2 rounded-full ${tx.type === 'IN' ? 'bg-green-500' : 'bg-red-500'}`} />
-                    <span className="text-gray-600">
+                    <span className="text-gray-600 dark:text-gray-400">
                       {new Date(tx.date).toLocaleDateString()} — {tx.reason || tx.type}
                     </span>
                   </div>

@@ -118,7 +118,7 @@ export default function SurveyForm({
           ))}
         </div>
         {rating > 0 && (
-          <p className="mt-2 text-xs text-gray-500">
+          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
             {rating === 5 ? L('ممتاز! 🎉', 'Excellent! 🎉')
               : rating === 4 ? L('جيد جداً', 'Very good')
               : rating === 3 ? L('جيد', 'Good')

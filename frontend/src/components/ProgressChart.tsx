@@ -71,12 +71,12 @@ export default function ProgressChart({ patientId }: { patientId: string }) {
   const trendIcon =
     data.summary.trend === 'IMPROVING' ? <TrendingUp size={20} className="text-green-600" />
     : data.summary.trend === 'WORSENING' ? <TrendingDown size={20} className="text-red-600" />
-    : <Minus size={20} className="text-gray-500" />;
+    : <Minus size={20} className="text-gray-500 dark:text-gray-400" />;
 
   const trendColor =
     data.summary.trend === 'IMPROVING' ? 'text-green-600 bg-green-50'
     : data.summary.trend === 'WORSENING' ? 'text-red-600 bg-red-50'
-    : 'text-gray-600 bg-gray-50';
+    : 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900';
 
   return (
     <Card>
@@ -136,20 +136,20 @@ export default function ProgressChart({ patientId }: { patientId: string }) {
 
           {/* Summary stats */}
           <div className="mt-4 grid grid-cols-3 gap-4">
-            <div className="rounded-lg bg-gray-50 p-3 text-center dark:bg-gray-800">
-              <p className="text-xs text-gray-500">{L('الألم الأولي', 'Initial Pain')}</p>
+            <div className="rounded-lg bg-gray-50 dark:bg-gray-900 p-3 text-center dark:bg-gray-800">
+              <p className="text-xs text-gray-500 dark:text-gray-400">{L('الألم الأولي', 'Initial Pain')}</p>
               <p className="mt-1 text-xl font-bold text-gray-900 dark:text-gray-100">
                 {data.summary.initialPainLevel ?? '—'}/10
               </p>
             </div>
-            <div className="rounded-lg bg-gray-50 p-3 text-center dark:bg-gray-800">
-              <p className="text-xs text-gray-500">{L('الألم الحالي', 'Current Pain')}</p>
+            <div className="rounded-lg bg-gray-50 dark:bg-gray-900 p-3 text-center dark:bg-gray-800">
+              <p className="text-xs text-gray-500 dark:text-gray-400">{L('الألم الحالي', 'Current Pain')}</p>
               <p className="mt-1 text-xl font-bold text-gray-900 dark:text-gray-100">
                 {data.summary.currentPainLevel ?? '—'}/10
               </p>
             </div>
-            <div className="rounded-lg bg-gray-50 p-3 text-center dark:bg-gray-800">
-              <p className="text-xs text-gray-500">{L('التحسن', 'Improvement')}</p>
+            <div className="rounded-lg bg-gray-50 dark:bg-gray-900 p-3 text-center dark:bg-gray-800">
+              <p className="text-xs text-gray-500 dark:text-gray-400">{L('التحسن', 'Improvement')}</p>
               <p className={`mt-1 text-xl font-bold ${
                 (data.summary.improvementPercent || 0) > 0 ? 'text-green-600' : 'text-red-600'
               }`}>

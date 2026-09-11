@@ -126,7 +126,7 @@ export default function MyRecords() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           {L('سجلي الطبي', 'My Medical Records')}
         </h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           {L(
             'تاريخ مواعيدك وجلساتك العلاجية',
             'Your appointment and treatment history',
@@ -158,7 +158,7 @@ export default function MyRecords() {
                       {formatDate(appt.dateTime)}
                     </p>
 
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {formatTime(appt.dateTime)} · {appt.therapist.name}
                       {appt.room && ` · Room ${appt.room.number}`}
                     </p>
@@ -199,7 +199,7 @@ export default function MyRecords() {
                     ${
                       isCompleted
                         ? 'border-green-100 bg-green-50/30'
-                        : 'border-gray-100 bg-gray-50/30'
+                        : 'border-gray-100 dark:border-gray-700 bg-gray-50/30'
                     }
                   `}
                 >
@@ -217,7 +217,7 @@ export default function MyRecords() {
                           ${
                             isCompleted
                               ? 'bg-green-100 text-green-600'
-                              : 'bg-gray-100 text-gray-500'
+                              : 'bg-gray-100 text-gray-500 dark:text-gray-400'
                           }
                         `}
                       >
@@ -233,7 +233,7 @@ export default function MyRecords() {
                           {formatDate(appt.dateTime)}
                         </p>
 
-                        <div className="flex items-center gap-3 text-sm text-gray-500">
+                        <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
                           <span className="flex items-center gap-1">
                             <Clock size={12} />
                             {formatTime(appt.dateTime)}
@@ -275,18 +275,18 @@ export default function MyRecords() {
 
                   {/* Expanded content */}
                   {isExpanded && (
-                    <div className="mt-4 space-y-4 border-t border-gray-100 pt-4">
+                    <div className="mt-4 space-y-4 border-t border-gray-100 dark:border-gray-700 pt-4">
                       {/* Session notes */}
                       {hasSession && (
                         <div className="space-y-3">
                           {appt.therapySessions.map((session) => (
                             <div
                               key={session.id}
-                              className="rounded-lg border border-gray-100 bg-white p-4"
+                              className="rounded-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
                             >
                               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 <div>
-                                  <p className="text-xs font-medium text-gray-500">
+                                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
                                     {L('التشخيص', 'Diagnosis')}
                                   </p>
 
@@ -297,7 +297,7 @@ export default function MyRecords() {
 
                                 {session.treatmentPlan && (
                                   <div>
-                                    <p className="text-xs font-medium text-gray-500">
+                                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
                                       {L(
                                         'خطة العلاج',
                                         'Treatment Plan',
@@ -312,11 +312,11 @@ export default function MyRecords() {
 
                                 {session.notes && (
                                   <div className="sm:col-span-2">
-                                    <p className="text-xs font-medium text-gray-500">
+                                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
                                       {L('ملاحظات', 'Notes')}
                                     </p>
 
-                                    <p className="mt-1 text-sm text-gray-700">
+                                    <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
                                       {session.notes}
                                     </p>
                                   </div>
@@ -324,7 +324,7 @@ export default function MyRecords() {
 
                                 <div className="flex items-center gap-6">
                                   <div>
-                                    <p className="text-xs font-medium text-gray-500">
+                                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
                                       {L('المدة', 'Duration')}
                                     </p>
 
@@ -336,7 +336,7 @@ export default function MyRecords() {
 
                                   {session.painLevel !== null && (
                                     <div>
-                                      <p className="text-xs font-medium text-gray-500">
+                                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
                                         {L(
                                           'مستوى الألم',
                                           'Pain Level',
@@ -367,7 +367,7 @@ export default function MyRecords() {
 
                       {/* Invoice link */}
                       {appt.invoices.length > 0 && (
-                        <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-white p-3">
+                        <div className="flex items-center gap-3 rounded-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-3">
                           <FileText
                             size={16}
                             className="text-emerald-600"
@@ -379,7 +379,7 @@ export default function MyRecords() {
                               {appt.invoices[0].number}
                             </p>
 
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                               {Number(appt.invoices[0].total).toFixed(0)}{' '}
                               {currency} — {appt.invoices[0].status}
                             </p>
@@ -401,7 +401,7 @@ export default function MyRecords() {
                                 size={18}
                               />
 
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
                                 {new Date(
                                   appt.rating!.createdAt,
                                 ).toLocaleDateString()}
@@ -416,7 +416,7 @@ export default function MyRecords() {
                                 className="mt-0.5 text-gray-400"
                               />
 
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
                                 {appt.rating!.comment}
                               </p>
                             </div>

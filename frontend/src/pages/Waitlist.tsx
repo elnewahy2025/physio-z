@@ -37,7 +37,7 @@ export default function Waitlist() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {L('قائمة الانتظار', 'Waitlist')}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {L('مرضى ينتظرون مواعيد ملغاة', 'Patients waiting for cancelled slots')}
           </p>
         </div>
@@ -99,7 +99,7 @@ function WaitlistEntry({ entry }: { entry: any }) {
     WAITING: 'bg-yellow-100 text-yellow-800',
     NOTIFIED: 'bg-blue-100 text-blue-800',
     BOOKED: 'bg-green-100 text-green-800',
-    EXPIRED: 'bg-gray-100 text-gray-500',
+    EXPIRED: 'bg-gray-100 text-gray-500 dark:text-gray-400',
   };
 
   return (
@@ -113,7 +113,7 @@ function WaitlistEntry({ entry }: { entry: any }) {
           <p className="font-medium text-gray-900 dark:text-gray-100">
             {entry.patient.name}
           </p>
-          <div className="flex items-center gap-3 text-sm text-gray-500">
+          <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
             <span className="flex items-center gap-1">
               <Phone size={12} />
               {entry.patient.phone}

@@ -115,15 +115,15 @@ const ExerciseLibrary: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">مكتبة التمارين</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">مكتبة التمارين</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             استعرض وابحث عن التمارين العلاجية
           </p>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white shadow rounded-lg p-4">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
         <div className="flex items-center space-x-4 space-x-reverse">
           <div className="flex-1">
             <div className="relative">
@@ -140,7 +140,7 @@ const ExerciseLibrary: React.FC = () => {
           
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-900"
           >
             <FunnelIcon className="h-5 w-5 ml-2" />
             فلاتر
@@ -150,7 +150,7 @@ const ExerciseLibrary: React.FC = () => {
         {showFilters && (
           <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 الفئة
               </label>
               <select
@@ -169,7 +169,7 @@ const ExerciseLibrary: React.FC = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 مستوى الصعوبة
               </label>
               <select
@@ -188,7 +188,7 @@ const ExerciseLibrary: React.FC = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 جزء الجسم
               </label>
               <select
@@ -213,7 +213,7 @@ const ExerciseLibrary: React.FC = () => {
 
       {/* Results Count */}
       <div className="flex justify-between items-center">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           {pagination.total} تمرين
         </p>
       </div>
@@ -221,7 +221,7 @@ const ExerciseLibrary: React.FC = () => {
       {/* Exercise Grid */}
       {exercises.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">لا توجد تمارين مطابقة للبحث</p>
+          <p className="text-gray-500 dark:text-gray-400">لا توجد تمارين مطابقة للبحث</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -241,19 +241,19 @@ const ExerciseLibrary: React.FC = () => {
           <button
             onClick={() => handlePageChange(Math.max(1, pagination.page - 1))}
             disabled={pagination.page === 1}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-900 disabled:opacity-50"
           >
             السابق
           </button>
           
-          <span className="px-4 py-2 text-sm text-gray-700">
+          <span className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
             صفحة {pagination.page} من {pagination.totalPages}
           </span>
           
           <button
             onClick={() => handlePageChange(Math.min(pagination.totalPages, pagination.page + 1))}
             disabled={pagination.page === pagination.totalPages}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-900 disabled:opacity-50"
           >
             التالي
           </button>

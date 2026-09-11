@@ -59,7 +59,7 @@ const WhatsAppReminders: React.FC = () => {
   return (
     <div className="space-y-4" dir="rtl">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-medium text-gray-900">
+        <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
           تذكيرات واتساب المعلقة
         </h2>
         <button
@@ -72,21 +72,21 @@ const WhatsAppReminders: React.FC = () => {
 
       {pendingReminders.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-500">لا توجد تذكيرات معلقة</p>
+          <p className="text-gray-500 dark:text-gray-400">لا توجد تذكيرات معلقة</p>
         </div>
       ) : (
         <div className="space-y-4">
           {pendingReminders.map((reminder) => (
-            <div key={reminder.patient.id} className="bg-white shadow rounded-lg p-4">
+            <div key={reminder.patient.id} className="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center">
                     <UserIcon className="h-5 w-5 text-gray-400 ml-2" />
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900">
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reminder.patient.name}
                       </h3>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {reminder.patient.phone}
                       </p>
                     </div>
@@ -94,7 +94,7 @@ const WhatsAppReminders: React.FC = () => {
                   
                   <div className="mt-3 space-y-2">
                     {reminder.appointments.map((appointment: any) => (
-                      <div key={appointment.id} className="flex items-center text-sm text-gray-600">
+                      <div key={appointment.id} className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                         <CalendarIcon className="h-4 w-4 text-gray-400 ml-2" />
                         <span>
                           {new Date(appointment.dateTime).toLocaleString('ar-EG')}

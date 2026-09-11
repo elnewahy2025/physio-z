@@ -56,7 +56,7 @@ export function InvoicePdfButton({ invoice }: { invoice: Invoice }) {
     return (
       <button
         disabled
-        className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-500"
+        className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-500 dark:text-gray-400"
       >
         <Loader2 size={14} className="animate-spin" />
         {isGenerating === 'bilingual'
@@ -80,24 +80,24 @@ export function InvoicePdfButton({ invoice }: { invoice: Invoice }) {
       </button>
 
       {dropdownOpen && (
-        <div className="absolute end-0 top-full z-50 mt-1 w-44 rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="absolute end-0 top-full z-50 mt-1 w-44 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
           <button
             onClick={() => handleDownload('ar')}
-            className="flex w-full items-center gap-3 px-4 py-2.5 text-start text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="flex w-full items-center gap-3 px-4 py-2.5 text-start text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-50 dark:bg-gray-900"
           >
             <span className="text-base">🇪🇬</span>
             <span>{L('العربية', 'Arabic (RTL)')}</span>
           </button>
           <button
             onClick={() => handleDownload('en')}
-            className="flex w-full items-center gap-3 border-t border-gray-100 px-4 py-2.5 text-start text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="flex w-full items-center gap-3 border-t border-gray-100 dark:border-gray-700 px-4 py-2.5 text-start text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-50 dark:bg-gray-900"
           >
             <span className="text-base">🇬🇧</span>
             <span>English (LTR)</span>
           </button>
           <button
             onClick={() => handleDownload('bilingual')}
-            className="flex w-full items-center gap-3 border-t border-gray-100 px-4 py-2.5 text-start text-xs font-medium text-primary-700 transition-colors hover:bg-primary-50"
+            className="flex w-full items-center gap-3 border-t border-gray-100 dark:border-gray-700 px-4 py-2.5 text-start text-xs font-medium text-primary-700 transition-colors hover:bg-primary-50"
           >
             <Languages size={16} />
             <span>{L('ثنائية اللغة', 'Bilingual (AR + EN)')}</span>

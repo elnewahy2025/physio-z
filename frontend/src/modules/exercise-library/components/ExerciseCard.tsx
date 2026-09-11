@@ -31,7 +31,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-md transition-shadow"
+      className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-md transition-shadow"
     >
       {/* Image */}
       <div className="h-48 bg-gray-200 relative">
@@ -61,12 +61,12 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onClick }) => {
 
       {/* Content */}
       <div className="p-4">
-        <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
+        <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">
           {exercise.nameAr || exercise.name}
         </h3>
         
         <div className="mt-2 flex items-center justify-between">
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
             {categoryLabels[exercise.category] || exercise.category}
           </span>
           
@@ -76,7 +76,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onClick }) => {
         </div>
 
         {/* Exercise parameters */}
-        <div className="mt-3 flex items-center text-xs text-gray-500 space-x-2 space-x-reverse">
+        <div className="mt-3 flex items-center text-xs text-gray-500 dark:text-gray-400 space-x-2 space-x-reverse">
           <span>
             {exercise.defaultSets} × {exercise.defaultReps}
           </span>
@@ -98,7 +98,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onClick }) => {
             {exercise.tags.slice(0, 3).map((tag: string, index: number) => (
               <span
                 key={index}
-                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600"
+                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 dark:text-gray-400"
               >
                 {tag}
               </span>

@@ -85,7 +85,7 @@ export default function OfflineIndicator() {
                   </p>
 
                   {lastSyncTime && !isSyncing && pendingCount === 0 && (
-                    <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
+                    <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                       <Clock size={12} />
                       {L(
                         `آخر مزامنة: ${new Date(lastSyncTime).toLocaleTimeString('ar-EG')}`,

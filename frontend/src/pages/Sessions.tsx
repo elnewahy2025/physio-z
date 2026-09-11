@@ -73,7 +73,7 @@ export default function Sessions() {
                       <p className="font-medium text-gray-900 dark:text-gray-100">
                         {session.appointment.patient.name}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {new Date(session.appointment.dateTime).toLocaleDateString(
                           lang === 'ar' ? 'ar-EG' : 'en-US',
                           { year: 'numeric', month: 'long', day: 'numeric' },
@@ -83,25 +83,25 @@ export default function Sessions() {
                       </p>
                       <div className="mt-2 space-y-1">
                         <p className="text-sm">
-                          <span className="font-medium text-gray-700">
+                          <span className="font-medium text-gray-700 dark:text-gray-300">
                             {L('\u0627\u0644\u062a\u0634\u062e\u064a\u0635', 'Diagnosis')}:
                           </span>{' '}
-                          <span className="text-gray-600">{session.diagnosis}</span>
+                          <span className="text-gray-600 dark:text-gray-400">{session.diagnosis}</span>
                         </p>
                         {session.treatmentPlan && (
                           <p className="text-sm">
-                            <span className="font-medium text-gray-700">
+                            <span className="font-medium text-gray-700 dark:text-gray-300">
                               {L('\u062e\u0637\u0629 \u0627\u0644\u0639\u0644\u0627\u062c', 'Treatment Plan')}:
                             </span>{' '}
-                            <span className="text-gray-600">{session.treatmentPlan}</span>
+                            <span className="text-gray-600 dark:text-gray-400">{session.treatmentPlan}</span>
                           </p>
                         )}
                         {session.notes && (
                           <p className="text-sm">
-                            <span className="font-medium text-gray-700">
+                            <span className="font-medium text-gray-700 dark:text-gray-300">
                               {L('\u0645\u0644\u0627\u062d\u0638\u0627\u062a', 'Notes')}:
                             </span>{' '}
-                            <span className="text-gray-600">{session.notes}</span>
+                            <span className="text-gray-600 dark:text-gray-400">{session.notes}</span>
                           </p>
                         )}
                       </div>
@@ -111,12 +111,12 @@ export default function Sessions() {
                     <Badge status="COMPLETED">
                       {L('\u0645\u0643\u062a\u0645\u0644\u0629', 'Completed')}
                     </Badge>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                       {session.duration} {L('\u062f\u0642\u064a\u0642\u0629', 'min')}
                     </div>
                     {session.painLevel !== null && (
                       <div className="flex items-center gap-1">
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
                           {L('\u0645\u0633\u062a\u0648\u0649 \u0627\u0644\u0623\u0644\u0645', 'Pain')}:
                         </span>
                         <span

@@ -7,8 +7,10 @@ import {
   Clock,
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../store/auth';
 import { useI18n } from '../i18n';
+import api from '../lib/api';
 
 export default function Login() {
   const [identifier, setIdentifier] = useState('');
@@ -20,6 +22,18 @@ export default function Login() {
   const { login, isLoading } = useAuthStore();
   const { t, lang, setLang } = useI18n();
   const navigate = useNavigate();
+
+  const { data: settings } = useQuery({
+    queryKey: ['settings'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/settings');
+        return res.data;
+      } catch {
+        return null;
+      }
+    },
+  });
 
   // ─── Rate limit countdown ───
   useEffect(() => {
@@ -97,7 +111,7 @@ export default function Login() {
         onClick={() =>
           setLang(lang === 'ar' ? 'en' : 'ar')
         }
-        className="absolute top-6 end-6 rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+        className="absolute top-6 end-6 rounded-lg bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
       >
         {lang === 'ar' ? 'English' : 'العربية'}
       </button>
@@ -105,12 +119,22 @@ export default function Login() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-lg">
-            <Stethoscope size={32} />
-          </div>
+          {settings?.centerLogo ? (
+            <div className="mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl shadow-lg bg-white dark:bg-gray-900">
+              <img
+                src={settings.centerLogo}
+                alt={settings.centerName || t('appName')}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-lg">
+              <Stethoscope size={32} />
+            </div>
+          )}
 
           <h1 className="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {t('appName')}
+            {settings?.centerName || t('appName')}
           </h1>
 
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -221,7 +245,7 @@ export default function Login() {
                         ? 'إظهار كلمة المرور'
                         : 'Show password'
                   }
-                  className="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  className="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200"
                 >
                   {showPassword ? (
                     <EyeOff size={18} />
@@ -264,7 +288,7 @@ export default function Login() {
         </form>
 
         {/* Registration link */}
-        <div className="mt-6 border-t border-gray-100 pt-4 text-center dark:border-gray-700">
+        <div className="mt-6 border-t border-gray-100 dark:border-gray-700 pt-4 text-center dark:border-gray-700">
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {lang === 'ar'
               ? 'ليس لديك حساب؟'
@@ -281,7 +305,7 @@ export default function Login() {
         </div>
 
         {/* Footer */}
-        <p className="mt-6 text-center text-xs text-gray-400 dark:text-gray-500">
+        <p className="mt-6 text-center text-xs text-gray-400 dark:text-gray-500 dark:text-gray-400">
           {lang === 'ar'
             ? 'مركز العلاج الطبيعي'
             : 'Physio Center'}{' '}

@@ -32,7 +32,7 @@ export const NoShowRiskDashboard: React.FC = () => {
       case 'MEDIUM': return 'bg-yellow-100 text-yellow-800';
       case 'HIGH': return 'bg-orange-100 text-orange-800';
       case 'CRITICAL': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -77,8 +77,8 @@ export const NoShowRiskDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">توقعات عدم الحضور</h2>
-          <p className="text-sm text-gray-600">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">توقعات عدم الحضور</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             المواعيد القادمة مع تقييم مخاطر عدم الحضور
           </p>
         </div>
@@ -93,9 +93,9 @@ export const NoShowRiskDashboard: React.FC = () => {
       {/* Summary Cards */}
       {data?.summary && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <p className="text-sm text-gray-600">إجمالي المواعيد</p>
-            <p className="text-2xl font-bold text-gray-900">{data.summary.total}</p>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <p className="text-sm text-gray-600 dark:text-gray-400">إجمالي المواعيد</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{data.summary.total}</p>
           </div>
           <div className="bg-green-50 p-4 rounded-lg">
             <p className="text-sm text-green-700">مخاطر منخفضة</p>
@@ -117,15 +117,15 @@ export const NoShowRiskDashboard: React.FC = () => {
       )}
 
       {/* High Risk Appointments */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
             مواعيد عالية المخاطر ({highRiskAppointments.length})
           </h3>
         </div>
 
         {highRiskAppointments.length === 0 ? (
-          <div className="p-6 text-center text-gray-500">
+          <div className="p-6 text-center text-gray-500 dark:text-gray-400">
             لا توجد مواعيد عالية المخاطر
           </div>
         ) : (
@@ -138,31 +138,31 @@ export const NoShowRiskDashboard: React.FC = () => {
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRiskColor(appointment.riskLevel)}`}>
                         {getRiskLabel(appointment.riskLevel)} ({appointment.riskScore})
                       </span>
-                      <h4 className="ml-3 text-lg font-medium text-gray-900">
+                      <h4 className="ml-3 text-lg font-medium text-gray-900 dark:text-gray-100">
                         {appointment.patientName}
                       </h4>
                     </div>
                     
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                       {new Date(appointment.appointmentDate).toLocaleString('ar-EG')}
                     </p>
 
                     {/* Risk Factors */}
                     <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
-                        <p className="text-gray-500">عدم حضور سابق:</p>
+                        <p className="text-gray-500 dark:text-gray-400">عدم حضور سابق:</p>
                         <p className="font-medium">{appointment.riskFactors.patientNoShowHistory}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">إلغاء سابق:</p>
+                        <p className="text-gray-500 dark:text-gray-400">إلغاء سابق:</p>
                         <p className="font-medium">{appointment.riskFactors.patientCancellationHistory}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">عمر المريض:</p>
+                        <p className="text-gray-500 dark:text-gray-400">عمر المريض:</p>
                         <p className="font-medium">{appointment.riskFactors.patientAge} سنة</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">رصيد مستحق:</p>
+                        <p className="text-gray-500 dark:text-gray-400">رصيد مستحق:</p>
                         <p className="font-medium">{appointment.riskFactors.outstandingBalance} ج.م</p>
                       </div>
                     </div>
@@ -187,40 +187,40 @@ export const NoShowRiskDashboard: React.FC = () => {
       </div>
 
       {/* All Appointments Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
             جميع المواعيد القادمة
           </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   المريض
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   الموعد
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   درجة المخاطرة
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   المستوى
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
               {data?.appointments?.map((appointment: any) => (
                 <tr key={appointment.appointmentId}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                     {appointment.patientName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {new Date(appointment.appointmentDate).toLocaleString('ar-EG')}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {appointment.riskScore}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

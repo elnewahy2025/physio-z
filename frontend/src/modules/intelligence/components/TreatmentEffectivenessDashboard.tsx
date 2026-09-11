@@ -129,10 +129,10 @@ const TreatmentEffectivenessDashboard: React.FC = () => {
   return (
     <div className="space-y-6" dir="rtl">
       {/* Filters */}
-      <div className="bg-white shadow rounded-lg p-4">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               التشخيص
             </label>
             <input
@@ -145,7 +145,7 @@ const TreatmentEffectivenessDashboard: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               من تاريخ
             </label>
             <input
@@ -157,7 +157,7 @@ const TreatmentEffectivenessDashboard: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               إلى تاريخ
             </label>
             <input
@@ -181,7 +181,7 @@ const TreatmentEffectivenessDashboard: React.FC = () => {
 
       {/* Overall Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -190,14 +190,14 @@ const TreatmentEffectivenessDashboard: React.FC = () => {
                 </svg>
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">إجمالي المرضى</p>
-                <p className="text-lg font-semibold text-gray-900">{data?.overall?.totalPatients || 0}</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">إجمالي المرضى</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{data?.overall?.totalPatients || 0}</p>
               </div>
             </div>
           </div>
         </div>
         
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -206,14 +206,14 @@ const TreatmentEffectivenessDashboard: React.FC = () => {
                 </svg>
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">إجمالي التشخيصات</p>
-                <p className="text-lg font-semibold text-gray-900">{data?.overall?.totalDiagnoses || 0}</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">إجمالي التشخيصات</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{data?.overall?.totalDiagnoses || 0}</p>
               </div>
             </div>
           </div>
         </div>
         
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -222,8 +222,8 @@ const TreatmentEffectivenessDashboard: React.FC = () => {
                 </svg>
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">متوسط معدل النجاح</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">متوسط معدل النجاح</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {data?.overall?.averageSuccessRate?.toFixed(1) || 0}%
                 </p>
               </div>
@@ -231,7 +231,7 @@ const TreatmentEffectivenessDashboard: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -240,8 +240,8 @@ const TreatmentEffectivenessDashboard: React.FC = () => {
                 </svg>
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">متوسط تقليل الألم</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">متوسط تقليل الألم</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {data?.overall?.averagePainReduction?.toFixed(1) || 0}
                 </p>
               </div>
@@ -251,48 +251,48 @@ const TreatmentEffectivenessDashboard: React.FC = () => {
       </div>
 
       {/* Chart */}
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
         <div className="h-96">
           <Bar data={chartData} options={chartOptions} />
         </div>
       </div>
 
       {/* Detailed Results Table */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">تفاصيل فعالية العلاج</h3>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">تفاصيل فعالية العلاج</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   التشخيص
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   عدد المرضى
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   معدل النجاح
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   متوسط الجلسات
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   متوسط تقليل الألم
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
               {data?.byDiagnosis?.map((item: any, index: number) => (
-                <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <tr key={index} className={index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                     {item.diagnosis}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {item.totalPatients}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       item.successRate >= 70
                         ? 'bg-green-100 text-green-800'
@@ -303,10 +303,10 @@ const TreatmentEffectivenessDashboard: React.FC = () => {
                       {item.successRate.toFixed(1)}%
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {item.averageSessionsToSuccess.toFixed(1)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {item.averagePainReduction.toFixed(1)}
                   </td>
                 </tr>

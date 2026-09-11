@@ -63,11 +63,11 @@ const DynamicFormRenderer: React.FC<DynamicFormRendererProps> = ({
 
       {/* Section Header */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
           {currentSectionData.titleAr || currentSectionData.title}
         </h3>
         {currentSectionData.description && (
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {currentSectionData.description}
           </p>
         )}
@@ -90,7 +90,7 @@ const DynamicFormRenderer: React.FC<DynamicFormRendererProps> = ({
         <button
           onClick={handlePrevious}
           disabled={currentSection === 0}
-          className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+          className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-900 disabled:opacity-50"
         >
           السابق
         </button>
@@ -188,7 +188,7 @@ const FormField: React.FC<{
                   }}
                   className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 />
-                <span className="ms-2 text-sm text-gray-700">{option.label}</span>
+                <span className="ms-2 text-sm text-gray-700 dark:text-gray-300">{option.label}</span>
               </label>
             ))}
           </div>
@@ -207,7 +207,7 @@ const FormField: React.FC<{
                   onChange={(e) => onChange(e.target.value)}
                   className="focus:ring-primary-500 text-primary-600"
                 />
-                <span className="ms-2 text-sm text-gray-700">{option.label}</span>
+                <span className="ms-2 text-sm text-gray-700 dark:text-gray-300">{option.label}</span>
               </label>
             ))}
           </div>
@@ -231,13 +231,13 @@ const FormField: React.FC<{
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
         {field.labelAr || field.label}
         {field.required && <span className="text-red-500 ms-1">*</span>}
       </label>
       {renderField()}
       {field.helpText && (
-        <p className="mt-1 text-sm text-gray-500">{field.helpText}</p>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{field.helpText}</p>
       )}
     </div>
   );

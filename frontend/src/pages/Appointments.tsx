@@ -130,8 +130,8 @@ export default function Appointments() {
                     <Clock size={20} />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">{appt.patient.name}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{appt.patient.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {formatTime(appt.dateTime)} آ· {appt.therapist.name}
                       {appt.room && ` آ· Room ${appt.room.number}`}
                       آ· {appt.duration}min
@@ -147,6 +147,15 @@ export default function Appointments() {
                       onClick={() => changeStatus.mutate({ id: appt.id, status: 'CONFIRMED' })}
                       className="rounded-lg p-2 text-green-600 hover:bg-green-50"
                       title={t('confirmed')}
+                    >
+                      <CheckCircle size={18} />
+                    </button>
+                  )}
+                  {appt.status === 'CONFIRMED' && (
+                    <button
+                      onClick={() => changeStatus.mutate({ id: appt.id, status: 'COMPLETED' })}
+                      className="rounded-lg p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                      title={t('completed')}
                     >
                       <CheckCircle size={18} />
                     </button>

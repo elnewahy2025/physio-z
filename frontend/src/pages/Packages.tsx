@@ -56,7 +56,7 @@ export default function Packages() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {L('باقات العلاج', 'Treatment Packages')}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {L('باقات جلسات بأسعار مخفضة', 'Session bundles at discounted prices')}
           </p>
         </div>
@@ -124,7 +124,7 @@ export default function Packages() {
               </h3>
 
               {pkg.description && (
-                <p className="mt-1 text-sm text-gray-500">{pkg.description}</p>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{pkg.description}</p>
               )}
 
               {/* Price */}
@@ -132,25 +132,25 @@ export default function Packages() {
                 <span className="text-3xl font-extrabold text-primary-600">
                   {Number(pkg.price).toFixed(0)}
                 </span>
-                <span className="text-sm text-gray-500">{currency}</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{currency}</span>
               </div>
 
               {/* Session info */}
               <div className="mt-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">{L('عدد الجلسات', 'Sessions')}</span>
+                  <span className="text-gray-500 dark:text-gray-400">{L('عدد الجلسات', 'Sessions')}</span>
                   <span className="font-semibold">{pkg.sessionCount}</span>
                 </div>
 
                 {pkg.durationDays && (
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">{L('صالحة لمدة', 'Valid for')}</span>
+                    <span className="text-gray-500 dark:text-gray-400">{L('صالحة لمدة', 'Valid for')}</span>
                     <span className="font-semibold">{pkg.durationDays} {L('يوم', 'days')}</span>
                   </div>
                 )}
 
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">{L('سعر الجلسة', 'Per session')}</span>
+                  <span className="text-gray-500 dark:text-gray-400">{L('سعر الجلسة', 'Per session')}</span>
                   <span className="font-semibold text-green-600">
                     {(Number(pkg.price) / pkg.sessionCount).toFixed(0)} {currency}
                   </span>
@@ -376,7 +376,7 @@ function SellPackageModal({
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
+      <div className="relative w-full max-w-md rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
         <button
           onClick={onClose}
           className="absolute end-4 top-4 rounded-lg p-2 text-gray-400 hover:bg-gray-100"

@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/auth';
 import { ar } from '../ar';
 import { Card, CardHeader, EmptyState, Spinner } from '../components/ui';
 import type { Patient } from '../types';
+import PatientProfileDashboard from '../components/PatientProfileDashboard';
 
 export default function Patients() {
   const { t, lang } = useI18n();
@@ -14,6 +15,7 @@ export default function Patients() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['patients', search, page],
@@ -67,14 +69,18 @@ export default function Patients() {
           <>
             <div className="divide-y divide-gray-100">
               {patients.map((patient) => (
-                <div key={patient.id} className="flex items-center justify-between py-4">
+                <div 
+                  key={patient.id} 
+                  onClick={() => setSelectedPatientId(patient.id)}
+                  className="flex items-center justify-between py-4 px-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer rounded-lg transition-colors"
+                >
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 text-lg font-semibold text-primary-700">
                       {patient.name.charAt(0)}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{patient.name}</p>
-                      <div className="mt-1 flex items-center gap-4 text-sm text-gray-500">
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{patient.name}</p>
+                      <div className="mt-1 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                         <span className="flex items-center gap-1"><Phone size={14} />{patient.phone}</span>
                         {patient.email && (
                           <span className="flex items-center gap-1"><Mail size={14} />{patient.email}</span>
@@ -84,12 +90,12 @@ export default function Patients() {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-end">
-                      <p className="text-sm font-medium text-gray-900">{patient._count?.appointments || 0}</p>
-                      <p className="text-xs text-gray-500">{t('appointments')}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{patient._count?.appointments || 0}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{t('appointments')}</p>
                     </div>
                     <div className="text-end">
-                      <p className="text-sm font-medium text-gray-900">{patient._count?.invoices || 0}</p>
-                      <p className="text-xs text-gray-500">{t('invoices')}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{patient._count?.invoices || 0}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{t('invoices')}</p>
                     </div>
                   </div>
                 </div>
@@ -97,11 +103,11 @@ export default function Patients() {
             </div>
 
             {pagination && pagination.totalPages > 1 && (
-              <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-4">
+              <div className="mt-4 flex items-center justify-between border-t border-gray-100 dark:border-gray-700 pt-4">
                 <button onClick={() => setPage(page - 1)} disabled={page <= 1} className="btn-secondary !py-1.5 !px-3 text-sm">
                   {L(ar.previous, 'Previous')}
                 </button>
-                <span className="text-sm text-gray-500">{page} / {pagination.totalPages}</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{page} / {pagination.totalPages}</span>
                 <button onClick={() => setPage(page + 1)} disabled={page >= pagination.totalPages} className="btn-secondary !py-1.5 !px-3 text-sm">
                   {L(ar.next, 'Next')}
                 </button>
@@ -110,6 +116,13 @@ export default function Patients() {
           </>
         )}
       </Card>
+
+      {selectedPatientId && (
+        <PatientProfileDashboard
+          patientId={selectedPatientId}
+          onClose={() => setSelectedPatientId(null)}
+        />
+      )}
     </div>
   );
 }

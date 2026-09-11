@@ -35,7 +35,7 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({
     return (
       <div className="flex items-center justify-center min-h-screen" dir="rtl">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-        <p className="mt-4 text-gray-600">جارٍ التحقق...</p>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">جارٍ التحقق...</p>
       </div>
     );
   }
@@ -107,8 +107,8 @@ export const PatientRoute: React.FC<{ children: React.ReactNode }> = ({ children
  */
 export const UnauthorizedPage: React.FC = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50" dir="rtl">
-      <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8 text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900" dir="rtl">
+      <div className="max-w-md w-full bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 text-center">
         <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-6">
           <svg
             className="h-8 w-8 text-red-600"
@@ -129,7 +129,7 @@ export const UnauthorizedPage: React.FC = () => {
           غير مصرح بالوصول
         </h1>
         
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
           عذراً، لا تملك الصلاحية للوصول إلى هذه الصفحة.
         </p>
         

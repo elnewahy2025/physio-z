@@ -39,7 +39,7 @@ const roleColors: Record<string, string> = {
   OWNER: 'bg-purple-50 text-purple-600',
   THERAPIST: 'bg-blue-50 text-blue-600',
   SECRETARY: 'bg-teal-50 text-teal-600',
-  PATIENT: 'bg-gray-50 text-gray-600',
+  PATIENT: 'bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400',
 };
 
 export default function Users() {
@@ -95,11 +95,11 @@ export default function Users() {
   const inactiveUsers = list.filter(u => !u.isActive);
 
   const renderUser = (user: User) => (
-    <div key={user.id} className="flex items-center justify-between py-4 px-2 hover:bg-gray-50/50 transition-colors rounded-lg">
+    <div key={user.id} className="flex items-center justify-between py-4 px-2 hover:bg-gray-50/50 dark:bg-gray-900/50 transition-colors rounded-lg">
       <div className="flex items-center gap-4">
         <div
           className={`flex h-12 w-12 items-center justify-center rounded-lg ${
-            roleColors[user.role] || 'bg-gray-50 text-gray-600'
+            roleColors[user.role] || 'bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400'
           }`}
         >
           {roleIcons[user.role]}
@@ -108,7 +108,7 @@ export default function Users() {
         <div>
           <p className="font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
 
-          <p className="text-sm text-gray-500" dir="ltr">
+          <p className="text-sm text-gray-500 dark:text-gray-400" dir="ltr">
             {user.phone}
             {user.email && ` · ${user.email}`}
           </p>
@@ -237,7 +237,7 @@ export default function Users() {
             {inactiveUsers.length > 0 && (
               <div>
                 <div className="mb-4 flex items-center gap-2 px-2">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     {L('المستخدمين غير النشطين', 'Inactive Users')}
                   </h3>
                   <div className="h-px flex-1 bg-gray-200"></div>
@@ -254,7 +254,7 @@ export default function Users() {
       {/* Delete Confirmation Modal */}
       {deleteConfirmId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800">
+          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-xl dark:bg-gray-800">
             <div className="mb-4 flex items-center gap-3 text-red-600">
               <AlertCircle size={24} />
               <h3 className="text-lg font-bold">
@@ -421,7 +421,7 @@ function NewUserForm({ onClose }: { onClose: () => void }) {
                 className={`rounded-lg border-2 p-4 text-center transition-all ${
                   formData.role === role
                     ? 'border-primary-500 bg-primary-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                 }`}
               >
                 <div
@@ -432,7 +432,7 @@ function NewUserForm({ onClose }: { onClose: () => void }) {
                   {roleIcons[role]}
                 </div>
 
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {roleLabels[role]}
                 </span>
               </button>

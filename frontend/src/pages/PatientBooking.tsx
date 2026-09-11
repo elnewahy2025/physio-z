@@ -189,12 +189,12 @@ function SimpleCalendar({
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 p-4">
+    <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
       {/* Month header */}
       <div className="mb-4 flex items-center justify-between">
         <button
           onClick={prevMonth}
-          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100"
+          className="rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100"
           disabled={currentMonth.getMonth() === today.getMonth()}
         >
           <ChevronLeft
@@ -210,7 +210,7 @@ function SimpleCalendar({
 
         <button
           onClick={nextMonth}
-          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100"
+          className="rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100"
         >
           <ChevronRight
             size={20}
@@ -224,7 +224,7 @@ function SimpleCalendar({
         {weekDays.map((day) => (
           <div
             key={day}
-            className="py-2 text-xs font-medium text-gray-500"
+            className="py-2 text-xs font-medium text-gray-500 dark:text-gray-400"
           >
             {day}
           </div>
@@ -262,7 +262,7 @@ function SimpleCalendar({
                     ? 'text-gray-300'
                     : isPast
                       ? 'text-gray-300'
-                      : 'text-gray-700'
+                      : 'text-gray-700 dark:text-gray-300'
                 }
                 ${
                   isToday && !isSelected
@@ -572,7 +572,7 @@ export default function PatientBooking() {
           )}
         </h1>
 
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           {L(
             'اختر الأخصائي والوقت المناسب لك',
             'Choose a therapist and time that works for you',
@@ -593,7 +593,7 @@ export default function PatientBooking() {
                   ? 'bg-green-500 text-white'
                   : step === s.num
                     ? 'bg-primary-600 text-white shadow-lg'
-                    : 'bg-gray-200 text-gray-500'
+                    : 'bg-gray-200 text-gray-500 dark:text-gray-400'
               }`}
             >
               {step > s.num ? (
@@ -685,7 +685,7 @@ export default function PatientBooking() {
                       selectedTherapist?.id ===
                       therapist.id
                         ? 'border-primary-500 bg-primary-50'
-                        : 'border-gray-200'
+                        : 'border-gray-200 dark:border-gray-700'
                     }`}
                   >
                     {/* Therapist avatar */}
@@ -701,7 +701,7 @@ export default function PatientBooking() {
                         {therapist.name}
                       </p>
 
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {L(
                           'أخصائي علاج طبيعي',
                           'Physiotherapist',
@@ -801,7 +801,7 @@ export default function PatientBooking() {
 
           <button
             onClick={() => setStep(1)}
-            className="mt-4 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+            className="mt-4 flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300"
           >
             <ChevronLeft
               size={16}
@@ -839,14 +839,14 @@ export default function PatientBooking() {
             </h2>
 
             {/* Summary bar */}
-            <div className="mb-4 flex flex-wrap items-center gap-4 rounded-lg bg-gray-50 p-3 text-sm">
+            <div className="mb-4 flex flex-wrap items-center gap-4 rounded-lg bg-gray-50 dark:bg-gray-900 p-3 text-sm">
               <div className="flex items-center gap-2">
                 <User
                   size={16}
-                  className="text-gray-500"
+                  className="text-gray-500 dark:text-gray-400"
                 />
 
-                <span className="font-medium text-gray-700">
+                <span className="font-medium text-gray-700 dark:text-gray-300">
                   {selectedTherapist.name}
                 </span>
               </div>
@@ -854,10 +854,10 @@ export default function PatientBooking() {
               <div className="flex items-center gap-2">
                 <CalendarIcon
                   size={16}
-                  className="text-gray-500"
+                  className="text-gray-500 dark:text-gray-400"
                 />
 
-                <span className="font-medium text-gray-700">
+                <span className="font-medium text-gray-700 dark:text-gray-300">
                   {selectedDate.toLocaleDateString(
                     lang === 'ar'
                       ? 'ar-EG'
@@ -921,10 +921,10 @@ export default function PatientBooking() {
                             flex flex-col items-center justify-center rounded-xl border-2 p-4 transition-all
                             ${
                               isDisabled
-                                ? 'cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300'
+                                ? 'cursor-not-allowed border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-300'
                                 : isSelected
                                   ? 'border-primary-500 bg-primary-600 text-white shadow-lg'
-                                  : 'cursor-pointer border-gray-200 text-gray-700 hover:border-primary-300 hover:bg-primary-50'
+                                  : 'cursor-pointer border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-primary-300 hover:bg-primary-50'
                             }
                           `}
                         >
@@ -964,7 +964,7 @@ export default function PatientBooking() {
                 </div>
 
                 {/* Legend */}
-                <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500 dark:text-gray-400">
                   <div className="flex items-center gap-2">
                     <div className="h-3 w-3 rounded-full bg-primary-600" />
                     <span>
@@ -990,7 +990,7 @@ export default function PatientBooking() {
                 <div className="mt-6 flex items-center justify-between">
                   <button
                     onClick={() => setStep(2)}
-                    className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+                    className="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300"
                   >
                     <ChevronLeft
                       size={16}
@@ -1044,7 +1044,7 @@ export default function PatientBooking() {
             </h2>
 
             {/* Booking summary */}
-            <div className="space-y-4 rounded-xl border border-gray-200 bg-gray-50 p-6">
+            <div className="space-y-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-6">
               <div className="flex items-center gap-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-blue-50 text-2xl font-semibold text-blue-600">
                   {selectedTherapist.name
@@ -1057,7 +1057,7 @@ export default function PatientBooking() {
                     {selectedTherapist.name}
                   </p>
 
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     {L(
                       'أخصائي علاج طبيعي',
                       'Physiotherapist',
@@ -1067,14 +1067,14 @@ export default function PatientBooking() {
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="flex items-center gap-3 rounded-lg bg-white p-4">
+                <div className="flex items-center gap-3 rounded-lg bg-white dark:bg-gray-800 p-4">
                   <CalendarIcon
                     size={20}
                     className="text-primary-600"
                   />
 
                   <div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {L(
                         'التاريخ',
                         'Date',
@@ -1097,14 +1097,14 @@ export default function PatientBooking() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 rounded-lg bg-white p-4">
+                <div className="flex items-center gap-3 rounded-lg bg-white dark:bg-gray-800 p-4">
                   <Clock
                     size={20}
                     className="text-primary-600"
                   />
 
                   <div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {L(
                         'الوقت',
                         'Time',
@@ -1128,7 +1128,7 @@ export default function PatientBooking() {
             <div className="mt-6 flex items-center justify-between">
               <button
                 onClick={() => setStep(3)}
-                className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+                className="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300"
               >
                 <ChevronLeft
                   size={16}
@@ -1193,7 +1193,7 @@ export default function PatientBooking() {
             )}
           </h2>
 
-          <p className="mt-2 text-gray-500">
+          <p className="mt-2 text-gray-500 dark:text-gray-400">
             {L(
               'سنراك قريباً. تم إرسال التفاصيل إلى حسابك.',
               "We'll see you soon. Details have been sent to your account.",

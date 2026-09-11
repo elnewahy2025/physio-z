@@ -124,7 +124,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
 
   return (
     <div className="space-y-4" dir="rtl">
-      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
+      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
         <canvas
           ref={canvasRef}
           width={width}
@@ -139,7 +139,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
           onTouchEnd={stopDrawing}
         />
         {!hasSignature && (
-          <p className="text-center text-gray-500 text-sm mt-2">
+          <p className="text-center text-gray-500 dark:text-gray-400 text-sm mt-2">
             وقّع هنا باستخدام الماوس أو اللمس
           </p>
         )}
@@ -150,7 +150,7 @@ export const SignaturePad: React.FC<SignaturePadProps> = ({
           type="button"
           onClick={clearSignature}
           disabled={disabled}
-          className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+          className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-900 disabled:opacity-50"
         >
           مسح التوقيع
         </button>

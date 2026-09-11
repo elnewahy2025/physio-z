@@ -21,15 +21,15 @@ const PrescriptionCard: React.FC<PrescriptionCardProps> = ({ prescription }) => 
   };
 
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
       {/* Header */}
       <div className="px-4 py-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <h3 className="text-sm font-medium text-gray-900">
+            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
               {prescription.title}
             </h3>
-            <div className="mt-1 flex items-center space-x-2 space-x-reverse text-xs text-gray-500">
+            <div className="mt-1 flex items-center space-x-2 space-x-reverse text-xs text-gray-500 dark:text-gray-400">
               <span>
                 {new Date(prescription.startDate).toLocaleDateString('ar-EG')}
               </span>
@@ -53,7 +53,7 @@ const PrescriptionCard: React.FC<PrescriptionCardProps> = ({ prescription }) => 
 
         {/* Description */}
         {prescription.description && (
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             {prescription.description}
           </p>
         )}
@@ -72,15 +72,15 @@ const PrescriptionCard: React.FC<PrescriptionCardProps> = ({ prescription }) => 
 
       {/* Exercises List */}
       {expanded && (
-        <div className="border-t border-gray-200 px-4 py-3">
+        <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-3">
           <div className="space-y-2">
             {prescription.assignments?.map((assignment: any, index: number) => (
-              <div key={index} className="flex items-center justify-between bg-gray-50 rounded-md p-3">
+              <div key={index} className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-md p-3">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {assignment.exercise?.nameAr || assignment.exercise?.name}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     {assignment.sets || assignment.exercise?.defaultSets} × {' '}
                     {assignment.reps || assignment.exercise?.defaultReps}
                     {assignment.holdTime && ` • ${assignment.holdTime}ث`}
@@ -93,7 +93,7 @@ const PrescriptionCard: React.FC<PrescriptionCardProps> = ({ prescription }) => 
                 </div>
                 
                 {/* Progress */}
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 dark:text-gray-400">
                   {assignment.completedCount > 0 && (
                     <span className="flex items-center text-green-600">
                       <CheckIcon className="h-4 w-4 ml-1" />

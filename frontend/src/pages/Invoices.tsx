@@ -39,6 +39,7 @@ export default function Invoices() {
   const invoices: Invoice[] = data?.data || [];
   const pagination = data?.pagination;
   const currency = settings?.currency || 'EGP';
+  const sessionPrice = settings?.sessionPrice || 300;
   const canCreate = user?.role === 'OWNER' || user?.role === 'SECRETARY';
   const canPay = user?.role === 'OWNER' || user?.role === 'SECRETARY';
 
@@ -76,7 +77,7 @@ export default function Invoices() {
           }
         />
 
-        {showInvoiceForm && <NewInvoiceForm onClose={() => setShowInvoiceForm(false)} currency={currency} />}
+        {showInvoiceForm && <NewInvoiceForm onClose={() => setShowInvoiceForm(false)} currency={currency} sessionPrice={sessionPrice} />}
         {paymentFor && <PaymentForm invoice={paymentFor} currency={currency} onClose={() => setPaymentFor(null)} />}
 
         {invoices.length === 0 ? (
@@ -96,13 +97,13 @@ export default function Invoices() {
                       <FileText size={20} />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{inv.number}</p>
-                      <p className="text-sm text-gray-500">{inv.patient.name}</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{inv.number}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{inv.patient.name}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-end">
-                      <p className="font-semibold text-gray-900">{Number(inv.total).toFixed(0)} {currency}</p>
+                      <p className="font-semibold text-gray-900 dark:text-gray-100">{Number(inv.total).toFixed(0)} {currency}</p>
                       {remaining > 0 && (
                         <p className="text-xs text-red-500">
                           {L(ar.remaining, 'Remaining')}: {remaining.toFixed(0)} {currency}
@@ -127,7 +128,7 @@ export default function Invoices() {
   );
 }
 
-function NewInvoiceForm({ onClose, currency }: { onClose: () => void; currency: string }) {
+function NewInvoiceForm({ onClose, currency, sessionPrice }: { onClose: () => void; currency: string; sessionPrice: number }) {
   const { t, lang } = useI18n();
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
@@ -141,7 +142,7 @@ function NewInvoiceForm({ onClose, currency }: { onClose: () => void; currency: 
     },
   });
 
-  const [formData, setFormData] = useState({ patientId: '', amount: '' });
+  const [formData, setFormData] = useState({ patientId: '', amount: String(sessionPrice) });
 
   const createInvoice = useMutation({
     mutationFn: async (data: any) => {
@@ -179,7 +180,7 @@ function NewInvoiceForm({ onClose, currency }: { onClose: () => void; currency: 
           <label className="label">{L(ar.amountLabel, 'Amount')} ({currency}) *</label>
           <input type="number" value={formData.amount}
             onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-            className="input" required min="1" step="0.01" placeholder="300" />
+            className="input" required min="1" step="0.01" placeholder={String(sessionPrice)} />
         </div>
       </div>
       <div className="mt-4 flex justify-end gap-3">
@@ -228,7 +229,7 @@ function PaymentForm({ invoice, currency, onClose }: { invoice: Invoice; currenc
       <h3 className="mb-4 text-lg font-semibold">
         {L(ar.recordPayment, 'Record Payment')} - {invoice.number}
       </h3>
-      <p className="mb-4 text-sm text-gray-600">
+      <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
         {L(ar.remaining, 'Remaining')}: {remaining.toFixed(0)} {currency}
       </p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

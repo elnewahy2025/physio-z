@@ -46,7 +46,7 @@ class ErrorBoundary extends Component<Props, State> {
       return (
         <div
           className={`flex min-h-screen items-center justify-center p-4 ${
-            isDark ? 'bg-gray-950' : 'bg-gray-50'
+            isDark ? 'bg-gray-950' : 'bg-gray-50 dark:bg-gray-900'
           }`}
           dir={isRTL ? 'rtl' : 'ltr'}
         >
@@ -54,7 +54,7 @@ class ErrorBoundary extends Component<Props, State> {
             className={`w-full max-w-lg rounded-2xl border p-8 text-center shadow-xl ${
               isDark
                 ? 'border-gray-700 bg-gray-800'
-                : 'border-gray-200 bg-white'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
             }`}
           >
             {/* Error icon */}
@@ -73,7 +73,7 @@ class ErrorBoundary extends Component<Props, State> {
 
             <p
               className={`mt-2 text-sm ${
-                isDark ? 'text-gray-400' : 'text-gray-500'
+                isDark ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'
               }`}
             >
               {isRTL
@@ -86,7 +86,7 @@ class ErrorBoundary extends Component<Props, State> {
               <details className="mt-6 text-start">
                 <summary
                   className={`flex cursor-pointer items-center gap-2 text-sm font-medium ${
-                    isDark ? 'text-gray-400' : 'text-gray-600'
+                    isDark ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'
                   }`}
                 >
                   <Bug size={14} />
@@ -94,7 +94,7 @@ class ErrorBoundary extends Component<Props, State> {
                 </summary>
                 <pre
                   className={`mt-2 max-h-48 overflow-auto rounded-lg p-3 text-xs ${
-                    isDark ? 'bg-gray-900 text-red-400' : 'bg-gray-50 text-red-600'
+                    isDark ? 'bg-gray-900 text-red-400' : 'bg-gray-50 dark:bg-gray-900 text-red-600'
                   }`}
                 >
                   {this.state.error.toString()}

@@ -59,7 +59,7 @@ export default function InstallPrompt() {
   if (isInstalled || !showPrompt) return null;
 
   return (
-    <div className="fixed bottom-4 inset-x-4 z-50 mx-auto max-w-md rounded-xl border border-gray-200 bg-white p-4 shadow-lg sm:bottom-6">
+    <div className="fixed bottom-4 inset-x-4 z-50 mx-auto max-w-md rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-lg sm:bottom-6">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600 text-white">
@@ -69,7 +69,7 @@ export default function InstallPrompt() {
             <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
               {L('تثبيت التطبيق', 'Install App')}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {L('أضف إلى شاشة البداية', 'Add to your home screen')}
             </p>
           </div>
@@ -78,7 +78,7 @@ export default function InstallPrompt() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowPrompt(false)}
-            className="rounded-lg p-2 text-gray-400 hover:bg-gray-50"
+            className="rounded-lg p-2 text-gray-400 hover:bg-gray-50 dark:bg-gray-900"
             aria-label="Dismiss"
           >
             <X size={16} />

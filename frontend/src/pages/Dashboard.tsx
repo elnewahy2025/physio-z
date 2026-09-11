@@ -195,7 +195,7 @@ export default function Dashboard() {
                 </h3>
 
                 {settings.address && (
-                  <p className="mt-1 text-sm text-gray-500">
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     {settings.address}
                   </p>
                 )}
@@ -243,7 +243,7 @@ export default function Dashboard() {
                       {appt.patient.name}
                     </p>
 
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {formatTime(appt.dateTime)} ·{' '}
                       {appt.therapist.name}
                       {appt.room &&
@@ -291,7 +291,7 @@ export default function Dashboard() {
                         {inv.number}
                       </p>
 
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {inv.patient.name} ·{' '}
                         {formatDate(inv.createdAt)}
                       </p>

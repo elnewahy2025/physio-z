@@ -51,7 +51,7 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ patientId, onPhotoUpload 
   return (
     <div className="space-y-6" dir="rtl">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">تتبع التقدم بالصور</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">تتبع التقدم بالصور</h3>
         <button
           onClick={() => setShowUpload(!showUpload)}
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
@@ -66,13 +66,13 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ patientId, onPhotoUpload 
       )}
 
       {photos.length === 0 ? (
-        <p className="text-center text-gray-500 py-8">لا توجد صور بعد</p>
+        <p className="text-center text-gray-500 dark:text-gray-400 py-8">لا توجد صور بعد</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {photos.map((photo: any) => (
             <div
               key={photo.id}
-              className="bg-white overflow-hidden shadow rounded-lg"
+              className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg"
             >
               <img
                 src={`data:image/jpeg;base64,${photo.thumbnailData}`}
@@ -82,10 +82,10 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ patientId, onPhotoUpload 
               <div className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {getPhotoTypeLabel(photo.photoType)}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {new Date(photo.photoDate).toLocaleDateString('ar-EG')}
                     </p>
                     {photo.bodyPart && (
@@ -103,7 +103,7 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ patientId, onPhotoUpload 
                   </button>
                 </div>
                 {photo.notes && (
-                  <p className="mt-2 text-sm text-gray-600">{photo.notes}</p>
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{photo.notes}</p>
                 )}
               </div>
             </div>

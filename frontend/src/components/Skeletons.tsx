@@ -98,7 +98,7 @@ export function TableSkeleton({ rows = 5, cols = 4 }: { rows?: number; cols?: nu
 
       {/* Column headers */}
       <div
-        className="mb-4 grid gap-4 border-b border-gray-100 pb-3 dark:border-gray-700"
+        className="mb-4 grid gap-4 border-b border-gray-100 dark:border-gray-700 pb-3 dark:border-gray-700"
         style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}
       >
         {Array.from({ length: cols }).map((_, i) => (

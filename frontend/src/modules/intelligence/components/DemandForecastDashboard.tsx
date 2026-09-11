@@ -74,15 +74,15 @@ const DemandForecastDashboard: React.FC = () => {
     <div className="space-y-6" dir="rtl">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <TrendingUpIcon className="h-6 w-6 text-blue-400" />
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">متوسط الطلب اليومي</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">متوسط الطلب اليومي</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {forecast?.summary?.averageDailyDemand?.toFixed(1) || 0}
                 </p>
               </div>
@@ -90,15 +90,15 @@ const DemandForecastDashboard: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <CalendarIcon className="h-6 w-6 text-green-400" />
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">يوم الذروة</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">يوم الذروة</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {forecast?.summary?.peakDay ? 
                     new Date(forecast.summary.peakDay).toLocaleDateString('ar-EG') : 
                     'لا يوجد'}
@@ -108,15 +108,15 @@ const DemandForecastDashboard: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <TrendingDownIcon className="h-6 w-6 text-red-400" />
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">أقل يوم طلباً</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">أقل يوم طلباً</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {forecast?.summary?.lowDay ? 
                     new Date(forecast.summary.lowDay).toLocaleDateString('ar-EG') : 
                     'لا يوجد'}
@@ -126,14 +126,14 @@ const DemandForecastDashboard: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <ChartBarIcon className="h-6 w-6 text-purple-400" />
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">الاتجاه العام</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">الاتجاه العام</p>
                 <p className={`text-lg font-semibold ${
                   forecast?.summary?.trend > 0 ? 'text-green-600' : 'text-red-600'
                 }`}>
@@ -147,9 +147,9 @@ const DemandForecastDashboard: React.FC = () => {
       </div>
 
       {/* Calendar Heatmap */}
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-medium text-gray-900">خريطة حرارة الطلب</h3>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">خريطة حرارة الطلب</h3>
           <div className="flex items-center space-x-4">
             <select
               value={selectedMonth}
@@ -180,7 +180,7 @@ const DemandForecastDashboard: React.FC = () => {
           <div className="grid grid-cols-7 gap-2">
             {/* Day headers */}
             {['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'].map((day) => (
-              <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
+              <div key={day} className="text-center text-sm font-medium text-gray-500 dark:text-gray-400 py-2">
                 {day}
               </div>
             ))}
@@ -208,37 +208,37 @@ const DemandForecastDashboard: React.FC = () => {
         <div className="mt-6 flex items-center justify-center space-x-6">
           <div className="flex items-center">
             <div className="w-4 h-4 bg-green-100 rounded mr-2"></div>
-            <span className="text-sm text-gray-600">منخفض (0-2)</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">منخفض (0-2)</span>
           </div>
           <div className="flex items-center">
             <div className="w-4 h-4 bg-yellow-100 rounded mr-2"></div>
-            <span className="text-sm text-gray-600">متوسط (3-5)</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">متوسط (3-5)</span>
           </div>
           <div className="flex items-center">
             <div className="w-4 h-4 bg-orange-100 rounded mr-2"></div>
-            <span className="text-sm text-gray-600">عالي (6-10)</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">عالي (6-10)</span>
           </div>
           <div className="flex items-center">
             <div className="w-4 h-4 bg-red-100 rounded mr-2"></div>
-            <span className="text-sm text-gray-600">مرتفع جداً (10+)</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">مرتفع جداً (10+)</span>
           </div>
         </div>
       </div>
 
       {/* Weekly Patterns */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-6">أنماط الطلب الأسبوعية</h3>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-6">أنماط الطلب الأسبوعية</h3>
         <div className="grid grid-cols-7 gap-4">
           {weeklyPatterns.map((pattern) => (
             <div key={pattern.dayOfWeek} className="text-center">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-sm font-medium text-gray-900 mb-2">
+              <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                   {pattern.dayName}
                 </p>
                 <p className="text-2xl font-bold text-primary-600">
                   {pattern.averageAppointments.toFixed(1)}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   مواعيد/أسبوع
                 </p>
                 {pattern.isWeekend && (
@@ -253,16 +253,16 @@ const DemandForecastDashboard: React.FC = () => {
       </div>
 
       {/* 30-Day Forecast */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-6">توقعات الطلب (30 يوم)</h3>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-6">توقعات الطلب (30 يوم)</h3>
         <div className="space-y-2">
           {forecast?.forecast?.slice(0, 14).map((day: any) => (
-            <div key={day.date.toISOString()} className="flex items-center justify-between py-2 border-b border-gray-100">
+            <div key={day.date.toISOString()} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700">
               <div className="flex items-center">
-                <div className="w-16 text-sm text-gray-500">
+                <div className="w-16 text-sm text-gray-500 dark:text-gray-400">
                   {new Date(day.date).toLocaleDateString('ar-EG', { weekday: 'short' })}
                 </div>
-                <div className="w-24 text-sm font-medium text-gray-900">
+                <div className="w-24 text-sm font-medium text-gray-900 dark:text-gray-100">
                   {new Date(day.date).toLocaleDateString('ar-EG')}
                 </div>
               </div>
@@ -276,10 +276,10 @@ const DemandForecastDashboard: React.FC = () => {
                     }}
                   />
                 </div>
-                <span className="text-sm font-medium text-gray-900 w-12">
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100 w-12">
                   {day.predictedAppointments}
                 </span>
-                <span className="text-xs text-gray-500 w-12">
+                <span className="text-xs text-gray-500 dark:text-gray-400 w-12">
                   {day.confidence}%
                 </span>
               </div>

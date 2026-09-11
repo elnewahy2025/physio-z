@@ -158,7 +158,7 @@ export default function CalendarPage() {
                 flex items-center gap-2 rounded-s-lg px-4 py-2 text-sm font-medium transition-colors
                 ${view === 'week'
                   ? 'bg-primary-600 text-white'
-                  : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-700'
                 }
               `}
             >
@@ -171,7 +171,7 @@ export default function CalendarPage() {
                 flex items-center gap-2 rounded-e-lg px-4 py-2 text-sm font-medium transition-colors
                 ${view === 'month'
                   ? 'bg-primary-600 text-white'
-                  : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-700'
                 }
               `}
             >
@@ -186,7 +186,7 @@ export default function CalendarPage() {
               <>
                 <button
                   onClick={handlePrevWeek}
-                  className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                  className="rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
                 >
                   <ChevronLeft size={20} className={lang === 'ar' ? 'rotate-180' : ''} />
                 </button>
@@ -198,7 +198,7 @@ export default function CalendarPage() {
                 </button>
                 <button
                   onClick={handleNextWeek}
-                  className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                  className="rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
                 >
                   <ChevronRight size={20} className={lang === 'ar' ? 'rotate-180' : ''} />
                 </button>
@@ -281,8 +281,8 @@ export default function CalendarPage() {
 
       {newAppointmentDate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl dark:bg-gray-900 p-6">
-            <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white dark:bg-gray-800 shadow-xl dark:bg-gray-900 p-6">
+            <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-gray-100 dark:text-white">
               {lang === 'ar' ? 'موعد جديد' : 'New Appointment'}
             </h2>
             <NewAppointmentForm

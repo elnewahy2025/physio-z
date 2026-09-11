@@ -13,7 +13,7 @@ const STATUS_COLORS: Record<string, string> = {
   CONFIRMED: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700',
   COMPLETED: 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700',
   CANCELLED: 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700',
-  NO_SHOW: 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600',
+  NO_SHOW: 'bg-gray-100 text-gray-800 dark:text-gray-200 border-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600',
 };
 
 interface WeekViewProps {
@@ -91,7 +91,7 @@ export default function WeekView({
             <div
               key={i}
               className={`
-                border-s border-gray-200 p-2 text-center dark:border-gray-700
+                border-s border-gray-200 dark:border-gray-700 p-2 text-center dark:border-gray-700
                 ${isToday(day) ? 'bg-primary-50 dark:bg-primary-900/20' : ''}
               `}
             >
@@ -130,7 +130,7 @@ export default function WeekView({
           {hours.map((hour) => (
             <React.Fragment key={hour}>
               {/* Hour label */}
-              <div className="border-b border-gray-100 dark:border-gray-800 p-2 text-end text-xs text-gray-400 dark:text-gray-500">
+              <div className="border-b border-gray-100 dark:border-gray-700 dark:border-gray-800 p-2 text-end text-xs text-gray-400 dark:text-gray-500 dark:text-gray-400">
                 {formatHour(hour)}
               </div>
 

@@ -49,7 +49,7 @@ export default function NotificationToast() {
   return (
     <div
       className={`
-      fixed top-16 end-4 z-[70] max-w-sm cursor-pointer rounded-xl border border-gray-200 bg-white p-4 shadow-2xl
+      fixed top-16 end-4 z-[70] max-w-sm cursor-pointer rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-2xl
       transition-all duration-300
       ${visible ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}
     `}
@@ -58,7 +58,7 @@ export default function NotificationToast() {
       <div className="flex items-start gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
           {TOAST_ICONS[currentNotification.type] || (
-            <CheckCircle size={18} className="text-gray-500" />
+            <CheckCircle size={18} className="text-gray-500 dark:text-gray-400" />
           )}
         </div>
 
@@ -66,7 +66,7 @@ export default function NotificationToast() {
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
             {currentNotification.title}
           </p>
-          <p className="mt-0.5 text-xs text-gray-500">
+          <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
             {currentNotification.message}
           </p>
         </div>

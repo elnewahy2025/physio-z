@@ -72,7 +72,7 @@ export function FilterBar({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/50">
+    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 dark:border-gray-700 dark:bg-gray-800/50">
       <div className="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400">
         <Filter size={16} />
         {L('تصفية', 'Filter')}

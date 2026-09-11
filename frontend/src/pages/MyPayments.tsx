@@ -97,7 +97,7 @@ export default function MyPayments() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           {L('مدفوعاتي', 'My Payments')}
         </h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           {L('فواتيرك ومدفوعاتك', 'Your invoices and payment history')}
         </p>
       </div>
@@ -200,7 +200,7 @@ export default function MyPayments() {
 
                       <div>
                         <p className="font-semibold text-gray-900 dark:text-gray-100">{invoice.number}</p>
-                        <div className="flex items-center gap-3 text-sm text-gray-500">
+                        <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
                           <span className="flex items-center gap-1">
                             <Calendar size={12} />
                             {formatDate(invoice.createdAt)}
@@ -240,11 +240,11 @@ export default function MyPayments() {
 
                   {/* Expanded content */}
                   {isExpanded && (
-                    <div className="mt-4 space-y-4 border-t border-gray-100 pt-4">
+                    <div className="mt-4 space-y-4 border-t border-gray-100 dark:border-gray-700 pt-4">
                       {/* Amount breakdown */}
-                      <div className="grid grid-cols-3 gap-4 rounded-lg bg-gray-50 p-4">
+                      <div className="grid grid-cols-3 gap-4 rounded-lg bg-gray-50 dark:bg-gray-900 p-4">
                         <div>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {L('المبلغ', 'Amount')}
                           </p>
                           <p className="mt-1 font-semibold text-gray-900 dark:text-gray-100">
@@ -252,7 +252,7 @@ export default function MyPayments() {
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {L('الضريبة', 'Tax')}
                           </p>
                           <p className="mt-1 font-semibold text-gray-900 dark:text-gray-100">
@@ -260,7 +260,7 @@ export default function MyPayments() {
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {L('الإجمالي', 'Total')}
                           </p>
                           <p className="mt-1 font-bold text-primary-600">
@@ -272,14 +272,14 @@ export default function MyPayments() {
                       {/* Payment history */}
                       {(invoice.payments || []).length > 0 && (
                         <div>
-                          <p className="mb-2 text-sm font-medium text-gray-700">
+                          <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                             {L('سجل المدفوعات', 'Payment History')}
                           </p>
                           <div className="space-y-2">
                             {invoice.payments.map((payment) => (
                               <div
                                 key={payment.id}
-                                className="flex items-center justify-between rounded-lg bg-white p-3 border border-gray-100"
+                                className="flex items-center justify-between rounded-lg bg-white dark:bg-gray-800 p-3 border border-gray-100 dark:border-gray-700"
                               >
                                 <div className="flex items-center gap-3">
                                   <CreditCard size={16} className="text-gray-400" />
@@ -287,7 +287,7 @@ export default function MyPayments() {
                                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                       {payment.method.replace('_', ' ')}
                                     </p>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
                                       {formatDate(payment.paymentDate)}
                                     </p>
                                   </div>

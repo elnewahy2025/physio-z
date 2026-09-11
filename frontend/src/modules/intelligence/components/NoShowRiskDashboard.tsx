@@ -64,15 +64,15 @@ const NoShowRiskDashboard: React.FC = () => {
     <div className="space-y-6" dir="rtl">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <CalendarIcon className="h-6 w-6 text-blue-400" />
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">إجمالي المواعيد القادمة</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">إجمالي المواعيد القادمة</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {upcomingAppointments?.totalAppointments || 0}
                 </p>
               </div>
@@ -80,15 +80,15 @@ const NoShowRiskDashboard: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <AlertTriangleIcon className="h-6 w-6 text-orange-400" />
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">مواعيد عالية الخطورة</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">مواعيد عالية الخطورة</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {upcomingAppointments?.highRiskAppointments || 0}
                 </p>
               </div>
@@ -96,15 +96,15 @@ const NoShowRiskDashboard: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <XCircleIcon className="h-6 w-6 text-red-400" />
               </div>
               <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 truncate">مواعيد حرجة</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">مواعيد حرجة</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {highRiskAppointments.filter((apt: any) => apt.riskLevel === 'CRITICAL').length}
                 </p>
               </div>
@@ -114,9 +114,9 @@ const NoShowRiskDashboard: React.FC = () => {
       </div>
 
       {/* High Risk Appointments */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-          <h3 className="text-lg font-medium text-gray-900">مواعيد عالية الخطورة</h3>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">مواعيد عالية الخطورة</h3>
           <button
             onClick={loadUpcomingAppointments}
             className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 text-sm"
@@ -126,7 +126,7 @@ const NoShowRiskDashboard: React.FC = () => {
         </div>
         
         {highRiskAppointments.length === 0 ? (
-          <div className="p-6 text-center text-gray-500">
+          <div className="p-6 text-center text-gray-500 dark:text-gray-400">
             لا توجد مواعيد عالية الخطورة
           </div>
         ) : (
@@ -137,10 +137,10 @@ const NoShowRiskDashboard: React.FC = () => {
                   <div className="flex items-center">
                     {getRiskIcon(appointment.riskLevel)}
                     <div className="mr-4">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {appointment.patientName}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {new Date(appointment.appointmentDate).toLocaleString('ar-EG')}
                       </p>
                     </div>
@@ -148,7 +148,7 @@ const NoShowRiskDashboard: React.FC = () => {
                   
                   <div className="flex items-center space-x-4">
                     <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         درجة الخطورة: {appointment.riskScore}
                       </p>
                       <span className={getRiskBadge(appointment.riskLevel)}>
@@ -162,19 +162,19 @@ const NoShowRiskDashboard: React.FC = () => {
                 {/* Risk Factors */}
                 <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-500">عدم حضور سابق:</p>
+                    <p className="text-gray-500 dark:text-gray-400">عدم حضور سابق:</p>
                     <p className="font-medium">{appointment.riskFactors.patientNoShowHistory}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">إلغاء سابق:</p>
+                    <p className="text-gray-500 dark:text-gray-400">إلغاء سابق:</p>
                     <p className="font-medium">{appointment.riskFactors.patientCancellationHistory}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">عمر المريض:</p>
+                    <p className="text-gray-500 dark:text-gray-400">عمر المريض:</p>
                     <p className="font-medium">{appointment.riskFactors.patientAge} سنة</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">رصيد مستحق:</p>
+                    <p className="text-gray-500 dark:text-gray-400">رصيد مستحق:</p>
                     <p className="font-medium">{appointment.riskFactors.outstandingBalance} ج.م</p>
                   </div>
                 </div>
@@ -197,41 +197,41 @@ const NoShowRiskDashboard: React.FC = () => {
       </div>
 
       {/* All Appointments List */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">جميع المواعيد القادمة</h3>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">جميع المواعيد القادمة</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   المريض
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   الموعد
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   درجة الخطورة
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   المستوى
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   التوصيات
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
               {upcomingAppointments?.riskAssessments?.map((appointment: any) => (
                 <tr key={appointment.appointmentId}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                     {appointment.patientName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {new Date(appointment.appointmentDate).toLocaleString('ar-EG')}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {appointment.riskScore}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -241,7 +241,7 @@ const NoShowRiskDashboard: React.FC = () => {
                        appointment.riskLevel === 'MEDIUM' ? 'متوسط' : 'منخفض'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                     {appointment.recommendations.length > 0 ? (
                       <ul className="list-disc list-inside">
                         {appointment.recommendations.slice(0, 2).map((rec: string, index: number) => (

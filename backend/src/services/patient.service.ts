@@ -36,12 +36,28 @@ export async function getPatientById(id: string) {
   const patient = await prisma.patient.findUnique({
     where: { id },
     include: {
-      appointments: { select: { id: true, dateTime: true, status: true, duration: true,
-        therapist: { select: { id: true, name: true } },
-        room: { select: { number: true, name: true } } },
-        orderBy: { dateTime: 'desc' }, take: 10 },
-      invoices: { select: { id: true, number: true, total: true, status: true, createdAt: true },
-        orderBy: { createdAt: 'desc' }, take: 10 },
+      appointments: {
+        select: {
+          id: true, dateTime: true, status: true, duration: true, notes: true,
+          therapist: { select: { id: true, name: true } },
+          room: { select: { number: true, name: true } },
+          therapySessions: true,
+        },
+        orderBy: { dateTime: 'desc' },
+      },
+      invoices: {
+        select: { id: true, number: true, amount: true, total: true, status: true, createdAt: true, dueDate: true, paymentMethod: true },
+        orderBy: { createdAt: 'desc' },
+      },
+      patientPackages: {
+        include: { package: true },
+        orderBy: { purchaseDate: 'desc' },
+      },
+      files: { orderBy: { createdAt: 'desc' } },
+      ConsentForm: { orderBy: { createdAt: 'desc' } },
+      MedicalFile: { orderBy: { createdAt: 'desc' } },
+      PainMap: { orderBy: { createdAt: 'desc' } },
+      ProgressPhoto: { orderBy: { createdAt: 'desc' } },
       user: { select: { id: true, email: true } },
     },
   });

@@ -5,6 +5,7 @@ import api from '../lib/api';
 import { useI18n } from '../i18n';
 import { ar } from '../ar';
 import { Card, CardHeader, Spinner } from '../components/ui';
+import LogoUpload from '../components/LogoUpload';
 
 export default function Settings() {
   const { t, lang } = useI18n();
@@ -75,7 +76,7 @@ export default function Settings() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <section>
-            <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700">
+            <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
               <Building2 size={16} /> {L(ar.centerInfo, 'Center Information')}
             </h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -112,8 +113,15 @@ export default function Settings() {
             </div>
           </section>
 
+          <section className="border-t border-gray-100 dark:border-gray-700 pt-6">
+            <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <Building2 size={16} /> {L('شعار المركز', 'Center Logo')}
+            </h3>
+            <LogoUpload currentLogo={settings?.centerLogo || null} />
+          </section>
+
           <section>
-            <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700">
+            <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
               <DollarSign size={16} /> {L(ar.financialSettings, 'Financial Settings')}
             </h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -142,7 +150,7 @@ export default function Settings() {
           </section>
 
           <section>
-            <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700">
+            <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
               <Phone size={16} /> {L(ar.whatsappTemplateLabel, 'WhatsApp Message Template')}
             </h3>
             <div>
@@ -154,7 +162,7 @@ export default function Settings() {
             </div>
           </section>
 
-          <div className="flex justify-end border-t border-gray-100 pt-4">
+          <div className="flex justify-end border-t border-gray-100 dark:border-gray-700 pt-4">
             <button type="submit" disabled={saveSettings.isPending} className="btn-primary">
               <Save size={16} />
               {saveSettings.isPending ? t('loading') : L(ar.saveSettingsLabel, 'Save Settings')}

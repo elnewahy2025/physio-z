@@ -38,7 +38,7 @@ const ProviderDropdown: React.FC<ProviderDropdownProps> = ({
   return (
     <div>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           {label}
         </label>
       )}
@@ -59,7 +59,7 @@ const ProviderDropdown: React.FC<ProviderDropdownProps> = ({
       </select>
       
       {providers.length === 0 && !loading && (
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
           لا توجد مزودي خدمة {providerType} مضافين. 
           <a href="/settings/providers" className="text-primary-600 hover:text-primary-700">
             إضافة مزود خدمة

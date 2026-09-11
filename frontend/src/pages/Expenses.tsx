@@ -20,7 +20,7 @@ const CATEGORY_LABELS: Record<string, { ar: string; en: string; color: string }>
   EQUIPMENT: { ar: 'أجهزة', en: 'Equipment', color: 'bg-red-50 text-red-700' },
   MARKETING: { ar: 'تسويق', en: 'Marketing', color: 'bg-teal-50 text-teal-700' },
   MAINTENANCE: { ar: 'صيانة', en: 'Maintenance', color: 'bg-orange-50 text-orange-700' },
-  OTHER: { ar: 'أخرى', en: 'Other', color: 'bg-gray-50 text-gray-700' },
+  OTHER: { ar: 'أخرى', en: 'Other', color: 'bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300' },
 };
 
 export default function Expenses() {
@@ -65,6 +65,14 @@ export default function Expenses() {
     },
   });
 
+  const { data: settings } = useQuery({
+    queryKey: ['settings'],
+    queryFn: async () => {
+      const res = await api.get('/settings');
+      return res.data;
+    },
+  });
+
   if (statsLoading) {
     return (
       <Card>
@@ -73,13 +81,6 @@ export default function Expenses() {
     );
   }
 
-  const { data: settings } = useQuery({
-    queryKey: ['settings'],
-    queryFn: async () => {
-      const res = await api.get('/settings');
-      return res.data;
-    },
-  });
   const currency = settings?.currency || 'EGP';
 
   const categoryData = Object.entries(stats?.byCategory || {}).map(([cat, amount]) => ({
@@ -95,7 +96,7 @@ export default function Expenses() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {L('المصروفات', 'Expenses')}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {L('تتبع جميع مصروفات المركز', 'Track all center expenses')}
           </p>
         </div>
@@ -225,14 +226,14 @@ export default function Expenses() {
             {(expenses || []).map((expense: any) => (
               <div key={expense.id} className="flex items-center justify-between py-4">
                 <div className="flex items-center gap-4">
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${CATEGORY_LABELS[expense.category]?.color || 'bg-gray-50'}`}>
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${CATEGORY_LABELS[expense.category]?.color || 'bg-gray-50 dark:bg-gray-900'}`}>
                     <DollarSign size={20} />
                   </div>
                   <div>
                     <p className="font-medium text-gray-900 dark:text-gray-100">
                       {expense.description}
                     </p>
-                    <div className="flex items-center gap-3 text-sm text-gray-500">
+                    <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
                       <span>{new Date(expense.date).toLocaleDateString()}</span>
                       <span>{lang === 'ar' ? CATEGORY_LABELS[expense.category]?.ar : CATEGORY_LABELS[expense.category]?.en}</span>
                       {expense.paymentMethod && <span>{expense.paymentMethod}</span>}

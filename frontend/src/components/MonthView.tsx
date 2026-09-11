@@ -106,7 +106,7 @@ export default function MonthView({
       <div className="flex items-center justify-between">
         <button
           onClick={prevMonth}
-          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+          className="rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
         >
           <ChevronLeft size={20} className={isRTL ? 'rotate-180' : ''} />
         </button>
@@ -115,7 +115,7 @@ export default function MonthView({
         </h3>
         <button
           onClick={nextMonth}
-          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+          className="rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
         >
           <ChevronRight size={20} className={isRTL ? 'rotate-180' : ''} />
         </button>
@@ -150,10 +150,10 @@ export default function MonthView({
               className={`
                 relative flex min-h-[80px] flex-col rounded-lg border p-2 transition-all
                 ${!isCurrentMonth
-                  ? 'border-transparent text-gray-300 dark:text-gray-600'
+                  ? 'border-transparent text-gray-300 dark:text-gray-600 dark:text-gray-400'
                   : isPast
-                    ? 'border-gray-100 bg-gray-50/50 text-gray-400 dark:border-gray-800 dark:bg-gray-900/20 dark:text-gray-500'
-                    : 'cursor-pointer border-gray-200 text-gray-700 hover:border-primary-300 hover:bg-primary-50 dark:border-gray-700 dark:text-gray-300 dark:hover:border-primary-600 dark:hover:bg-primary-900/20'
+                    ? 'border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 text-gray-400 dark:border-gray-800 dark:bg-gray-900/20 dark:text-gray-500 dark:text-gray-400'
+                    : 'cursor-pointer border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-primary-300 hover:bg-primary-50 dark:border-gray-700 dark:text-gray-300 dark:hover:border-primary-600 dark:hover:bg-primary-900/20'
                 }
                 ${isToday ? 'border-2 border-primary-500 dark:border-primary-400' : ''}
                 ${isSelected ? 'bg-primary-100 dark:bg-primary-900/30 ring-2 ring-primary-500 dark:ring-primary-400' : ''}
@@ -178,7 +178,7 @@ export default function MonthView({
                     />
                   ))}
                   {dayAppointments.length > 4 && (
-                    <span className="text-[9px] font-medium text-gray-400 dark:text-gray-500">
+                    <span className="text-[9px] font-medium text-gray-400 dark:text-gray-500 dark:text-gray-400">
                       +{dayAppointments.length - 4}
                     </span>
                   )}
@@ -191,7 +191,7 @@ export default function MonthView({
 
       {/* Selected day appointments */}
       {selectedDay && selectedDayAppointments.length > 0 && (
-        <div className="mt-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+        <div className="mt-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 dark:border-gray-700 dark:bg-gray-800">
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CalendarIcon size={16} className="text-primary-600" />
@@ -221,7 +221,7 @@ export default function MonthView({
               <button
                 key={appt.id}
                 onClick={() => onAppointmentClick?.(appt)}
-                className="flex w-full items-center justify-between rounded-lg bg-gray-50 p-3 text-start transition-colors hover:bg-gray-100 dark:bg-gray-700/50 dark:hover:bg-gray-700"
+                className="flex w-full items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-900 p-3 text-start transition-colors hover:bg-gray-100 dark:bg-gray-700/50 dark:hover:bg-gray-700"
               >
                 <div className="flex items-center gap-3">
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">

@@ -112,19 +112,19 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity" onClick={onClose}>
-          <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+          <div className="absolute inset-0 bg-gray-50 dark:bg-gray-9000 opacity-75"></div>
         </div>
 
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
+        <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
           {/* Header */}
-          <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-200">
+          <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                 إنشاء وصفة تمارين
               </h3>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-gray-400 hover:text-gray-500 dark:text-gray-400"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -136,7 +136,7 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
             <div className="space-y-4">
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   عنوان الوصفة *
                 </label>
                 <input
@@ -151,7 +151,7 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   الوصف
                 </label>
                 <textarea
@@ -165,7 +165,7 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
 
               {/* Instructions */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   تعليمات للمريض
                 </label>
                 <textarea
@@ -180,7 +180,7 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
               {/* Frequency and Duration */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     التكرار
                   </label>
                   <input
@@ -192,7 +192,7 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     المدة
                   </label>
                   <input
@@ -208,7 +208,7 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
               {/* Exercise Selection */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     التمارين ({selectedExercises.length})
                   </label>
                   <button
@@ -222,19 +222,19 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
                 </div>
 
                 {selectedExercises.length === 0 ? (
-                  <p className="text-sm text-gray-500 text-center py-4 border-2 border-dashed border-gray-300 rounded-md">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4 border-2 border-dashed border-gray-300 rounded-md">
                     لم يتم اختيار تمارين بعد
                   </p>
                 ) : (
                   <div className="space-y-3">
                     {selectedExercises.map((ex, index) => (
-                      <div key={index} className="bg-gray-50 rounded-lg p-4">
+                      <div key={index} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                               {ex.exercise.nameAr || ex.exercise.name}
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                               {ex.exercise.category}
                             </p>
                           </div>
@@ -250,7 +250,7 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
                         {/* Parameters */}
                         <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3">
                           <div>
-                            <label className="block text-xs text-gray-500">
+                            <label className="block text-xs text-gray-500 dark:text-gray-400">
                               مجموعات
                             </label>
                             <input
@@ -262,7 +262,7 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
                             />
                           </div>
                           <div>
-                            <label className="block text-xs text-gray-500">
+                            <label className="block text-xs text-gray-500 dark:text-gray-400">
                               تكرارات
                             </label>
                             <input
@@ -275,7 +275,7 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
                           </div>
                           {ex.holdTime && (
                             <div>
-                              <label className="block text-xs text-gray-500">
+                              <label className="block text-xs text-gray-500 dark:text-gray-400">
                                 ثبات (ثانية)
                               </label>
                               <input
@@ -288,7 +288,7 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
                             </div>
                           )}
                           <div>
-                            <label className="block text-xs text-gray-500">
+                            <label className="block text-xs text-gray-500 dark:text-gray-400">
                               راحة (ثانية)
                             </label>
                             <input
@@ -323,7 +323,7 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-900"
               >
                 إلغاء
               </button>
@@ -341,16 +341,16 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
           {showExerciseSearch && (
             <div className="fixed inset-0 z-60 overflow-y-auto">
               <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center">
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75" onClick={() => setShowExerciseSearch(false)} />
+                <div className="fixed inset-0 bg-gray-50 dark:bg-gray-9000 bg-opacity-75" onClick={() => setShowExerciseSearch(false)} />
                 
-                <div className="inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full relative">
-                  <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-                    <h4 className="text-sm font-medium text-gray-900">
+                <div className="inline-block bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full relative">
+                  <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       البحث عن تمرين
                     </h4>
                     <button
                       onClick={() => setShowExerciseSearch(false)}
-                      className="text-gray-400 hover:text-gray-500"
+                      className="text-gray-400 hover:text-gray-500 dark:text-gray-400"
                     >
                       <XMarkIcon className="h-5 w-5" />
                     </button>
@@ -372,14 +372,14 @@ const PrescriptionBuilder: React.FC<PrescriptionBuilderProps> = ({
                           <button
                             key={exercise.id}
                             onClick={() => addExercise(exercise)}
-                            className="w-full text-right px-4 py-2 hover:bg-gray-50 rounded-md"
+                            className="w-full text-right px-4 py-2 hover:bg-gray-50 dark:bg-gray-900 rounded-md"
                           >
                             <div className="flex items-center justify-between">
                               <div>
-                                <p className="text-sm font-medium text-gray-900">
+                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                   {exercise.nameAr || exercise.name}
                                 </p>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
                                   {exercise.category} • {exercise.difficulty}
                                 </p>
                               </div>

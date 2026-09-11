@@ -57,7 +57,7 @@ const PatientPrescriptions: React.FC<PatientPrescriptionsProps> = ({ patientId }
       {/* Prescriptions */}
       {prescriptions.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-500">لا توجد وصفات تمارين</p>
+          <p className="text-gray-500 dark:text-gray-400">لا توجد وصفات تمارين</p>
         </div>
       ) : (
         <div className="space-y-4">

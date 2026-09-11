@@ -77,7 +77,7 @@ export default function NotificationBell() {
       {/* Bell button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+        className="relative rounded-lg p-2 text-gray-500 dark:text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-300"
         aria-label="Notifications"
       >
         <Bell size={20} />
@@ -90,9 +90,9 @@ export default function NotificationBell() {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute end-0 top-full z-50 mt-2 w-80 sm:w-96 rounded-xl border border-gray-200 bg-white shadow-xl sm:w-96">
+        <div className="absolute end-0 top-full z-50 mt-2 w-80 sm:w-96 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl sm:w-96">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-gray-100 p-4">
+          <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 p-4">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
               {L('الإشعارات', 'Notifications')}
               {unreadCount > 0 && (
@@ -117,7 +117,7 @@ export default function NotificationBell() {
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <Bell size={24} className="text-gray-300" />
-                <p className="mt-2 text-sm text-gray-500">
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                   {L('لا توجد إشعارات', 'No notifications')}
                 </p>
               </div>
@@ -127,7 +127,7 @@ export default function NotificationBell() {
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification)}
                   className={`
-                    flex w-full items-start gap-3 border-b border-gray-50 p-4 text-start transition-colors hover:bg-gray-50
+                    flex w-full items-start gap-3 border-b border-gray-50 p-4 text-start transition-colors hover:bg-gray-50 dark:bg-gray-900
                     ${!notification.isRead ? 'bg-primary-50/50' : ''}
                   `}
                 >
@@ -138,7 +138,7 @@ export default function NotificationBell() {
                   `}
                   >
                     {NOTIFICATION_ICONS[notification.type] || (
-                      <Bell size={16} className="text-gray-500" />
+                      <Bell size={16} className="text-gray-500 dark:text-gray-400" />
                     )}
                   </div>
 
@@ -146,7 +146,7 @@ export default function NotificationBell() {
                     <div className="flex items-center justify-between gap-2">
                       <p
                         className={`truncate text-sm font-medium ${
-                          !notification.isRead ? 'text-gray-900 dark:text-gray-100' : 'text-gray-600'
+                          !notification.isRead ? 'text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400'
                         }`}
                       >
                         {notification.title}
@@ -155,7 +155,7 @@ export default function NotificationBell() {
                         <span className="h-2 w-2 shrink-0 rounded-full bg-primary-500" />
                       )}
                     </div>
-                    <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
+                    <p className="mt-0.5 line-clamp-2 text-xs text-gray-500 dark:text-gray-400">
                       {notification.message}
                     </p>
                     <p className="mt-1 text-[10px] text-gray-400">
@@ -169,7 +169,7 @@ export default function NotificationBell() {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="border-t border-gray-100 p-3 text-center">
+            <div className="border-t border-gray-100 dark:border-gray-700 p-3 text-center">
               <button
                 onClick={() => {
                   setIsOpen(false);

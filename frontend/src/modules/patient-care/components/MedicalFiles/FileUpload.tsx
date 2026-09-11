@@ -62,7 +62,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     <div className="space-y-4" dir="rtl">
       {/* Category Selection */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           نوع الملف
         </label>
         <select
@@ -90,14 +90,14 @@ const FileUpload: React.FC<FileUploadProps> = ({
       >
         <input {...getInputProps()} />
         <CloudArrowUpIcon className="mx-auto h-12 w-12 text-gray-400" />
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           {isDragActive ? (
             'أسحب الملفات هنا...'
           ) : (
             <>
               <span className="font-medium text-primary-600">اضغط للرفع</span> أو اسحب وأفلت
               <br />
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
                 JPEG, PNG, PDF, DICOM حتى 10MB
               </span>
             </>

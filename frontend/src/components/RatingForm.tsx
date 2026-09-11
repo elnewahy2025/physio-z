@@ -62,7 +62,7 @@ export default function RatingForm({ appointmentId }: { appointmentId: string })
         </div>
       )}
 
-      <p className="mb-3 text-sm font-medium text-gray-700">
+      <p className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
         {L('كيف كانت تجربتك؟', 'How was your experience?')}
       </p>
 

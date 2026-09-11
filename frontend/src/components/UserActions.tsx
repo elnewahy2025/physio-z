@@ -86,7 +86,7 @@ export function ResetPasswordButton({ userId, userName }: UserActionsProps) {
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
 
-          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
+          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
             <button
               onClick={() => setIsOpen(false)}
               className="absolute end-4 top-4 rounded-lg p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -102,7 +102,7 @@ export function ResetPasswordButton({ userId, userName }: UserActionsProps) {
                 <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                   {L('إعادة تعيين كلمة المرور', 'Reset Password')}
                 </h2>
-                <p className="text-sm text-gray-500">{userName}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{userName}</p>
               </div>
             </div>
 
@@ -226,7 +226,7 @@ export function ChangeRoleButton({ userId, userName, currentRole }: UserActionsP
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
 
-          <div className="relative w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
+          <div className="relative w-full max-w-sm rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
             <button
               onClick={() => setIsOpen(false)}
               className="absolute end-4 top-4 rounded-lg p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -238,7 +238,7 @@ export function ChangeRoleButton({ userId, userName, currentRole }: UserActionsP
               <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                 {L('تغيير الدور', 'Change Role')}
               </h2>
-              <p className="text-sm text-gray-500">{userName}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{userName}</p>
             </div>
 
             {success ? (
@@ -267,7 +267,7 @@ export function ChangeRoleButton({ userId, userName, currentRole }: UserActionsP
                         w-full rounded-xl border-2 p-4 text-start transition-all
                         ${selectedRole === role
                           ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                          : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:border-gray-700'
                         }
                       `}
                     >

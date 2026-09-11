@@ -111,19 +111,19 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity" onClick={onClose}>
-          <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+          <div className="absolute inset-0 bg-gray-50 dark:bg-gray-9000 opacity-75"></div>
         </div>
 
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+        <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
           {/* Header */}
-          <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div className="flex items-start justify-between">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                 إضافة مزود خدمة جديد
               </h3>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-gray-400 hover:text-gray-500 dark:text-gray-400"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -136,17 +136,17 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
               /* Template Selection */
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
                     اختر قالب مزود الخدمة
                   </h4>
-                  <p className="text-sm text-gray-500 mb-4">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                     اختر من القوالب الجاهزة أو أنشئ مزوداً مخصصاً
                   </p>
                 </div>
 
                 {Object.entries(groupedTemplates).map(([category, templates]) => (
                   <div key={category}>
-                    <h5 className="text-xs font-medium text-gray-500 uppercase mb-2">
+                    <h5 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">
                       {categoryLabels[category] || category}
                     </h5>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -154,14 +154,14 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
                         <button
                           key={template.id}
                           onClick={() => handleTemplateSelect(template.id)}
-                          className="text-right p-4 border border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors"
+                          className="text-right p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors"
                         >
                           <div className="flex items-center justify-between">
                             <div>
-                              <h6 className="text-sm font-medium text-gray-900">
+                              <h6 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                 {template.name}
                               </h6>
-                              <p className="text-xs text-gray-500 mt-1">
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                 {template.description}
                               </p>
                             </div>
@@ -181,13 +181,13 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
               /* Provider Configuration */
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Template Info */}
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="text-sm font-medium text-gray-900">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {selectedTemplate.name}
                       </h4>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {selectedTemplate.description}
                       </p>
                     </div>
@@ -203,7 +203,7 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
 
                 {/* Provider Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     اسم المزود *
                   </label>
                   <input
@@ -218,14 +218,14 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
 
                 {/* Credentials */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">
+                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
                     بيانات الاعتماد
                   </h4>
                   <div className="space-y-4">
                     {Object.entries(selectedTemplate.credentialsTemplate).map(
                       ([key, field]: [string, any]) => (
                         <div key={key}>
-                          <label className="block text-sm font-medium text-gray-700">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             {field.label} {field.required && '*'}
                           </label>
                           <input
@@ -237,7 +237,7 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
                             placeholder={field.description}
                           />
                           {field.description && (
-                            <p className="mt-1 text-xs text-gray-500">
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                               {field.description}
                             </p>
                           )}
@@ -259,7 +259,7 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-900"
                   >
                     إلغاء
                   </button>

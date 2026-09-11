@@ -60,7 +60,7 @@ const FileList: React.FC<FileListComponentProps> = ({ patientId, onFileDeleted }
   return (
     <div className="space-y-4" dir="rtl">
       {files.length === 0 ? (
-        <p className="text-center text-gray-500 py-8">لا توجد ملفات طبية</p>
+        <p className="text-center text-gray-500 dark:text-gray-400 py-8">لا توجد ملفات طبية</p>
       ) : (
         <div className="divide-y divide-gray-200">
           {files.map((file: any) => (
@@ -68,10 +68,10 @@ const FileList: React.FC<FileListComponentProps> = ({ patientId, onFileDeleted }
               <div className="flex items-center">
                 <DocumentIcon className="h-8 w-8 text-gray-400" />
                 <div className="ms-4">
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {file.originalName}
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     {new Date(file.createdAt).toLocaleDateString('ar-EG')} •{' '}
                     {(file.size / 1024 / 1024).toFixed(2)} MB
                   </p>

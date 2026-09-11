@@ -52,15 +52,15 @@ export function AppointmentDetailsModal({ appointment, onClose, canEdit = true }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl dark:bg-gray-800">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-xl dark:bg-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-800/50">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+        <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-6 py-4 dark:border-gray-700 dark:bg-gray-800/50">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 dark:text-white">
             {isRTL ? 'تفاصيل الموعد' : 'Appointment Details'}
           </h2>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+            className="rounded-full p-2 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
           >
             <X size={20} />
           </button>
@@ -82,7 +82,7 @@ export function AppointmentDetailsModal({ appointment, onClose, canEdit = true }
               </div>
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{t('patients')}</p>
-                <p className="font-semibold text-gray-900 dark:text-white">{appointment.patient.name}</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100 dark:text-white">{appointment.patient.name}</p>
                 <a href={`tel:${appointment.patient.phone}`} className="flex items-center gap-1 mt-1 text-sm text-primary-600 hover:underline">
                   <Phone size={12} />
                   {appointment.patient.phone}
@@ -97,7 +97,7 @@ export function AppointmentDetailsModal({ appointment, onClose, canEdit = true }
               </div>
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{isRTL ? 'الوقت والتاريخ' : 'Date & Time'}</p>
-                <p className="font-semibold text-gray-900 dark:text-white">{formatDate(appointment.dateTime)}</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100 dark:text-white">{formatDate(appointment.dateTime)}</p>
                 <div className="flex items-center gap-2 mt-1 text-sm text-gray-600 dark:text-gray-300">
                   <Clock size={14} className="text-gray-400" />
                   {formatTime(appointment.dateTime)} ({appointment.duration} min)
@@ -112,7 +112,7 @@ export function AppointmentDetailsModal({ appointment, onClose, canEdit = true }
               </div>
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{isRTL ? 'الأخصائي والعيادة' : 'Therapist & Room'}</p>
-                <p className="font-semibold text-gray-900 dark:text-white">{appointment.therapist.name}</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100 dark:text-white">{appointment.therapist.name}</p>
                 {appointment.room && (
                   <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Room {appointment.room.number}</p>
                 )}
@@ -122,12 +122,12 @@ export function AppointmentDetailsModal({ appointment, onClose, canEdit = true }
             {/* Notes */}
             {appointment.notes && (
               <div className="flex items-start gap-3">
-                <div className="mt-0.5 rounded-full bg-gray-100 p-2 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                <div className="mt-0.5 rounded-full bg-gray-100 p-2 text-gray-600 dark:text-gray-400 dark:bg-gray-800 dark:text-gray-400">
                   <AlignLeft size={18} />
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{isRTL ? 'ملاحظات' : 'Notes'}</p>
-                  <p className="text-sm text-gray-900 dark:text-white mt-1 whitespace-pre-wrap">{appointment.notes}</p>
+                  <p className="text-sm text-gray-900 dark:text-gray-100 dark:text-white mt-1 whitespace-pre-wrap">{appointment.notes}</p>
                 </div>
               </div>
             )}
@@ -136,7 +136,7 @@ export function AppointmentDetailsModal({ appointment, onClose, canEdit = true }
 
         {/* Actions */}
         {canEdit && (appointment.status === 'PENDING' || appointment.status === 'CONFIRMED') && (
-          <div className="border-t border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50 flex gap-3">
+          <div className="border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4 dark:border-gray-700 dark:bg-gray-800/50 flex gap-3">
             {appointment.status === 'PENDING' && (
               <button
                 onClick={() => changeStatus.mutate('CONFIRMED')}
@@ -151,7 +151,7 @@ export function AppointmentDetailsModal({ appointment, onClose, canEdit = true }
             <button
               onClick={() => changeStatus.mutate('CANCELLED')}
               disabled={changeStatus.isPending}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900/50 dark:bg-gray-800 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-red-200 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900/50 dark:bg-gray-800 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
             >
               <XCircle size={18} />
               {t('cancelled')}
