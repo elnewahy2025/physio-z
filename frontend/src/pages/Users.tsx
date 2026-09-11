@@ -226,7 +226,9 @@ function NewUserForm({ onClose }: { onClose: () => void }) {
 
   const createUser = useMutation({
     mutationFn: async (data: any) => {
-      await api.post('/users', data);
+      const payload = { ...data };
+      if (!payload.email) payload.email = null;
+      await api.post('/users', payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
