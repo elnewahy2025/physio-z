@@ -175,8 +175,15 @@ function NewAppointmentForm({
   const { t, lang } = useI18n();
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(10, 0, 0, 0);
+  // Correct timezone offset for datetime-local
+  const tzOffset = tomorrow.getTimezoneOffset() * 60000;
+  const localIso = new Date(tomorrow.getTime() - tzOffset).toISOString().slice(0, 16);
+
   const [formData, setFormData] = useState({
-    patientId: '', therapistId: '', roomId: '', dateTime: '', duration: '45', notes: '',
+    patientId: '', therapistId: '', roomId: '', dateTime: localIso, duration: '45', notes: '',
   });
 
   const L = (arText: string, enText: string) => (lang === 'ar' ? arText : enText);
@@ -201,11 +208,6 @@ function NewAppointmentForm({
     setError(null);
     createAppointment.mutate(formData);
   };
-
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(10, 0, 0, 0);
-  const defaultDateTime = tomorrow.toISOString().slice(0, 16);
 
   return (
     <form onSubmit={handleSubmit} className="mb-6 rounded-xl border border-primary-200 bg-primary-50/50 p-6">
@@ -258,7 +260,7 @@ function NewAppointmentForm({
           <label className="label">{L(ar.dateTimeLabel, 'Date & Time')}</label>
           <input
             type="datetime-local"
-            value={formData.dateTime || defaultDateTime}
+            value={formData.dateTime}
             onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })}
             className="input" required
           />
