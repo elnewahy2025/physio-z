@@ -606,7 +606,7 @@ function MaintenanceHistory({ equipmentId }: { equipmentId: string }) {
                 <Wrench size={14} />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">{log.description}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{log.description}</p>
                 <p className="text-xs text-gray-500">
                   {new Date(log.date).toLocaleDateString()} ·{' '}
                   {lang === 'ar' ? MAINTENANCE_TYPES[log.type]?.ar : MAINTENANCE_TYPES[log.type]?.en}

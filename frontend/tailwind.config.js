@@ -20,8 +20,8 @@ export default {
       },
       fontFamily: {
         sans: [
-          'Cairo',
-          'Tajawal',
+          'Alexandria',
+          'Outfit',
           'Segoe UI',
           'Tahoma',
           'Arial',

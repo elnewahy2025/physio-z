@@ -203,7 +203,7 @@ function SimpleCalendar({
           />
         </button>
 
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {monthNames[currentMonth.getMonth()]}{' '}
           {currentMonth.getFullYear()}
         </h3>
@@ -565,7 +565,7 @@ export default function PatientBooking() {
     <div className="mx-auto max-w-2xl space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           {L(
             'حجز موعد جديد',
             'Book New Appointment',
@@ -646,7 +646,7 @@ export default function PatientBooking() {
 
       {step === 1 && (
         <Card>
-          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900">
+          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
             <Stethoscope
               size={20}
               className="text-primary-600"
@@ -697,7 +697,7 @@ export default function PatientBooking() {
 
                     {/* Therapist information + rating */}
                     <div className="flex-1">
-                      <p className="text-base font-semibold text-gray-900">
+                      <p className="text-base font-semibold text-gray-900 dark:text-gray-100">
                         {therapist.name}
                       </p>
 
@@ -757,7 +757,7 @@ export default function PatientBooking() {
 
       {step === 2 && selectedTherapist && (
         <Card>
-          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900">
+          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
             <CalendarIcon
               size={20}
               className="text-primary-600"
@@ -826,7 +826,7 @@ export default function PatientBooking() {
         selectedTherapist &&
         selectedDate && (
           <Card>
-            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900">
+            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
               <Clock
                 size={20}
                 className="text-primary-600"
@@ -1031,7 +1031,7 @@ export default function PatientBooking() {
         selectedSlot &&
         !bookingSuccess && (
           <Card>
-            <h2 className="mb-6 flex items-center gap-2 text-lg font-semibold text-gray-900">
+            <h2 className="mb-6 flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
               <Check
                 size={20}
                 className="text-primary-600"
@@ -1053,7 +1053,7 @@ export default function PatientBooking() {
                 </div>
 
                 <div>
-                  <p className="text-lg font-semibold text-gray-900">
+                  <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {selectedTherapist.name}
                   </p>
 
@@ -1081,7 +1081,7 @@ export default function PatientBooking() {
                       )}
                     </p>
 
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">
                       {selectedDate.toLocaleDateString(
                         lang === 'ar'
                           ? 'ar-EG'
@@ -1111,7 +1111,7 @@ export default function PatientBooking() {
                       )}
                     </p>
 
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">
                       {formatSlotTime(
                         selectedSlot,
                         lang,
@@ -1186,7 +1186,7 @@ export default function PatientBooking() {
             />
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {L(
               'تم الحجز بنجاح!',
               'Booking Confirmed!',

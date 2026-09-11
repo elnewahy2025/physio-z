@@ -46,22 +46,23 @@ interface NavItem {
  * relying directly on the i18n translation key.
  */
 const navLabels: Record<string, { en: string; ar: string }> = {
-  calendar: {
-    en: 'Calendar',
-    ar: 'التقويم',
-  },
-  myRecords: {
-    en: 'My Records',
-    ar: 'سجلي الطبي',
-  },
-  myPayments: {
-    en: 'My Payments',
-    ar: 'مدفوعاتي',
-  },
-  book: {
-    en: 'Book Appointment',
-    ar: 'حجز موعد',
-  },
+  dashboard: { en: 'Dashboard', ar: 'لوحة التحكم' },
+  calendar: { en: 'Calendar', ar: 'التقويم' },
+  book: { en: 'Book Appointment', ar: 'حجز موعد' },
+  appointments: { en: 'Appointments', ar: 'المواعيد' },
+  myRecords: { en: 'My Records', ar: 'سجلي الطبي' },
+  myPayments: { en: 'My Payments', ar: 'مدفوعاتي' },
+  patients: { en: 'Patients', ar: 'المرضى' },
+  sessions: { en: 'Sessions', ar: 'الجلسات' },
+  invoices: { en: 'Invoices', ar: 'الفواتير' },
+  reports: { en: 'Reports', ar: 'التقارير' },
+  users: { en: 'Users', ar: 'المستخدمين' },
+  expenses: { en: 'Expenses', ar: 'المصروفات' },
+  inventory: { en: 'Inventory', ar: 'المخزون' },
+  equipment: { en: 'Equipment', ar: 'المعدات' },
+  packages: { en: 'Packages', ar: 'الباقات' },
+  waitlist: { en: 'Waitlist', ar: 'قائمة الانتظار' },
+  settings: { en: 'Settings', ar: 'الإعدادات' },
 };
 
 const navItems: NavItem[] = [

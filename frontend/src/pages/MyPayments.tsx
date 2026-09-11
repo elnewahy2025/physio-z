@@ -94,7 +94,7 @@ export default function MyPayments() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           {L('مدفوعاتي', 'My Payments')}
         </h1>
         <p className="mt-1 text-sm text-gray-500">
@@ -199,7 +199,7 @@ export default function MyPayments() {
                       </div>
 
                       <div>
-                        <p className="font-semibold text-gray-900">{invoice.number}</p>
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">{invoice.number}</p>
                         <div className="flex items-center gap-3 text-sm text-gray-500">
                           <span className="flex items-center gap-1">
                             <Calendar size={12} />
@@ -216,7 +216,7 @@ export default function MyPayments() {
 
                     <div className="flex items-center gap-4">
                       <div className="text-end">
-                        <p className="font-semibold text-gray-900">
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">
                           {Number(invoice.total).toFixed(0)} {currency}
                         </p>
                         {remaining > 0 && (
@@ -247,7 +247,7 @@ export default function MyPayments() {
                           <p className="text-xs text-gray-500">
                             {L('المبلغ', 'Amount')}
                           </p>
-                          <p className="mt-1 font-semibold text-gray-900">
+                          <p className="mt-1 font-semibold text-gray-900 dark:text-gray-100">
                             {Number(invoice.amount).toFixed(0)} {currency}
                           </p>
                         </div>
@@ -255,7 +255,7 @@ export default function MyPayments() {
                           <p className="text-xs text-gray-500">
                             {L('الضريبة', 'Tax')}
                           </p>
-                          <p className="mt-1 font-semibold text-gray-900">
+                          <p className="mt-1 font-semibold text-gray-900 dark:text-gray-100">
                             {Number(invoice.tax).toFixed(0)} {currency}
                           </p>
                         </div>
@@ -284,7 +284,7 @@ export default function MyPayments() {
                                 <div className="flex items-center gap-3">
                                   <CreditCard size={16} className="text-gray-400" />
                                   <div>
-                                    <p className="text-sm font-medium text-gray-900">
+                                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                       {payment.method.replace('_', ' ')}
                                     </p>
                                     <p className="text-xs text-gray-500">

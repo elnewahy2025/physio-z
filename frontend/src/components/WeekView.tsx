@@ -5,7 +5,7 @@ import { useI18n } from '../i18n';
 import type { Appointment } from '../types';
 
 const WORKING_START = 9;
-const WORKING_END = 18;
+const WORKING_END = 23;
 const HOUR_HEIGHT = 64; // pixels per hour
 
 const STATUS_COLORS: Record<string, string> = {
@@ -125,7 +125,7 @@ export default function WeekView({
           className="grid"
           style={{
             gridTemplateColumns: `80px repeat(7, 1fr)`,
-            gridTemplateRows: `repeat(${hours.length}, ${HOUR_HEIGHT}px)`,
+            gridTemplateRows: `repeat(${hours.length}, minmax(${HOUR_HEIGHT}px, auto))`,
           }}
           dir={isRTL ? 'rtl' : 'ltr'}
         >
@@ -159,8 +159,8 @@ export default function WeekView({
                   `}
                 >
                   {/* Appointments in this slot */}
-                  <div className="flex h-full flex-col gap-1 p-1 overflow-hidden">
-                    {slotAppointments.slice(0, 2).map((appt) => (
+                  <div className="flex h-full flex-col gap-1 p-1">
+                    {slotAppointments.map((appt) => (
                       <button
                         key={appt.id}
                         onClick={(e) => {
@@ -168,11 +168,11 @@ export default function WeekView({
                           onAppointmentClick?.(appt);
                         }}
                         className={`
-                          w-full rounded-md border px-2 py-1 text-start text-xs transition-all hover:scale-[1.02] hover:shadow-md
+                          w-full rounded-md border px-2 py-1 text-start text-xs transition-all hover:scale-[1.02] hover:shadow-md shrink-0
                           ${STATUS_COLORS[appt.status] || STATUS_COLORS['PENDING']}
                         `}
                         style={{
-                          height: `${Math.min((appt.duration / 60) * HOUR_HEIGHT - 4, 56)}px`,
+                          minHeight: `${Math.min((appt.duration / 60) * HOUR_HEIGHT - 4, 56)}px`,
                         }}
                       >
                         <div className="flex items-center gap-1 truncate">
@@ -189,13 +189,6 @@ export default function WeekView({
                         </div>
                       </button>
                     ))}
-
-                    {/* Show "+N more" if more than 2 appointments */}
-                    {slotAppointments.length > 2 && (
-                      <div className="text-center text-[10px] font-medium text-gray-400 dark:text-gray-500">
-                        +{slotAppointments.length - 2} more
-                      </div>
-                    )}
                   </div>
                 </div>
               );

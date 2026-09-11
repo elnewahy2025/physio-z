@@ -70,7 +70,7 @@ export default function Sessions() {
                       <Activity size={20} />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-gray-900 dark:text-gray-100">
                         {session.appointment.patient.name}
                       </p>
                       <p className="text-sm text-gray-500">

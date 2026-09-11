@@ -66,7 +66,7 @@ export default function InstallPrompt() {
             <Download size={20} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-900">
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
               {L('تثبيت التطبيق', 'Install App')}
             </p>
             <p className="text-xs text-gray-500">

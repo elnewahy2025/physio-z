@@ -144,7 +144,7 @@ export default function Users() {
                   </div>
 
                   <div>
-                    <p className="font-medium text-gray-900">{user.name}</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
 
                     <p className="text-sm text-gray-500" dir="ltr">
                       {user.phone}

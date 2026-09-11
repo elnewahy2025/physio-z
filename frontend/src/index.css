@@ -4,7 +4,8 @@
 
 @layer base {
   html {
-    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-family: 'Alexandria', 'Outfit', 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-size: 105%; /* Slightly larger base font size globally */
   }
 
   html[dir='rtl'] {
@@ -116,7 +117,7 @@
 
   /* Reset main content positioning */
   .ps-64 {
-    padding-start: 0 !important;
+    padding-inline-start: 0 !important;
   }
 
   /* Reset background */

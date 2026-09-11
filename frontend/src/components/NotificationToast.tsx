@@ -63,7 +63,7 @@ export default function NotificationToast() {
         </div>
 
         <div className="flex-1">
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
             {currentNotification.title}
           </p>
           <p className="mt-0.5 text-xs text-gray-500">

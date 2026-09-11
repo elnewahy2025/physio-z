@@ -96,10 +96,7 @@ class OfflineManager {
 
     const queue = await offlineDB.getQueue();
     if (queue.length === 0) {
-      this.lastSyncTime = Date.now();
-      this.lastSyncResult = 'success';
-      this.updateStatus({});
-      return;
+      return; // Do nothing if queue is empty (prevents mass query invalidation every 30s)
     }
 
     this.isSyncing = true;

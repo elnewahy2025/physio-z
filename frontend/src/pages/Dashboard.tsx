@@ -44,16 +44,20 @@ export default function Dashboard() {
     },
   });
 
-  const { data: patients } = useQuery({
-    queryKey: ['patients'],
+  const { data: patientsTotal } = useQuery({
+    queryKey: ['patients-count'],
     queryFn: async () => {
-      const res = await api.get('/patients', {
-        params: {
-          limit: 1,
-        },
-      });
-
-      return res.data.pagination.total as number;
+      try {
+        const res = await api.get('/patients', {
+          params: { limit: 1 },
+        });
+        if (res.data && res.data.pagination) {
+          return Number(res.data.pagination.total) || 0;
+        }
+        return 0;
+      } catch (err) {
+        return 0;
+      }
     },
     enabled: user?.role !== 'PATIENT',
   });
@@ -93,7 +97,7 @@ export default function Dashboard() {
   }
 
   const todayAppointments = appointments || [];
-  const totalPatients = patients || 0;
+  const totalPatients = typeof patientsTotal === 'number' ? patientsTotal : 0;
   const currency = settings?.currency || 'EGP';
 
   const formatTime = (iso: string) => {
@@ -186,7 +190,7 @@ export default function Dashboard() {
           <Card>
             <div className="flex items-center justify-between gap-4">
               <div className="min-w-0">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {settings.centerName}
                 </h3>
 
@@ -235,7 +239,7 @@ export default function Dashboard() {
                   </div>
 
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {appt.patient.name}
                     </p>
 
@@ -283,7 +287,7 @@ export default function Dashboard() {
                     </div>
 
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {inv.number}
                       </p>
 
@@ -295,7 +299,7 @@ export default function Dashboard() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-gray-900">
+                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                       {Number(inv.total).toFixed(0)} {currency}
                     </span>
 

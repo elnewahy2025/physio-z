@@ -93,7 +93,7 @@ export default function NotificationBell() {
         <div className="absolute end-0 top-full z-50 mt-2 w-80 sm:w-96 rounded-xl border border-gray-200 bg-white shadow-xl sm:w-96">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-gray-100 p-4">
-            <h3 className="text-sm font-semibold text-gray-900">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
               {L('الإشعارات', 'Notifications')}
               {unreadCount > 0 && (
                 <span className="ms-2 rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">
@@ -146,7 +146,7 @@ export default function NotificationBell() {
                     <div className="flex items-center justify-between gap-2">
                       <p
                         className={`truncate text-sm font-medium ${
-                          !notification.isRead ? 'text-gray-900' : 'text-gray-600'
+                          !notification.isRead ? 'text-gray-900 dark:text-gray-100' : 'text-gray-600'
                         }`}
                       >
                         {notification.title}

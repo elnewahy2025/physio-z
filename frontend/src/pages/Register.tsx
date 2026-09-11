@@ -96,7 +96,7 @@ export default function Register() {
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-lg">
             <Stethoscope size={32} />
           </div>
-          <h1 className="mt-4 text-2xl font-bold text-gray-900">
+          <h1 className="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-100">
             {L('إنشاء حساب مريض', 'Create Patient Account')}
           </h1>
           <p className="mt-2 text-sm text-gray-500">

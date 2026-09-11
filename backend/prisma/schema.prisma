@@ -471,3 +471,152 @@ model MaintenanceLog {
 
   @@index([equipmentId, date])
 }
+// ─── Dynamic Provider Management System ───
+
+// Provider types
+enum ProviderType {
+  WHATSAPP
+  PAYMENT
+  VIDEO
+  SMS
+  EMAIL
+  CUSTOM
+}
+
+// Provider authentication methods
+enum AuthMethod {
+  BEARER_TOKEN
+  API_KEY_HEADER
+  BASIC_AUTH
+  OAUTH2
+  QUERY_PARAM
+  CUSTOM_HEADERS
+  NONE
+}
+
+// Main service provider model
+model ServiceProvider {
+  id              String       @id @default(cuid())
+  name            String       // User-friendly name
+  providerType    ProviderType
+  providerSubtype String?      // e.g., "whatsapp_business", "myfawry", "instapay"
+  description     String?
+  
+  // Status and priority
+  isActive        Boolean      @default(true)
+  isDefault       Boolean      @default(false)
+  priority        Int          @default(100) // Lower = higher priority for fallback
+  
+  // API Configuration
+  baseUrl         String       // e.g., "https://graph.facebook.com/v18.0"
+  apiVersion      String?
+  
+  // Authentication
+  authMethod      AuthMethod   @default(BEARER_TOKEN)
+  credentials     String       // Encrypted JSON credentials
+  
+  // Request configuration
+  requestConfig   Json         // Default headers, timeout, retries
+  
+  // Webhook configuration
+  webhookUrl      String?
+  webhookSecret   String?
+  
+  // Provider-specific settings
+  settings        Json?
+  
+  // Usage tracking
+  lastTestedAt    DateTime?
+  lastTestSuccess Boolean?
+  totalRequests   Int          @default(0)
+  successfulRequests Int       @default(0)
+  failedRequests  Int          @default(0)
+  
+  // Relations
+  capabilities    ProviderCapability[]
+  usageLogs       ProviderUsageLog[]
+  
+  // Audit
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  @@unique([name, providerType])
+  @@index([providerType, isActive, priority])
+  @@index([isDefault])
+}
+
+// Provider capabilities (what this provider can do)
+model ProviderCapability {
+  id          String @id @default(cuid())
+  providerId  String
+  provider    ServiceProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  
+  capability  String // SEND_MESSAGE, CREATE_PAYMENT, CREATE_ROOM, etc.
+  name        String // Display name for UI
+  
+  // Request configuration
+  endpoint    String // API endpoint (can use template variables)
+  method      String // GET, POST, PUT, DELETE
+  
+  // Request template with variables: {{variable_name}}
+  requestTemplate Json // Full request structure with templates
+  
+  // Response parsing
+  responseMapping Json // How to extract data from response
+  errorMapping     Json // How to detect errors
+  
+  // Configuration
+  timeout     Int @default(30000) // milliseconds
+  retries     Int @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([providerId, capability])
+  @@index([capability])
+}
+
+// Usage logging (simple success/failure)
+model ProviderUsageLog {
+  id          String   @id @default(cuid())
+  providerId  String
+  provider    ServiceProvider @relation(fields: [providerId], references: [id])
+  
+  capability  String
+  success     Boolean
+  errorMessage String?
+  duration    Int?     // milliseconds
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([providerId, createdAt])
+  @@index([success, createdAt])
+}
+
+// Provider templates (pre-built configurations)
+model ProviderTemplate {
+  id              String @id @default(cuid())
+  name            String // Display name
+  providerType    ProviderType
+  providerSubtype String
+  description     String
+  
+  // Template configuration
+  baseUrl         String
+  authMethod      AuthMethod
+  credentialsTemplate Json // What credentials are needed
+  capabilitiesTemplate Json // Pre-built capabilities
+  settingsTemplate     Json
+  
+  // UI
+  icon            String? // Icon identifier
+  category        String // EGYPTIAN_PAYMENTS, INTERNATIONAL_PAYMENTS, etc.
+  isPopular       Boolean @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([name, providerType])
+  @@index([providerType])
+  @@index([category])
+}

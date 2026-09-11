@@ -41,7 +41,7 @@ export default function Patients() {
       <Card>
         <CardHeader
           title={t('patients')}
-          subtitle={`${pagination?.total || 0} ${lang === 'ar' ? '?�?�???�' : 'patients'}`}
+          subtitle={`${pagination?.total || 0} ${lang === 'ar' ? 'مريض' : 'patients'}`}
           action={
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -60,7 +60,7 @@ export default function Patients() {
               {canAdd && (
                 <button onClick={() => setShowForm(!showForm)} className="btn-primary">
                   <Plus size={16} />
-                  {lang === 'ar' ? '?�?�?�???� ?�?�???�' : 'Add Patient'}
+                  {lang === 'ar' ? 'إضافة مريض' : 'Add Patient'}
                 </button>
               )}
             </div>
@@ -94,7 +94,7 @@ export default function Patients() {
                         {patient.name.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{patient.name}</p>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">{patient.name}</p>
                         <div className="mt-1 flex items-center gap-4 text-sm text-gray-500">
                           <span className="flex items-center gap-1">
                             <Phone size={14} />
@@ -112,13 +112,13 @@ export default function Patients() {
 
                     <div className="flex items-center gap-4">
                       <div className="text-end">
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                           {patient._count?.appointments || 0}
                         </p>
                         <p className="text-xs text-gray-500">{t('appointments')}</p>
                       </div>
                       <div className="text-end">
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                           {patient._count?.invoices || 0}
                         </p>
                         <p className="text-xs text-gray-500">{t('invoices')}</p>
@@ -136,7 +136,7 @@ export default function Patients() {
                   disabled={page <= 1}
                   className="btn-secondary !py-1.5 !px-3 text-sm"
                 >
-                  {lang === 'ar' ? '?�?�?�?�?�?�' : 'Previous'}
+                  {lang === 'ar' ? 'السابق' : 'Previous'}
                 </button>
                 <span className="text-sm text-gray-500">
                   {page} / {pagination.totalPages}
@@ -146,7 +146,7 @@ export default function Patients() {
                   disabled={page >= pagination.totalPages}
                   className="btn-secondary !py-1.5 !px-3 text-sm"
                 >
-                  {lang === 'ar' ? '?�?�???�?�??' : 'Next'}
+                  {lang === 'ar' ? 'التالي' : 'Next'}
                 </button>
               </div>
             )}
@@ -209,7 +209,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
       )}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="label">{lang === 'ar' ? '?�?�?�?�?�' : 'Name'} *</label>
+          <label className="label">{lang === 'ar' ? 'الاسم' : 'Name'} *</label>
           <input
             type="text"
             value={formData.name}
@@ -242,7 +242,7 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
           />
         </div>
         <div>
-          <label className="label">{lang === 'ar' ? '???�?�???� ?�?�?�???�?�?�' : 'Date of Birth'}</label>
+          <label className="label">{lang === 'ar' ? 'تاريخ الميلاد' : 'Date of Birth'}</label>
           <input
             type="date"
             value={formData.dateOfBirth}
@@ -251,13 +251,13 @@ function NewPatientForm({ onClose }: { onClose: () => void }) {
           />
         </div>
         <div className="sm:col-span-2">
-          <label className="label">{lang === 'ar' ? '?�?�???�?�???� ?�?�?�?�??' : 'Medical History'}</label>
+          <label className="label">{lang === 'ar' ? 'التاريخ الطبي' : 'Medical History'}</label>
           <textarea
             value={formData.medicalHistory}
             onChange={(e) => setFormData({ ...formData, medicalHistory: e.target.value })}
             className="input"
             rows={3}
-            placeholder={lang === 'ar' ? '?�?? ?�?�?�?� ?�?�???�?� ?�?�?�???�?� ?�?�?�?�???�...' : 'Any conditions, medications, allergies...'}
+            placeholder={lang === 'ar' ? 'أي حالات طبية، أدوية، حساسية...' : 'Any conditions, medications, allergies...'}
           />
         </div>
       </div>

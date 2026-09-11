@@ -65,7 +65,7 @@ class ErrorBoundary extends Component<Props, State> {
             {/* Title */}
             <h1
               className={`text-2xl font-bold ${
-                isDark ? 'text-gray-100' : 'text-gray-900'
+                isDark ? 'text-gray-100' : 'text-gray-900 dark:text-gray-100'
               }`}
             >
               {isRTL ? 'حدث خطأ غير متوقع' : 'Something went wrong'}

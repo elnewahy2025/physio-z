@@ -123,7 +123,7 @@ export default function MyRecords() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           {L('سجلي الطبي', 'My Medical Records')}
         </h1>
         <p className="mt-1 text-sm text-gray-500">
@@ -154,7 +154,7 @@ export default function MyRecords() {
                   </div>
 
                   <div>
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">
                       {formatDate(appt.dateTime)}
                     </p>
 
@@ -229,7 +229,7 @@ export default function MyRecords() {
                       </div>
 
                       <div>
-                        <p className="font-semibold text-gray-900">
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">
                           {formatDate(appt.dateTime)}
                         </p>
 
@@ -290,7 +290,7 @@ export default function MyRecords() {
                                     {L('التشخيص', 'Diagnosis')}
                                   </p>
 
-                                  <p className="mt-1 text-sm text-gray-900">
+                                  <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
                                     {session.diagnosis}
                                   </p>
                                 </div>
@@ -304,7 +304,7 @@ export default function MyRecords() {
                                       )}
                                     </p>
 
-                                    <p className="mt-1 text-sm text-gray-900">
+                                    <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
                                       {session.treatmentPlan}
                                     </p>
                                   </div>
@@ -328,7 +328,7 @@ export default function MyRecords() {
                                       {L('المدة', 'Duration')}
                                     </p>
 
-                                    <p className="mt-1 text-sm text-gray-900">
+                                    <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
                                       {session.duration}{' '}
                                       {L('دقيقة', 'min')}
                                     </p>
@@ -374,7 +374,7 @@ export default function MyRecords() {
                           />
 
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                               {L('فاتورة', 'Invoice')}{' '}
                               {appt.invoices[0].number}
                             </p>
