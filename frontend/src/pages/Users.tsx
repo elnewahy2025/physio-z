@@ -216,6 +216,13 @@ function NewUserForm({ onClose }: { onClose: () => void }) {
   const [error, setError] = useState<string | null>(null);
   const L = (arText: string, enText: string) => (lang === 'ar' ? arText : enText);
 
+  const roleLabels: Record<string, string> = {
+    OWNER: L('المالك', 'Owner'),
+    THERAPIST: L('أخصائي', 'Therapist'),
+    SECRETARY: L('سكرتارية', 'Secretary'),
+    PATIENT: L('مريض', 'Patient'),
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
