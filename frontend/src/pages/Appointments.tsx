@@ -12,9 +12,11 @@ export default function Appointments() {
   const { t, lang } = useI18n();
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
-  const [filterDate, setFilterDate] = useState<string>(
-    new Date().toISOString().split('T')[0],
-  );
+  const today = new Date();
+  const tzOffset = today.getTimezoneOffset() * 60000;
+  const localToday = new Date(today.getTime() - tzOffset).toISOString().split('T')[0];
+  
+  const [filterDate, setFilterDate] = useState<string>(localToday);
   const [showForm, setShowForm] = useState(false);
 
   const { data: appointments, isLoading } = useQuery({
@@ -112,6 +114,7 @@ export default function Appointments() {
             patients={patients || []}
             therapists={therapists || []}
             rooms={rooms || []}
+            selectedDate={filterDate}
             onClose={() => setShowForm(false)}
           />
         )}
@@ -168,19 +171,18 @@ export default function Appointments() {
 }
 
 function NewAppointmentForm({
-  patients, therapists, rooms, onClose,
+  patients, therapists, rooms, selectedDate, onClose,
 }: {
-  patients: any[]; therapists: any[]; rooms: any[]; onClose: () => void;
+  patients: any[]; therapists: any[]; rooms: any[]; selectedDate: string; onClose: () => void;
 }) {
   const { t, lang } = useI18n();
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(10, 0, 0, 0);
-  // Correct timezone offset for datetime-local
-  const tzOffset = tomorrow.getTimezoneOffset() * 60000;
-  const localIso = new Date(tomorrow.getTime() - tzOffset).toISOString().slice(0, 16);
+  
+  const defaultDate = new Date(selectedDate);
+  defaultDate.setHours(10, 0, 0, 0);
+  const formTzOffset = defaultDate.getTimezoneOffset() * 60000;
+  const localIso = new Date(defaultDate.getTime() - formTzOffset).toISOString().slice(0, 16);
 
   const [formData, setFormData] = useState({
     patientId: '', therapistId: '', roomId: '', dateTime: localIso, duration: '45', notes: '',
