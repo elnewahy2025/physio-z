@@ -1,3 +1,5 @@
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './swagger';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -9,6 +11,7 @@ import appointmentRoutes from './routes/appointment.routes.js';
 import invoiceRoutes from './routes/invoice.routes.js';
 import sessionRoutes from './routes/session.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
+import patientCareRoutes from './routes/patient-care.routes.js';
 import roomRoutes from './routes/room.routes.js';
 import reportRoutes from './routes/report.routes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
@@ -66,6 +69,7 @@ export function createApp() {
   app.use('/api/invoices', invoiceRoutes);
   app.use('/api/sessions', sessionRoutes);
   app.use('/api/settings', settingsRoutes);
+app.use('/api/patient-care', patientCareRoutes);
   app.use('/api/rooms', roomRoutes);
   app.use('/api/reports', reportRoutes);
   app.use('/api/notifications', notificationRoutes);
@@ -77,3 +81,4 @@ app.use('/api/surveys', surveyRoutes);
 app.use('/api', phase2Routes);
   return app;
 }
+

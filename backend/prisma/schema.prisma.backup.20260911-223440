@@ -45,9 +45,6 @@ enum PaymentStatus {
 }
 
 model User {
-  // Phase 4: Patient Care Relations
-
-  photosTaken          ProgressPhoto[] @relation("PhotoTaker")
   // Phase 6 Relations
   whatsappSent     WhatsAppReminderLog[] @relation("WhatsAppSender")
   paymentsConfirmed PaymentReference[] @relation("PaymentConfirmer")
@@ -77,16 +74,12 @@ model User {
   waitlistTherapist WaitlistEntry[]  @relation("WaitlistTherapist")
    inventoryRecords InventoryTransaction[] @relation("InventoryRecorder")
   maintenanceRecords MaintenanceLog[]     @relation("MaintenanceRecorder")
-
-  AuditLog AuditLog[] @relation("AuditUser")
-  UserActivity UserActivity[] @relation("UserActivity")
-  MedicalFile MedicalFile[] @relation("MedicalFileUploader")
+  medicalFilesUploaded MedicalFile[]    @relation("MedicalFileUploader")
+  progressPhotosTaken  ProgressPhoto[]  @relation("PhotoTaker")
+  patientCareAudits    PatientCareAudit[] @relation("AuditUser")
 }
 
 model Patient {
-  // Phase 4: Patient Care Relations
-  intakeForms      IntakeForm[]
-
   // Phase 6: Exercise Prescriptions
   exercisePrescriptions ExercisePrescription[]
   id              String           @id @default(cuid())
@@ -107,11 +100,11 @@ model Patient {
   patientPackages PatientPackage[]
   waitlistEntries WaitlistEntry[]
   files           File[]
-
-  ConsentForm ConsentForm[]
-  MedicalFile MedicalFile[]
-  PainMap PainMap[]
-  ProgressPhoto ProgressPhoto[]
+  patientForms    PatientForm[]
+  consentForms    ConsentForm[]
+  painMaps        PainMap[]
+  medicalFiles    MedicalFile[]
+  progressPhotos  ProgressPhoto[]
 }
 
 model Room {
@@ -123,8 +116,6 @@ model Room {
 }
 
 model Appointment {
-  // Phase 4: Patient Care Relations
-
   // Phase 6 Relations
   whatsappReminders WhatsAppReminderLog[]
   videoConsultations VideoConsultation[]
@@ -148,15 +139,15 @@ model Appointment {
   rating              Rating?           @relation("AppointmentRating")
   survey              Survey?           @relation("AppointmentSurvey")
   recurringPatternId  String?
+  painMaps            PainMap[]
+  medicalFiles        MedicalFile[]
+  progressPhotos      ProgressPhoto[]
 
   // Note: We don't create a direct relation to avoid circular reference
   @@index([dateTime])
   @@index([therapistId, dateTime])
   @@index([patientId, dateTime])
   @@index([status, dateTime])
-  MedicalFile MedicalFile[]
-  PainMap PainMap[]
-  ProgressPhoto ProgressPhoto[]
 }
 
 model TherapySession {
@@ -666,15 +657,326 @@ model ProviderTemplate {
 // ─── Phase 4: Patient Care Models ───
 
 // P1: Patient Intake Forms
+model FormTemplate {
+  id          String   @id @default(cuid())
+  type        String   // initial_assessment, medical_history, insurance, consent
+  title       String
+  titleAr     String   // Arabic title for RTL
+  description String
+  schema      Json     // JSON schema for form fields
+  version     String   @default("1.0")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  patientForms PatientForm[]
+  
+  @@index([type, isActive])
+  @@index([version])
+}
 
-
-
+model PatientForm {
+  id          String   @id @default(cuid())
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  templateId  String
+  template    FormTemplate @relation(fields: [templateId], references: [id])
+  formData    Json     // Submitted form data
+  status      String   @default("pending") // pending, in_progress, completed
+  startedAt   DateTime?
+  completedAt DateTime?
+  pdfUrl      String?  // Generated PDF URL
+  ipAddress   String?  // For audit trail
+  userAgent   String?  // For audit trail
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([patientId, status])
+  @@index([templateId])
+  @@index([status, createdAt])
+}
 
 // P2: Consent Forms with Digital Signature
+model ConsentTemplate {
+  id           String   @id @default(cuid())
+  type         String   // treatment, procedure, privacy, financial
+  title        String
+  titleAr      String
+  content      String   // HTML content
+  contentAr    String   // Arabic content for RTL
+  version      String   @default("1.0")
+  requiresWitness Boolean @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  consents     ConsentForm[]
+  
+  @@index([type, isActive])
+}
 
+model ConsentForm {
+  id           String   @id @default(cuid())
+  patientId    String
+  patient      Patient  @relation(fields: [patientId], references: [id])
+  templateId   String
+  template     ConsentTemplate @relation(fields: [templateId], references: [id])
+  consentText  String   // The text that was agreed to
+  signatureData String   // Base64 encoded signature image
+  signedAt     DateTime
+  witnessName  String?  // If witness required
+  ipAddress    String?
+  userAgent    String?
+  pdfUrl       String?
+  version      String   // Template version at signing
+  createdAt    DateTime @default(now())
+  
+  @@index([patientId, signedAt])
+  @@index([templateId])
+}
+
+// P4: Body Diagram (Pain Mapping)
+model PainMap {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  bodyView        String   // front, back, left, right
+  xCoordinate     Float    // 0-100 percentage
+  yCoordinate     Float    // 0-100 percentage
+  painIntensity   Int      // 0-10 scale
+  painType        String   // sharp, dull, burning, throbbing, numbness, tingling
+  painDescription String?
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  
+  @@index([patientId, createdAt])
+  @@index([appointmentId])
+  @@index([bodyView])
+}
+
+// P3/P5: Medical Files and Photos (Extending File model)
+model MedicalFile {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  fileName        String
+  originalName    String
+  mimeType        String
+  size            Int
+  data            String   @db.Text // Base64 encoded
+  category        String   // xray, mri, ct_scan, referral, lab_report, doctor_note, other
+  description     String?
+  uploadedById    String
+  uploadedBy      User     @relation("MedicalFileUploader", fields: [uploadedById], references: [id])
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  isActive        Boolean  @default(true)
+  
+  @@index([patientId, category])
+  @@index([category, createdAt])
+  @@index([uploadedById])
+}
+
+model ProgressPhoto {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  photoDate       DateTime
+  photoType       String   // before, during, after
+  bodyPart        String?  // full_body, head_neck, shoulder, arm, hand, chest, back, abdomen, hip, leg, knee, foot
+  imageData       String   @db.Text // Base64 encoded
+  thumbnailData   String?  @db.Text // Base64 encoded thumbnail
+  notes           String?
+  takenById       String
+  takenBy         User     @relation("PhotoTaker", fields: [takenById], references: [id])
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  
+  @@index([patientId, photoDate])
+  @@index([photoType])
+  @@index([bodyPart])
+}
 
 // Audit Log for Phase 4 actions (preparation for Phase 7)
+model PatientCareAudit {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation("AuditUser", fields: [userId], references: [id])
+  action       String   // VIEW, UPLOAD, DOWNLOAD, SIGN, CREATE, UPDATE, DELETE
+  entityType   String   // medical_file, progress_photo, intake_form, consent_form, pain_map
+  entityId     String
+  details      Json?    // Additional context
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+  @@index([action, createdAt])
+}
 
+// ─── Phase 4: Patient Care Models ───
+
+// P1: Patient Intake Forms
+model FormTemplate {
+  id          String   @id @default(cuid())
+  type        String   // initial_assessment, medical_history, insurance, consent
+  title       String
+  titleAr     String   // Arabic title for RTL
+  description String
+  schema      Json     // JSON schema for form fields
+  version     String   @default("1.0")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  patientForms PatientForm[]
+  
+  @@index([type, isActive])
+  @@index([version])
+}
+
+model PatientForm {
+  id          String   @id @default(cuid())
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  templateId  String
+  template    FormTemplate @relation(fields: [templateId], references: [id])
+  formData    Json     // Submitted form data
+  status      String   @default("pending") // pending, in_progress, completed
+  startedAt   DateTime?
+  completedAt DateTime?
+  pdfUrl      String?  // Generated PDF URL
+  ipAddress   String?  // For audit trail
+  userAgent   String?  // For audit trail
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([patientId, status])
+  @@index([templateId])
+  @@index([status, createdAt])
+}
+
+// P2: Consent Forms with Digital Signature
+model ConsentTemplate {
+  id           String   @id @default(cuid())
+  type         String   // treatment, procedure, privacy, financial
+  title        String
+  titleAr      String
+  content      String   // HTML content
+  contentAr    String   // Arabic content for RTL
+  version      String   @default("1.0")
+  requiresWitness Boolean @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  consents     ConsentForm[]
+  
+  @@index([type, isActive])
+}
+
+model ConsentForm {
+  id           String   @id @default(cuid())
+  patientId    String
+  patient      Patient  @relation(fields: [patientId], references: [id])
+  templateId   String
+  template     ConsentTemplate @relation(fields: [templateId], references: [id])
+  consentText  String   // The text that was agreed to
+  signatureData String   // Base64 encoded signature image
+  signedAt     DateTime
+  witnessName  String?  // If witness required
+  ipAddress    String?
+  userAgent    String?
+  pdfUrl       String?
+  version      String   // Template version at signing
+  createdAt    DateTime @default(now())
+  
+  @@index([patientId, signedAt])
+  @@index([templateId])
+}
+
+// P4: Body Diagram (Pain Mapping)
+model PainMap {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  bodyView        String   // front, back, left, right
+  xCoordinate     Float    // 0-100 percentage
+  yCoordinate     Float    // 0-100 percentage
+  painIntensity   Int      // 0-10 scale
+  painType        String   // sharp, dull, burning, throbbing, numbness, tingling
+  painDescription String?
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  
+  @@index([patientId, createdAt])
+  @@index([appointmentId])
+  @@index([bodyView])
+}
+
+// P3/P5: Medical Files and Photos (Extending File model)
+model MedicalFile {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  fileName        String
+  originalName    String
+  mimeType        String
+  size            Int
+  data            String   @db.Text // Base64 encoded
+  category        String   // xray, mri, ct_scan, referral, lab_report, doctor_note, other
+  description     String?
+  uploadedById    String
+  uploadedBy      User     @relation("MedicalFileUploader", fields: [uploadedById], references: [id])
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  isActive        Boolean  @default(true)
+  
+  @@index([patientId, category])
+  @@index([category, createdAt])
+  @@index([uploadedById])
+}
+
+model ProgressPhoto {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  photoDate       DateTime
+  photoType       String   // before, during, after
+  bodyPart        String?  // full_body, head_neck, shoulder, arm, hand, chest, back, abdomen, hip, leg, knee, foot
+  imageData       String   @db.Text // Base64 encoded
+  thumbnailData   String?  @db.Text // Base64 encoded thumbnail
+  notes           String?
+  takenById       String
+  takenBy         User     @relation("PhotoTaker", fields: [takenById], references: [id])
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  createdAt       DateTime @default(now())
+  
+  @@index([patientId, photoDate])
+  @@index([photoType])
+  @@index([bodyPart])
+}
+
+// Audit Log for Phase 4 actions (preparation for Phase 7)
+model PatientCareAudit {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation("AuditUser", fields: [userId], references: [id])
+  action       String   // VIEW, UPLOAD, DOWNLOAD, SIGN, CREATE, UPDATE, DELETE
+  entityType   String   // medical_file, progress_photo, intake_form, consent_form, pain_map
+  entityId     String
+  details      Json?    // Additional context
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+  @@index([action, createdAt])
+}
 
 // ─── Phase 6: N3 Exercise Prescription Library ───
 
@@ -840,7 +1142,6 @@ model ExerciseAssignment {
   @@index([prescriptionId])
   @@index([exerciseId])
   @@unique([prescriptionId, exerciseId])
-  ExerciseLog ExerciseLog[]
 }
 
 // Exercise progress log (for tracking patient compliance)
@@ -1031,144 +1332,4 @@ model UserActivity {
   @@index([userId, createdAt])
   @@index([action, createdAt])
 }
-
-
-// ─── Phase 4: Patient Care (P1-P5) ───
-
-// P1: Patient Intake Forms
-model IntakeForm {
-  id          String   @id @default(cuid())
-  patientId   String
-  patient     Patient  @relation(fields: [patientId], references: [id])
-  
-  // Form details
-  formType    String   // initial_assessment, medical_history, insurance_info, consent_to_treat
-  title       String
-  description String?
-  formData    Json     // Dynamic form data
-  status      String   @default("pending") // pending, in_progress, completed
-  startedAt   DateTime?
-  completedAt DateTime?
-  pdfUrl      String?  // Generated PDF URL
-  
-  // Audit
-  ipAddress   String?
-  userAgent   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  @@index([patientId, status])
-  @@index([formType])
-}
-
-// P2: Consent Forms with Digital Signature
-model ConsentForm {
-  id           String   @id @default(cuid())
-  patientId    String
-  patient      Patient  @relation(fields: [patientId], references: [id])
-  
-  // Consent details
-  consentType  String   // treatment, procedure, privacy, financial
-  consentText  String   // The text that was agreed to
-  title        String
-  
-  // Signature
-  signatureData String  // Base64 encoded signature image
-  signedAt     DateTime
-  witnessName  String?  // If witness required
-  
-  // Audit trail
-  ipAddress    String?
-  userAgent    String?
-  pdfUrl       String?
-  version      String   @default("1.0")
-  
-  createdAt    DateTime @default(now())
-  
-  @@index([patientId, signedAt])
-  @@index([consentType])
-}
-
-// P3: Medical File Upload
-model MedicalFile {
-  id              String   @id @default(cuid())
-  patientId       String
-  patient         Patient  @relation(fields: [patientId], references: [id])
-  appointmentId   String?
-  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
-  
-  // File details
-  fileName        String
-  originalName    String
-  mimeType        String
-  size            Int
-  data            String   @db.Text // Base64 encoded
-  
-  // Medical file specific
-  category        String   // xray, mri, ct_scan, referral, lab_report, doctor_note, other
-  description     String?
-  
-  // Audit
-  uploadedById     String
-  uploadedBy       User     @relation("MedicalFileUploader", fields: [uploadedById], references: [id])
-  isActive         Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  
-  @@index([patientId, category])
-  @@index([category, createdAt])
-}
-
-// P4: Body Diagram Pain Mapping
-model PainMap {
-  id              String   @id @default(cuid())
-  patientId       String
-  patient         Patient  @relation(fields: [patientId], references: [id])
-  appointmentId   String?
-  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
-  
-  // Pain location
-  bodyView        String   // front, back, left, right
-  xCoordinate     Float    // 0-100 percentage
-  yCoordinate     Float    // 0-100 percentage
-  bodyRegion      String?  // Specific region name
-  
-  // Pain details
-  painIntensity   Int      // 0-10 scale
-  painType        String   // sharp, dull, burning, throbbing, numbness, tingling
-  painDescription String?
-  
-  // Metadata
-  recordedAt      DateTime @default(now())
-  createdAt       DateTime @default(now())
-  
-  @@index([patientId, createdAt])
-  @@index([appointmentId])
-}
-
-// P5: Photo Progress Tracking
-model ProgressPhoto {
-  id              String   @id @default(cuid())
-  patientId       String
-  patient         Patient  @relation(fields: [patientId], references: [id])
-  appointmentId   String?
-  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
-  
-  // Photo details
-  photoDate       DateTime
-  photoType       String   // before, during, after
-  bodyPart        String?  // full_body, head_neck, shoulder, arm, hand, chest, back, abdomen, hip, leg, knee, foot
-  imageData       String   @db.Text // Base64 encoded
-  thumbnailData   String?  @db.Text // Base64 encoded thumbnail
-  notes           String?
-  
-  // Audit
-  takenById       String
-  takenBy         User     @relation("PhotoTaker", fields: [takenById], references: [id])
-  createdAt       DateTime @default(now())
-  
-  @@index([patientId, photoDate])
-  @@index([photoType])
-}
-
-
 
