@@ -99,6 +99,52 @@ export async function checkRoomAvailability(
   }
 }
 
+export async function checkGlobalConcurrency(
+  newStart: Date,
+  newDuration: number,
+  excludeId?: string,
+): Promise<void> {
+  const newStartMs = newStart.getTime();
+  const newEndMs = newStartMs + newDuration * 60000;
+  const windowStart = new Date(newStartMs - 8 * 3600000);
+  const windowEnd = new Date(newStartMs + 8 * 3600000);
+
+  const totalRooms = await prisma.room.count();
+  
+  // If there are no rooms configured, we can't accept any appointments!
+  // Alternatively, if the center is strictly room-based, capacity = totalRooms.
+  // For safety, let's assume if totalRooms = 0, we bypass or allow at least 1.
+  const capacity = Math.max(totalRooms, 1);
+
+  const where: Prisma.AppointmentWhereInput = {
+    status: { in: ['PENDING', 'CONFIRMED'] },
+    dateTime: { gte: windowStart, lte: windowEnd },
+    ...(excludeId && { id: { not: excludeId } }),
+  };
+
+  const existing = await prisma.appointment.findMany({
+    where,
+    select: { dateTime: true, duration: true },
+  });
+
+  let concurrentCount = 0;
+  for (const appt of existing) {
+    const eStart = appt.dateTime.getTime();
+    const eEnd = eStart + appt.duration * 60000;
+
+    if (intervalsOverlap(eStart, eEnd, newStartMs, newEndMs)) {
+      concurrentCount++;
+    }
+  }
+
+  if (concurrentCount >= capacity) {
+    throw new HttpError(
+      409,
+      `Center is at maximum capacity (${capacity} patients) for this time slot.`,
+    );
+  }
+}
+
 const VALID_STATUS_TRANSITIONS: Record<
   AppointmentStatus,
   AppointmentStatus[]
@@ -118,6 +164,8 @@ const appointmentInclude = {
 
 export async function listAppointments(filters: {
   date?: Date;
+  startDate?: Date;
+  endDate?: Date;
   therapistId?: string;
   patientId?: string;
   status?: AppointmentStatus;
@@ -126,7 +174,15 @@ export async function listAppointments(filters: {
 }) {
   const where: Prisma.AppointmentWhereInput = {};
 
-  if (filters.date) {
+  if (filters.startDate && filters.endDate) {
+    const start = new Date(filters.startDate);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(filters.endDate);
+    end.setHours(23, 59, 59, 999);
+
+    where.dateTime = { gte: start, lte: end };
+  } else if (filters.date) {
     const start = new Date(filters.date);
     start.setHours(0, 0, 0, 0);
 
@@ -260,6 +316,9 @@ export async function createAppointment(data: CreateAppointmentData) {
     );
   }
 
+  // Check global slot capacity (max concurrent patients = max rooms)
+  await checkGlobalConcurrency(appointmentStart, duration);
+
   const appointment = await prisma.appointment.create({
     data: {
       patientId: data.patientId,
@@ -332,27 +391,42 @@ export async function updateAppointment(
       ? new Date(data.dateTime)
       : appointment.dateTime;
 
-    const newDuration = data.duration ?? appointment.duration;
-
     if (newStart < new Date() && data.dateTime) {
       throw new HttpError(400, 'Cannot reschedule to a past time');
     }
+  }
+
+  const duration = data.duration ?? appointment.duration;
+
+  // If changing time or duration, check therapist, room, and global concurrency
+  if (data.dateTime || data.duration) {
+    const appointmentStart = data.dateTime ? new Date(data.dateTime) : appointment.dateTime;
 
     await checkTherapistConcurrency(
       appointment.therapistId,
-      newStart,
-      newDuration,
+      appointmentStart,
+      duration,
       id,
     );
 
-    const roomId =
-      data.roomId !== undefined ? data.roomId : appointment.roomId;
+    await checkGlobalConcurrency(appointmentStart, duration, id);
 
+    const roomId = data.roomId !== undefined ? data.roomId : appointment.roomId;
     if (roomId) {
       await checkRoomAvailability(
         roomId,
-        newStart,
-        newDuration,
+        appointmentStart,
+        duration,
+        id,
+      );
+    }
+  } else if (data.roomId !== undefined) {
+    // Only changing room, check room availability using existing time
+    if (data.roomId) {
+      await checkRoomAvailability(
+        data.roomId,
+        appointment.dateTime,
+        appointment.duration,
         id,
       );
     }

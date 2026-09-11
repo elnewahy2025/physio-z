@@ -1,5 +1,5 @@
 // frontend/src/components/WeekView.tsx
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Clock, User, MapPin } from 'lucide-react';
 import { useI18n } from '../i18n';
 import type { Appointment } from '../types';
@@ -19,6 +19,7 @@ const STATUS_COLORS: Record<string, string> = {
 interface WeekViewProps {
   appointments: Appointment[];
   weekStart: Date;
+  maxCapacity?: number;
   onAppointmentClick?: (appointment: Appointment) => void;
   onSlotClick?: (date: Date, hour: number) => void;
 }
@@ -26,6 +27,7 @@ interface WeekViewProps {
 export default function WeekView({
   appointments,
   weekStart,
+  maxCapacity = 1,
   onAppointmentClick,
   onSlotClick,
 }: WeekViewProps) {
@@ -49,10 +51,6 @@ export default function WeekView({
     for (let h = WORKING_START; h < WORKING_END; h++) arr.push(h);
     return arr;
   }, []);
-
-  const dayNames = isRTL
-    ? ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة']
-    : ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
   const today = new Date();
   const isToday = (date: Date) => date.toDateString() === today.toDateString();
@@ -98,7 +96,7 @@ export default function WeekView({
               `}
             >
               <div className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                {dayNames[i]}
+                {day.toLocaleDateString(isRTL ? 'ar-EG' : 'en-US', { weekday: 'short' })}
               </div>
               <div
                 className={`
@@ -129,71 +127,79 @@ export default function WeekView({
           }}
           dir={isRTL ? 'rtl' : 'ltr'}
         >
-          {/* Hour labels */}
           {hours.map((hour) => (
-            <div
-              key={hour}
-              className="border-b border-gray-100 dark:border-gray-800 p-2 text-end text-xs text-gray-400 dark:text-gray-500"
-            >
-              {formatHour(hour)}
-            </div>
-          ))}
+            <React.Fragment key={hour}>
+              {/* Hour label */}
+              <div className="border-b border-gray-100 dark:border-gray-800 p-2 text-end text-xs text-gray-400 dark:text-gray-500">
+                {formatHour(hour)}
+              </div>
 
-          {/* Appointment cells */}
-          {hours.map((hour) =>
-            days.map((day, dayIdx) => {
-              const hourKey = `${day.toDateString()}-${hour}`;
-              const slotAppointments = appointmentsByDayHour.get(hourKey) || [];
-              const isPast = day < today || (isToday(day) && hour < today.getHours());
-              const isTodaySlot = isToday(day);
+              {/* Appointment cells for this hour */}
+              {days.map((day, dayIdx) => {
+                const hourKey = `${day.toDateString()}-${hour}`;
+                const slotAppointments = appointmentsByDayHour.get(hourKey) || [];
+                const isPast = day < today || (isToday(day) && hour < today.getHours());
+                const isTodaySlot = isToday(day);
+                const isFull = slotAppointments.length >= maxCapacity;
 
-              return (
-                <div
-                  key={`${dayIdx}-${hour}`}
-                  onClick={() => onSlotClick?.(day, hour)}
-                  className={`
-                    relative border-b border-s border-gray-100 dark:border-gray-800
-                    ${isPast ? 'bg-gray-50/50 dark:bg-gray-900/30' : 'cursor-pointer hover:bg-blue-50/30 dark:hover:bg-blue-900/10'}
-                    ${isTodaySlot ? 'bg-primary-50/20 dark:bg-primary-900/10' : ''}
-                    transition-colors
-                  `}
-                >
-                  {/* Appointments in this slot */}
-                  <div className="flex h-full flex-col gap-1 p-1">
-                    {slotAppointments.map((appt) => (
-                      <button
-                        key={appt.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onAppointmentClick?.(appt);
-                        }}
-                        className={`
-                          w-full rounded-md border px-2 py-1 text-start text-xs transition-all hover:scale-[1.02] hover:shadow-md shrink-0
-                          ${STATUS_COLORS[appt.status] || STATUS_COLORS['PENDING']}
-                        `}
-                        style={{
-                          minHeight: `${Math.min((appt.duration / 60) * HOUR_HEIGHT - 4, 56)}px`,
-                        }}
-                      >
-                        <div className="flex items-center gap-1 truncate">
-                          <User size={10} className="shrink-0" />
-                          <span className="truncate font-medium">
-                            {appt.patient?.name || 'Patient'}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1 truncate text-[10px] opacity-75">
-                          <MapPin size={8} className="shrink-0" />
-                          <span className="truncate">
-                            {appt.room ? `R${appt.room.number}` : '—'} · {appt.therapist?.name || ''}
-                          </span>
-                        </div>
-                      </button>
-                    ))}
+                return (
+                  <div
+                    key={`${dayIdx}-${hour}`}
+                    onClick={() => {
+                      if (!isFull) onSlotClick?.(day, hour);
+                    }}
+                    className={`
+                      relative border-b border-s border-gray-200 dark:border-gray-700
+                      ${isPast 
+                        ? 'bg-gray-100/50 dark:bg-gray-900/50' 
+                        : isFull
+                          ? 'bg-red-50/30 dark:bg-red-900/10 cursor-not-allowed repeating-linear-gradient-45'
+                          : 'bg-white dark:bg-gray-800 cursor-pointer hover:bg-blue-50/50 dark:hover:bg-blue-900/20'
+                      }
+                      ${isTodaySlot && !isPast && !isFull ? 'bg-primary-50/10 dark:bg-primary-900/10' : ''}
+                      transition-colors
+                    `}
+                    style={isFull && !isPast ? {
+                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(239, 68, 68, 0.05) 10px, rgba(239, 68, 68, 0.05) 20px)'
+                    } : undefined}
+                  >
+                    {/* Appointments in this slot */}
+                    <div className="flex h-full flex-col gap-1 p-1">
+                      {slotAppointments.map((appt) => (
+                        <button
+                          key={appt.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onAppointmentClick?.(appt);
+                          }}
+                          className={`
+                            w-full rounded-md border px-2 py-1 text-start text-xs transition-all hover:scale-[1.02] hover:shadow-md shrink-0
+                            ${STATUS_COLORS[appt.status] || STATUS_COLORS['PENDING']}
+                          `}
+                          style={{
+                            minHeight: `${Math.min((appt.duration / 60) * HOUR_HEIGHT - 4, 56)}px`,
+                          }}
+                        >
+                          <div className="flex items-center gap-1 truncate">
+                            <User size={10} className="shrink-0" />
+                            <span className="truncate font-medium">
+                              {appt.patient?.name || 'Patient'}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1 truncate text-[10px] opacity-75">
+                            <MapPin size={8} className="shrink-0" />
+                            <span className="truncate">
+                              {appt.room ? `R${appt.room.number}` : '—'} · {appt.therapist?.name || ''}
+                            </span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              );
-            }),
-          )}
+                );
+              })}
+            </React.Fragment>
+          ))}
         </div>
       </div>
     </div>

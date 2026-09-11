@@ -7,8 +7,10 @@ import type { Appointment } from '../types';
 interface MonthViewProps {
   appointments: Appointment[];
   currentMonth: Date;
+  maxCapacity?: number;
   onMonthChange: (date: Date) => void;
-  onDayClick?: (date: Date) => void;
+  onAddAppointmentClick?: (date: Date) => void;
+  onAppointmentClick?: (appointment: Appointment) => void;
 }
 
 const STATUS_DOT_COLORS: Record<string, string> = {
@@ -22,8 +24,10 @@ const STATUS_DOT_COLORS: Record<string, string> = {
 export default function MonthView({
   appointments,
   currentMonth,
+  maxCapacity = 1,
   onMonthChange,
-  onDayClick,
+  onAddAppointmentClick,
+  onAppointmentClick,
 }: MonthViewProps) {
   const { lang } = useI18n();
   const isRTL = lang === 'ar';
@@ -35,7 +39,7 @@ export default function MonthView({
 
   const weekDays = isRTL
     ? ['سبت', 'أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة']
-    : ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   // Generate calendar grid
   const days = useMemo(() => {
@@ -73,6 +77,7 @@ export default function MonthView({
   }, [appointments]);
 
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const nextMonth = () => {
     const next = new Date(currentMonth);
@@ -88,7 +93,6 @@ export default function MonthView({
 
   const handleDayClick = (day: Date) => {
     setSelectedDay(day);
-    onDayClick?.(day);
   };
 
   // Get appointments for selected day
@@ -188,25 +192,36 @@ export default function MonthView({
       {/* Selected day appointments */}
       {selectedDay && selectedDayAppointments.length > 0 && (
         <div className="mt-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-          <div className="mb-3 flex items-center gap-2">
-            <CalendarIcon size={16} className="text-primary-600" />
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-              {selectedDay.toLocaleDateString(isRTL ? 'ar-EG' : 'en-US', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-              })}
-            </p>
-            <span className="badge bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300">
-              {selectedDayAppointments.length}
-            </span>
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CalendarIcon size={16} className="text-primary-600" />
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                {selectedDay.toLocaleDateString(isRTL ? 'ar-EG' : 'en-US', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long',
+                })}
+              </p>
+              <span className="badge bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300">
+                {selectedDayAppointments.length}
+              </span>
+            </div>
+            {onAddAppointmentClick && (
+              <button
+                onClick={() => onAddAppointmentClick(selectedDay)}
+                className="btn-primary !py-1 !px-3 text-xs"
+              >
+                {isRTL ? '+ إضافة موعد' : '+ Add Appointment'}
+              </button>
+            )}
           </div>
 
           <div className="space-y-2">
             {selectedDayAppointments.map((appt) => (
-              <div
+              <button
                 key={appt.id}
-                className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-700/50"
+                onClick={() => onAppointmentClick?.(appt)}
+                className="flex w-full items-center justify-between rounded-lg bg-gray-50 p-3 text-start transition-colors hover:bg-gray-100 dark:bg-gray-700/50 dark:hover:bg-gray-700"
               >
                 <div className="flex items-center gap-3">
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -237,7 +252,7 @@ export default function MonthView({
                 >
                   {appt.status}
                 </span>
-              </div>
+              </button>
             ))}
           </div>
         </div>

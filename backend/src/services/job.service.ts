@@ -510,6 +510,8 @@ const jobHandlers: Record<string, () => Promise<unknown>> = {
   [JOB_TYPES.CHURN_CHECK]: handleChurnCheck,
   [JOB_TYPES.WEEKLY_REPORT]: handleWeeklyReport,
   [JOB_TYPES.SURVEY_REMINDER]: handleSurveyReminder,
+  [JOB_TYPES.INVENTORY_CHECK]: checkLowStockJob,
+  [JOB_TYPES.MAINTENANCE_CHECK]: checkMaintenanceDueJob,
 };
 
 // ─── Run Job ─────────────────────────────────────────────────────────────────

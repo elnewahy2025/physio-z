@@ -24,6 +24,8 @@ const updateAppointmentSchema = z.object({
 
 const listQuerySchema = paginationSchema.extend({
   date: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
   therapistId: z.string().optional(),
   patientId: z.string().optional(),
   status: appointmentStatusSchema.optional(),
@@ -32,7 +34,7 @@ const listQuerySchema = paginationSchema.extend({
 const changeStatusSchema = z.object({ status: appointmentStatusSchema });
 
 export const list = asyncHandler(async (req: Request, res: Response) => {
-  const { date, therapistId, patientId, status, page, limit } = listQuerySchema.parse(req.query);
+  const { date, startDate, endDate, therapistId, patientId, status, page, limit } = listQuerySchema.parse(req.query);
   let patientFilter = patientId;
   if (req.userRole === 'PATIENT' && req.userId) {
     const { prisma } = await import('../lib/prisma.js');
@@ -44,7 +46,14 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
     patientFilter = ownPatient.id;
   }
   res.json(await appointmentService.listAppointments({
-    date: date ? new Date(date) : undefined, therapistId, patientId: patientFilter, status, page, limit,
+    date: date ? new Date(date) : undefined,
+    startDate: startDate ? new Date(startDate) : undefined,
+    endDate: endDate ? new Date(endDate) : undefined,
+    therapistId, 
+    patientId: patientFilter, 
+    status, 
+    page, 
+    limit,
   }));
 });
 
