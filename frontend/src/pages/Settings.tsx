@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Save, Building2, DollarSign, Phone, AlertCircle } from 'lucide-react';
 import api from '../lib/api';
 import { useI18n } from '../i18n';
@@ -11,6 +11,7 @@ export default function Settings() {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const L = (arText: string, enText: string) => (lang === 'ar' ? arText : enText);
+  const queryClient = useQueryClient();
 
   const { data: settings, isLoading } = useQuery({
     queryKey: ['settings'],
@@ -44,7 +45,11 @@ export default function Settings() {
         taxRate: parseFloat(data.taxRate) || 0, whatsappMessageTemplate: data.whatsappMessageTemplate || null,
       });
     },
-    onSuccess: () => { setSaved(true); setTimeout(() => setSaved(false), 3000); },
+    onSuccess: () => { 
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
+      setSaved(true); 
+      setTimeout(() => setSaved(false), 3000); 
+    },
     onError: (err: any) => { setError(err.response?.data?.message || 'Failed to save'); },
   });
 
