@@ -114,12 +114,15 @@ export async function startIntakeForm(patientId: string, formType: string) {
     return existingForm;
   }
 
+  const data = { patientId, formType };
+
   // Create new form
   const form = await prisma.intakeForm.create({
     data: {
-      patientId,
-      formType,
-      status: 'in_progress',
+      patientId: data.patientId,
+      formType: data.formType,
+      title: data.formType + ' Intake Form',
+      status: 'DRAFT',
       startedAt: new Date(),
       formData: {},
     },

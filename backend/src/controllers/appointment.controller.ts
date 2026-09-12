@@ -8,7 +8,7 @@ import { HttpError } from '../lib/errors.js';
 
 const videoLinkSchema = z.preprocess(
   (val) => (typeof val === 'string' && val.trim() === '' ? null : val),
-  z.string().optional().nullable()
+  z.string().optional()
 );
 
 const createAppointmentSchema = z.object({
@@ -24,8 +24,8 @@ const createAppointmentSchema = z.object({
 const updateAppointmentSchema = z.object({
   dateTime: isoDateSchema.optional(),
   duration: z.number().int().min(15).max(240).optional(),
-  roomId: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
+  roomId: z.string().optional(),
+  notes: z.string().optional(),
   videoLink: videoLinkSchema,
 });
 

@@ -1,5 +1,5 @@
 // backend/src/controllers/notification.controller.ts
-import type { Request, Response } from 'react';
+import type { Request, Response } from 'express';
 import { z } from 'zod';
 import * as notificationService from '../services/notification.service.js';
 import { notificationEmitter } from '../lib/notification-emitter.js';

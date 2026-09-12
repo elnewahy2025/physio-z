@@ -63,7 +63,7 @@ export async function createInvoice(data: {
   const tax = data.tax ?? Math.round(data.amount * Number(settings.taxRate)) / 100;
   const total = Math.round((data.amount + tax) * 100) / 100;
   const number = await generateInvoiceNumber();
-  return prisma.invoice.create({
+  const invoice = await prisma.invoice.create({
         data: {
       number, patientId: data.patientId, appointmentId: data.appointmentId ?? null,
       amount: data.amount, tax, total, dueDate: data.dueDate ?? null, createdById,
@@ -76,15 +76,16 @@ export async function createInvoice(data: {
     include: { user: true },
   });
 
-  if (patientWithUser?.user) {
+  if (patientWithUser?.userId) {
     await createNotification({
-      userId: patientWithUser.user.id,
+      userId: patientWithUser.userId,
       type: NOTIFICATION_TYPES.INVOICE_CREATED,
       title: 'New Invoice',
       message: `Invoice ${number} for ${total} has been created`,
       link: '/invoices',
     });
   }
+  return invoice;
 }
 
 export async function updateInvoiceStatus(id: string, status: InvoiceStatus) {
@@ -101,7 +102,7 @@ export async function recordPayment(data: {
 }) {
   const invoice = await prisma.invoice.findUnique({
     where: { id: data.invoiceId },
-    include: { payments: true },
+    include: { payments: true, patient: true },
   });
   if (!invoice) throw new HttpError(404, 'Invoice not found');
   if (invoice.status === 'PAID') throw new HttpError(400, 'This invoice is already fully paid');

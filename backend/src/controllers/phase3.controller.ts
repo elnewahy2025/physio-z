@@ -16,10 +16,10 @@ const createInventorySchema = z.object({
   quantity: z.number().int().min(0).optional(),
   minQuantity: z.number().int().min(0).optional(),
   maxQuantity: z.number().int().min(1).optional(),
-  unitCost: z.number().positive().optional().nullable(),
-  supplier: z.string().optional().nullable(),
-  location: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
+  unitCost: z.number().positive().optional(),
+  supplier: z.string().optional(),
+  location: z.string().optional(),
+  notes: z.string().optional(),
 });
 
 export const listInventory = asyncHandler(async (req: Request, res: Response) => {
@@ -53,7 +53,7 @@ const stockTransactionSchema = z.object({
   itemId: z.string().min(1),
   type: z.enum(['IN', 'OUT', 'ADJUST']),
   quantity: z.number().int().positive(),
-  reason: z.string().optional().nullable(),
+  reason: z.string().optional(),
 });
 
 export const stockTransaction = asyncHandler(async (req: Request, res: Response) => {
@@ -76,12 +76,12 @@ export const getTransactionHistory = asyncHandler(async (req: Request, res: Resp
 const createEquipmentSchema = z.object({
   name: z.string().min(2),
   category: z.enum(['TREATMENT', 'DIAGNOSTIC', 'EXERCISE', 'FURNITURE', 'OTHER']),
-  serialNumber: z.string().optional().nullable(),
-  roomId: z.string().optional().nullable(),
-  purchaseDate: z.string().optional().nullable(),
-  purchaseCost: z.number().positive().optional().nullable(),
-  maintenanceIntervalDays: z.number().int().min(1).optional().nullable(),
-  notes: z.string().optional().nullable(),
+  serialNumber: z.string().optional(),
+  roomId: z.string().optional(),
+  purchaseDate: z.string().optional(),
+  purchaseCost: z.number().positive().optional(),
+  maintenanceIntervalDays: z.number().int().min(1).optional(),
+  notes: z.string().optional(),
 });
 
 export const listEquipment = asyncHandler(async (req: Request, res: Response) => {
@@ -116,9 +116,9 @@ const logMaintenanceSchema = z.object({
   equipmentId: z.string().min(1),
   type: z.enum(['ROUTINE', 'REPAIR', 'INSPECTION', 'CALIBRATION']),
   description: z.string().min(3),
-  cost: z.number().positive().optional().nullable(),
-  performedBy: z.string().optional().nullable(),
-  nextDueInDays: z.number().int().min(1).optional().nullable(),
+  cost: z.number().positive().optional(),
+  performedBy: z.string().optional(),
+  nextDueInDays: z.number().int().min(1).optional(),
 });
 
 export const logMaintenance = asyncHandler(async (req: Request, res: Response) => {

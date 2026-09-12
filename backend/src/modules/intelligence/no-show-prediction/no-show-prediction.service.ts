@@ -69,7 +69,7 @@ export class NoShowPredictionService {
 
     // Calculate outstanding balance
     const outstandingBalance = appointment.patient.invoices.reduce(
-      (sum, invoice) => sum + Number(invoice.total),
+      (sum: number, invoice: any) => sum + Number(invoice.total),
       0,
     );
 
@@ -125,7 +125,7 @@ export class NoShowPredictionService {
 
     const patientHistory = await this.getPatientHistory(patientId);
     const outstandingBalance = patient.invoices.reduce(
-      (sum, invoice) => sum + Number(invoice.total),
+      (sum: number, invoice: any) => sum + Number(invoice.total),
       0,
     );
 
@@ -200,9 +200,9 @@ export class NoShowPredictionService {
       select: { status: true },
     });
 
-    const noShowCount = appointments.filter((a) => a.status === 'NO_SHOW').length;
-    const cancellationCount = appointments.filter((a) => a.status === 'CANCELLED').length;
-    const completedCount = appointments.filter((a) => a.status === 'COMPLETED').length;
+    const noShowCount = appointments.filter((a: any) => a.status === 'NO_SHOW').length;
+    const cancellationCount = appointments.filter((a: any) => a.status === 'CANCELLED').length;
+    const completedCount = appointments.filter((a: any) => a.status === 'COMPLETED').length;
 
     return {
       totalAppointments: appointments.length,
@@ -299,7 +299,7 @@ export class NoShowPredictionService {
 
   private calculateCompletionRate(appointments: any[]): number {
     if (appointments.length === 0) return 0;
-    const completed = appointments.filter((a) => a.status === 'COMPLETED').length;
+    const completed = appointments.filter((a: any) => a.status === 'COMPLETED').length;
     return (completed / appointments.length) * 100;
   }
 

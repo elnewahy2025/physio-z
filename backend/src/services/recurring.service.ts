@@ -170,24 +170,43 @@ export async function cancelRecurringSeries(patternId: string, cancelFuture: boo
 }
 
 export async function getRecurringPatterns(patientId?: string) {
-  const where: Record<string, unknown> = {};
+  let patternIds: string[] | undefined = undefined;
+
   if (patientId) {
-    where.appointments = { some: { patientId } };
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        patientId,
+        recurringPatternId: { not: null },
+      },
+      select: { recurringPatternId: true },
+    });
+    patternIds = [...new Set(appointments.map((a) => a.recurringPatternId as string))];
   }
 
-  return prisma.recurringPattern.findMany({
-    where,
-    include: {
-      appointments: {
-        where: { status: { in: ['PENDING', 'CONFIRMED'] } },
-        take: 1,
-        include: {
-          patient: { select: { id: true, name: true } },
-          therapist: { select: { id: true, name: true } },
-        },
-        orderBy: { dateTime: 'asc' },
-      },
-    },
+  const patterns = await prisma.recurringPattern.findMany({
+    where: patternIds ? { id: { in: patternIds } } : undefined,
     orderBy: { createdAt: 'desc' },
   });
+
+  const result = [];
+  for (const pattern of patterns) {
+    const nextAppointments = await prisma.appointment.findMany({
+      where: {
+        recurringPatternId: pattern.id,
+        status: { in: ['PENDING', 'CONFIRMED'] },
+      },
+      take: 1,
+      include: {
+        patient: { select: { id: true, name: true } },
+        therapist: { select: { id: true, name: true } },
+      },
+      orderBy: { dateTime: 'asc' },
+    });
+    result.push({
+      ...pattern,
+      appointments: nextAppointments,
+    });
+  }
+
+  return result;
 }

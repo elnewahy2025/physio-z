@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 export const exportPatientData = async (patientId: string) => {
   const patient = await prisma.patient.findUnique({
     where: { id: patientId },
-    include: { appointments: true, medicalFiles: true }
+    include: { appointments: true, MedicalFile: true }
   });
   return { success: true, data: patient };
 };

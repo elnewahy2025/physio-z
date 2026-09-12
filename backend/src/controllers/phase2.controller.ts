@@ -13,18 +13,17 @@ import { HttpError } from '../lib/errors.js';
 const createRecurringSchema = z.object({
   patientId: z.string().min(1),
   therapistId: z.string().min(1),
-  roomId: z.string().optional().nullable(),
-  startDate: z.string().min(1),
+  roomId: z.string().optional(),
+  startDate: z.coerce.date(),
   frequency: z.enum(['WEEKLY', 'BIWEEKLY']),
   daysOfWeek: z.array(z.number().int().min(0).max(6)).min(1),
   sessionCount: z.number().int().min(2).max(50),
   duration: z.number().int().min(15).max(240).optional(),
-  notes: z.string().optional().nullable(),
+  notes: z.string().optional(),
 });
 
 export const createRecurring = asyncHandler(async (req: Request, res: Response) => {
   const data = createRecurringSchema.parse(req.body);
-  data.startDate = new Date(data.startDate);
   res.status(201).json(await recurringService.createRecurringAppointments(data));
 });
 
@@ -43,10 +42,10 @@ export const listRecurring = asyncHandler(async (req: Request, res: Response) =>
 
 const createPackageSchema = z.object({
   name: z.string().min(2),
-  description: z.string().optional().nullable(),
+  description: z.string().optional(),
   sessionCount: z.number().int().min(1).max(100),
   price: z.number().positive(),
-  durationDays: z.number().int().min(1).optional().nullable(),
+  durationDays: z.number().int().min(1).optional(),
 });
 
 export const listPackages = asyncHandler(async (req: Request, res: Response) => {
@@ -93,10 +92,10 @@ const createDiscountSchema = z.object({
   name: z.string().min(2),
   type: z.enum(['PERCENT', 'FIXED']),
   value: z.number().positive(),
-  minAmount: z.number().positive().optional().nullable(),
-  maxUses: z.number().int().positive().optional().nullable(),
-  startsAt: z.string(),
-  expiresAt: z.string().optional().nullable(),
+  minAmount: z.number().positive().optional(),
+  maxUses: z.number().int().positive().optional(),
+  startsAt: z.coerce.date(),
+  expiresAt: z.coerce.date().optional(),
 });
 
 export const listDiscounts = asyncHandler(async (_req: Request, res: Response) => {
@@ -105,8 +104,6 @@ export const listDiscounts = asyncHandler(async (_req: Request, res: Response) =
 
 export const createDiscount = asyncHandler(async (req: Request, res: Response) => {
   const data = createDiscountSchema.parse(req.body);
-  data.startsAt = new Date(data.startsAt);
-  if (data.expiresAt) data.expiresAt = new Date(data.expiresAt);
   res.status(201).json(await discountService.createDiscount(data));
 });
 
@@ -124,17 +121,16 @@ export const deleteDiscount = asyncHandler(async (req: Request, res: Response) =
 
 const addToWaitlistSchema = z.object({
   patientId: z.string().min(1),
-  preferredDate: z.string().min(1),
+  preferredDate: z.coerce.date(),
   preferredTimeStart: z.string().regex(/^\d{2}:\d{2}$/),
   preferredTimeEnd: z.string().regex(/^\d{2}:\d{2}$/),
-  therapistId: z.string().optional().nullable(),
+  therapistId: z.string().optional(),
   priority: z.number().int().min(0).max(10).optional(),
-  notes: z.string().optional().nullable(),
+  notes: z.string().optional(),
 });
 
 export const addToWaitlist = asyncHandler(async (req: Request, res: Response) => {
   const data = addToWaitlistSchema.parse(req.body);
-  data.preferredDate = new Date(data.preferredDate);
   res.status(201).json(await waitlistService.addToWaitlist(data));
 });
 
@@ -149,13 +145,12 @@ export const removeFromWaitlist = asyncHandler(async (req: Request, res: Respons
 
 const bookFromWaitlistSchema = z.object({
   therapistId: z.string().min(1),
-  roomId: z.string().optional().nullable(),
-  dateTime: z.string().min(1),
+  roomId: z.string().optional(),
+  dateTime: z.coerce.date(),
   duration: z.number().int().min(15).max(240).optional(),
 });
 
 export const bookFromWaitlist = asyncHandler(async (req: Request, res: Response) => {
   const data = bookFromWaitlistSchema.parse(req.body);
-  data.dateTime = new Date(data.dateTime);
   res.status(201).json(await waitlistService.bookFromWaitlist(req.params.id, data));
 });

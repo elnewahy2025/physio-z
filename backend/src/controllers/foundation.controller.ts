@@ -15,7 +15,7 @@ const uploadFileSchema = z.object({
   mimeType: z.string().min(1),
   data: z.string().min(1), // base64
   category: z.enum(['MEDICAL_FILE', 'PHOTO', 'CONSENT', 'EXERCISE', 'LOGO']),
-  patientId: z.string().optional().nullable(),
+  patientId: z.string().optional(),
 });
 
 export const uploadFile = asyncHandler(async (req: Request, res: Response) => {
@@ -54,9 +54,9 @@ const createBlockedSlotSchema = z.object({
   dayOfWeek: z.number().int().min(0).max(6),
   startTime: z.string().regex(/^\d{2}:\d{2}$/),
   endTime: z.string().regex(/^\d{2}:\d{2}$/),
-  reason: z.string().optional().nullable(),
-  isRecurring: z.boolean().default(true),
-  specificDate: z.string().optional().nullable(),
+  reason: z.string().optional(),
+  isRecurring: z.boolean().default(false),
+  specificDate: z.coerce.date().optional(),
 });
 
 export const listBlockedSlots = asyncHandler(async (req: Request, res: Response) => {
@@ -104,10 +104,10 @@ export const getPatientProgress = asyncHandler(async (req: Request, res: Respons
   }));
 
   // Calculate improvement
-  const firstPain = progress.find((p) => p.painLevel !== null)?.painLevel;
-  const lastPain = [...progress].reverse().find((p) => p.painLevel !== null)?.painLevel;
+  const firstPain = progress.find((p) => p.painLevel !== null && p.painLevel !== undefined)?.painLevel ?? null;
+  const lastPain = [...progress].reverse().find((p) => p.painLevel !== null && p.painLevel !== undefined)?.painLevel ?? null;
   const improvement =
-    firstPain !== undefined && lastPain !== undefined && firstPain > 0
+    firstPain !== null && lastPain !== null && firstPain > 0
       ? Math.round(((firstPain - lastPain) / firstPain) * 100)
       : null;
 
@@ -215,8 +215,8 @@ const createExpenseSchema = z.object({
   description: z.string().min(2),
   amount: z.number().positive(),
   date: z.string(),
-  paymentMethod: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
+  paymentMethod: z.string().optional(),
+  notes: z.string().optional(),
 });
 
 export const createExpense = asyncHandler(async (req: Request, res: Response) => {

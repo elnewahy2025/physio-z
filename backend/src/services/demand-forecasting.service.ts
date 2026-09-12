@@ -145,7 +145,7 @@ export async function getCalendarHeatmap(year: number, month: number) {
     year,
     month,
     calendar: calendarData,
-    maxAppointments: Math.max(...Array.from(dailyCount.values(), 0)),
+    maxAppointments: Math.max(0, ...Array.from(dailyCount.values())),
     averageAppointments: calculateAverage(dailyCount),
   };
 }

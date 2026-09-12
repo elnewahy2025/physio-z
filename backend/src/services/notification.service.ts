@@ -35,6 +35,8 @@ export async function createNotification(params: {
   return notification;
 }
 
+import { Role } from '@prisma/client';
+
 export async function notifyRole(role: string, params: {
   type: string;
   title: string;
@@ -42,7 +44,7 @@ export async function notifyRole(role: string, params: {
   link?: string;
 }) {
   const users = await prisma.user.findMany({
-    where: { role, isActive: true },
+    where: { role: role as Role, isActive: true },
     select: { id: true },
   });
 

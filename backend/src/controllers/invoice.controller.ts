@@ -6,17 +6,17 @@ import { paginationSchema, invoiceStatusSchema, paymentMethodSchema, isoDateSche
 
 const createInvoiceSchema = z.object({
   patientId: z.string().min(1, 'Patient is required'),
-  appointmentId: z.string().optional().nullable(),
-  amount: z.number().positive('Amount must be greater than 0'),
+  appointmentId: z.string().optional(),
+  amount: z.number().positive('Amount must be positive'),
   tax: z.number().min(0).optional(),
-  dueDate: isoDateSchema.optional().nullable(),
+  dueDate: z.coerce.date().optional(),
 });
 
 const recordPaymentSchema = z.object({
   invoiceId: z.string().min(1, 'Invoice is required'),
   amount: z.number().positive('Amount must be greater than 0'),
   method: paymentMethodSchema,
-  transactionId: z.string().optional().nullable(),
+  transactionId: z.string().optional(),
 });
 
 const listQuerySchema = paginationSchema.extend({

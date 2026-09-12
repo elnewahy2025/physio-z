@@ -7,7 +7,7 @@ import { roleSchema } from '../lib/validation.js';
 const createUserSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   phone: z.string().min(8, 'Phone must be at least 8 digits').max(15),
-  email: z.string().email().optional().nullable(),
+  email: z.string().email().optional(),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   role: roleSchema,
 });

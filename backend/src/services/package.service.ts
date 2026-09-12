@@ -1,6 +1,7 @@
 // backend/src/services/package.service.ts
 import { prisma } from '../lib/prisma.js';
 import { HttpError } from '../lib/errors.js';
+import { validateDiscount } from './discount.service.js';
 
 // ─── Package Management (Owner) ───
 

@@ -7,10 +7,10 @@ import { paginationSchema } from '../lib/validation.js';
 const createSessionSchema = z.object({
   appointmentId: z.string().min(1, 'Appointment is required'),
   diagnosis: z.string().min(3, 'Diagnosis must be at least 3 characters'),
-  treatmentPlan: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
+  treatmentPlan: z.string().optional(),
+  notes: z.string().optional(),
   duration: z.number().int().min(15).max(240).optional(),
-  painLevel: z.number().int().min(0).max(10).optional().nullable(),
+  painLevel: z.number().int().min(0).max(10).optional(),
 });
 
 const updateSessionSchema = createSessionSchema.partial();

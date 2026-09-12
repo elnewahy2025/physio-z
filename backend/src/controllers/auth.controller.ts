@@ -47,10 +47,10 @@ export const logout = (_req: Request, res: Response) => {
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   phone: z.string().min(8, 'Phone must be at least 8 digits').max(15),
-  email: z.string().email('Invalid email').optional().nullable(),
+  email: z.string().email('Invalid email').optional(),
   password: z.string().min(6, 'Password must be at least 6 characters'),
-  dateOfBirth: z.string().optional().nullable(),
-  medicalHistory: z.string().optional().nullable(),
+  dateOfBirth: z.string().optional(),
+  medicalHistory: z.string().optional(),
 });
 
 export const register = asyncHandler(async (req: Request, res: Response) => {

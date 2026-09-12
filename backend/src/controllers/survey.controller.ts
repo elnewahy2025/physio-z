@@ -8,7 +8,7 @@ import { HttpError } from '../lib/errors.js';
 const submitSurveySchema = z.object({
   appointmentId: z.string().min(1),
   rating: z.number().int().min(1).max(5),
-  feedback: z.string().max(500).optional().nullable(),
+  feedback: z.string().max(500).optional(),
 });
 
 export const submit = asyncHandler(async (req: Request, res: Response) => {

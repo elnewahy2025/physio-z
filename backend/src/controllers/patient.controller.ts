@@ -15,13 +15,13 @@ const createPatientSchema = z.object({
 
   phone: z.string().min(8, 'Phone must be at least 8 digits').max(15),
 
-  email: z.string().email().optional().nullable(),
+  email: z.string().email().optional(),
 
-  address: z.string().optional().nullable(),
+  address: z.string().optional(),
 
-  dateOfBirth: z.coerce.date().optional().nullable(),
+  dateOfBirth: z.coerce.date().optional(),
 
-  medicalHistory: z.string().optional().nullable(),
+  medicalHistory: z.string().optional(),
 });
 
 const updatePatientSchema = createPatientSchema.partial();

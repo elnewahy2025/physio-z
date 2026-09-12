@@ -7,12 +7,9 @@ export const getExercises = async () => {
 export const assignExercise = async (patientId: string, exerciseId: string) => {
   return prisma.exerciseAssignment.create({
     data: {
-      patientId,
+      prescriptionId: 'default-prescription',
       exerciseId,
-      assignedBy: 'system',
-      frequency: 'Daily',
-      duration: '10 mins',
-      status: 'PENDING'
+      frequency: 'Daily'
     }
   });
 };

@@ -62,7 +62,7 @@ export async function getSurveyResults(therapistId?: string) {
   const where: Record<string, unknown> = {};
   if (therapistId) where.therapistId = therapistId;
 
-  const [surveys, avgRating, totalCount] = await Promise.all([
+  const [surveys, aggregate] = await Promise.all([
     prisma.survey.findMany({
       where,
       include: {
@@ -78,6 +78,8 @@ export async function getSurveyResults(therapistId?: string) {
       _count: { rating: true },
     }),
   ]);
+
+  const totalCount = aggregate._count.rating;
 
   // Rating distribution
   const distribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -101,8 +103,8 @@ export async function getSurveyResults(therapistId?: string) {
 
   return {
     summary: {
-      averageRating: avgRating._avg.rating
-        ? Math.round(avgRating._avg.rating * 10) / 10
+      averageRating: aggregate._avg.rating
+        ? Math.round(aggregate._avg.rating * 10) / 10
         : null,
       totalResponses: totalCount,
     },

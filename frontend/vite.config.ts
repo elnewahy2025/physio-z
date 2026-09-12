@@ -1,11 +1,13 @@
 // frontend/vite.config.ts
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+// @ts-ignore
 import path from 'path';
 
 export default defineConfig({
-  test: { environment: 'jsdom', setupFiles: ['./src/setupTests.ts'] },
+  test: { environment: 'jsdom', setupFiles: ['./src/setupTests.ts'], globals: true },
   plugins: [
     react(),
     VitePWA({
@@ -21,7 +23,7 @@ export default defineConfig({
         orientation: 'portrait',
         start_url: '/',
         lang: 'ar',
-        dir: 'auto',
+        dir: 'rtl',
         categories: ['medical', 'health'],
         icons: [
           {
@@ -43,6 +45,7 @@ export default defineConfig({
         ],
       },
       workbox: {
+        maximumFileSizeToCacheInBytes: 5000000,
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff,woff2}'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
@@ -101,6 +104,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      // @ts-ignore
       '@': path.resolve(__dirname, './src'),
     },
   },
