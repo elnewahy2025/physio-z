@@ -26,6 +26,20 @@ import Waitlist from './pages/Waitlist';
 import Expenses from './pages/Expenses';
 import Inventory from './pages/Inventory';
 import Equipment from './pages/Equipment';
+import EducationPortal from './pages/EducationPortal';
+
+// Modules
+import IntelligenceDashboard from './modules/intelligence/components/IntelligenceDashboard';
+import DemandForecastDashboard from './modules/intelligence/components/DemandForecastDashboard';
+import NoShowRiskDashboard from './modules/intelligence/components/NoShowRiskDashboard';
+import TreatmentEffectivenessDashboard from './modules/intelligence/components/TreatmentEffectivenessDashboard';
+import ExerciseLibrary from './modules/exercise-library/components/ExerciseLibrary';
+import WhatsAppReminders from './modules/integrations/components/WhatsAppReminders';
+import VideoConsultation from './modules/integrations/components/VideoConsultation';
+import PaymentManagement from './modules/integrations/components/PaymentManagement';
+import AuditLogDashboard from './modules/audit/components/AuditLogDashboard';
+import BackupManagement from './modules/backup/components/BackupManagement';
+import ProviderManagementDashboard from './modules/providers/components/ProviderManagementDashboard';
 
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -177,6 +191,19 @@ function App() {
           />
 <Route path="/packages" element={<ProtectedRoute><Packages /></ProtectedRoute>} />
 <Route path="/waitlist" element={<ProtectedRoute><Waitlist /></ProtectedRoute>} />
+<Route path="/intelligence" element={<ProtectedRoute><IntelligenceDashboard /></ProtectedRoute>} />
+<Route path="/intelligence/demand" element={<ProtectedRoute><DemandForecastDashboard /></ProtectedRoute>} />
+<Route path="/intelligence/no-show" element={<ProtectedRoute><NoShowRiskDashboard /></ProtectedRoute>} />
+<Route path="/intelligence/treatment" element={<ProtectedRoute><TreatmentEffectivenessDashboard /></ProtectedRoute>} />
+<Route path="/exercises" element={<ProtectedRoute><ExerciseLibrary /></ProtectedRoute>} />
+<Route path="/integrations/whatsapp" element={<ProtectedRoute><WhatsAppReminders /></ProtectedRoute>} />
+<Route path="/integrations/video" element={<ProtectedRoute><VideoConsultation /></ProtectedRoute>} />
+<Route path="/integrations/payments" element={<ProtectedRoute><PaymentManagement /></ProtectedRoute>} />
+<Route path="/audit-logs" element={<ProtectedRoute><AuditLogDashboard /></ProtectedRoute>} />
+<Route path="/backups" element={<ProtectedRoute><BackupManagement /></ProtectedRoute>} />
+<Route path="/providers" element={<ProtectedRoute><ProviderManagementDashboard /></ProtectedRoute>} />
+<Route path="/education" element={<ProtectedRoute><EducationPortal /></ProtectedRoute>} />
+
           <Route
             path="*"
             element={<Navigate to="/" replace />}

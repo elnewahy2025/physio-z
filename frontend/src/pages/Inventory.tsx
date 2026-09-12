@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import api from '../lib/api';
 import { useI18n } from '../i18n';
-import { Card, CardHeader, StatCard, EmptyState, Badge } from '../components/ui';
+import { Card, CardHeader, StatCard, EnhancedEmptyState, Badge, Spinner } from '../components/ui';
 
 const CATEGORY_LABELS: Record<string, { ar: string; en: string }> = {
   SUPPLIES: { ar: 'مستلزمات', en: 'Supplies' },
@@ -159,7 +159,7 @@ export default function Inventory() {
         />
 
         {(items || []).length === 0 ? (
-          <EmptyState
+          <EnhancedEmptyState
             icon={<Package size={32} />}
             title={L('لا توجد عناصر', 'No items')}
             subtitle={L('أضف عنصرك الأول', 'Add your first item')}

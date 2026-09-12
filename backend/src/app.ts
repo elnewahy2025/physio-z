@@ -1,8 +1,10 @@
 import swaggerUi from 'swagger-ui-express';
-import { swaggerSpec } from './swagger';
-import phase6Routes from './routes/phase6.routes';
-import phase7Routes from './routes/phase7.routes';
-import providerRoutes from './routes/provider.routes';
+import { swaggerSpec } from './swagger.js';
+import phase6Routes from './routes/phase6.routes.js';
+import phase7Routes from './routes/phase7.routes.js';
+import providerRoutes from './routes/provider.routes.js';
+import whatsappRoutes from './routes/whatsapp.routes.js';
+import paymentGatewayRoutes from './routes/payment-gateway.routes.js';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -73,21 +75,26 @@ export function createApp() {
   app.use('/api/invoices', invoiceRoutes);
   app.use('/api/sessions', sessionRoutes);
   app.use('/api/settings', settingsRoutes);
-app.use('/api/patient-care', patientCareRoutes);
-app.use('/api/intelligence', intelligenceRoutes);
+  app.use('/api/patient-care', patientCareRoutes);
+  app.use('/api/intelligence', intelligenceRoutes);
   app.use('/api/rooms', roomRoutes);
   app.use('/api/reports', reportRoutes);
   app.use('/api/notifications', notificationRoutes);
   app.use('/api/ratings', ratingRoutes);
   app.use('/api', foundationRoutes);
+  app.use('/api/surveys', surveyRoutes);
+  app.use('/api', phase2Routes);
+  app.use('/api', phase6Routes);
+  app.use('/api', phase7Routes);
+  app.use('/api/providers', providerRoutes);
+  app.use('/api/whatsapp', whatsappRoutes);
+  app.use('/api/integrations/whatsapp', whatsappRoutes);
+  app.use('/api/payment-gateways', paymentGatewayRoutes);
+  app.use('/api/integrations/payments', paymentGatewayRoutes);
+
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   app.use(notFoundHandler);
   app.use(errorHandler);
-app.use('/api/surveys', surveyRoutes);
-app.use('/api', phase2Routes);
+  
   return app;
 }
-
-
-
-
-

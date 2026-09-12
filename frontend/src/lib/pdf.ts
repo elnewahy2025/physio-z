@@ -75,7 +75,7 @@ function prepareTemplateData(
 
     patientName: invoice.patient.name,
     patientPhone: invoice.patient.phone,
-    patientEmail: invoice.patient.email,
+    patientEmail: (invoice.patient as any).email || null,
 
     items: [
       {

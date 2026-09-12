@@ -6,3 +6,6 @@ setup-physio.ps1
 setup-phase2.ps1
 *.log
 .DS_Store
+dev-dist/
+**/dev-dist/
+*.tsbuildinfo

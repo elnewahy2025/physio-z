@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { KeyRound } from 'lucide-react';
 import ChangePasswordModal from './ChangePasswordModal';
-import { Package, Clock, TrendingDown, Boxes, Wrench } from 'lucide-react';
+import { Package, Clock, TrendingDown, Boxes, Wrench, BookOpen } from 'lucide-react';
 
 
 import {
@@ -23,6 +23,8 @@ import {
   Sun,
   CalendarDays,
   CreditCard,
+  Video,
+  MessageSquare,
 } from 'lucide-react';
 
 import NotificationBell from './NotificationBell';
@@ -39,6 +41,7 @@ interface NavItem {
   icon: ReactNode;
   path: string;
   roles: string[];
+  category?: string;
 }
 
 /**
@@ -63,6 +66,18 @@ const navLabels: Record<string, { en: string; ar: string }> = {
   packages: { en: 'Packages', ar: 'الباقات' },
   waitlist: { en: 'Waitlist', ar: 'قائمة الانتظار' },
   settings: { en: 'Settings', ar: 'الإعدادات' },
+  exercises: { en: 'Exercises', ar: 'التمارين' },
+  intelligence: { en: 'AI Intelligence', ar: 'الذكاء الاصطناعي' },
+  demandForecast: { en: 'Demand Forecast', ar: 'توقع الطلب' },
+  noShowRisk: { en: 'No-Show Risk', ar: 'مخاطر التغيب' },
+  treatmentEffectiveness: { en: 'Treatment Effectiveness', ar: 'فعالية العلاج' },
+  whatsapp: { en: 'WhatsApp Reminders', ar: 'تذكيرات واتساب' },
+  video: { en: 'Video Consultations', ar: 'استشارات الفيديو' },
+  paymentsIntegration: { en: 'Payment Integration', ar: 'تكامل الدفع' },
+  providers: { en: 'Providers', ar: 'مقدمي الخدمة' },
+  auditLogs: { en: 'Audit Logs', ar: 'سجلات النظام' },
+  backups: { en: 'Backups', ar: 'النسخ الاحتياطي' },
+  education: { en: 'Education Portal', ar: 'التثقيف الصحي' },
 };
 
 const navItems: NavItem[] = [
@@ -71,77 +86,203 @@ const navItems: NavItem[] = [
     icon: <LayoutDashboard size={20} />,
     path: '/',
     roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT'],
+    category: 'Core'
   },
   {
     key: 'calendar',
     icon: <CalendarDays size={20} />,
     path: '/calendar',
     roles: ['OWNER', 'THERAPIST', 'SECRETARY'],
+    category: 'Core'
   },
   {
     key: 'book',
     icon: <CalendarPlus size={20} />,
     path: '/book',
     roles: ['PATIENT'],
+    category: 'Core'
   },
   {
     key: 'appointments',
     icon: <Calendar size={20} />,
     path: '/appointments',
     roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT'],
+    category: 'Core'
   },
   {
     key: 'myRecords',
     icon: <FileText size={20} />,
     path: '/my-records',
     roles: ['PATIENT'],
+    category: 'Core'
+  },
+  {
+    key: 'education',
+    icon: <BookOpen size={20} />,
+    path: '/education',
+    roles: ['PATIENT'],
+    category: 'Core'
   },
   {
     key: 'myPayments',
     icon: <CreditCard size={20} />,
     path: '/my-payments',
     roles: ['PATIENT'],
+    category: 'Core'
   },
   {
     key: 'patients',
     icon: <Users size={20} />,
     path: '/patients',
     roles: ['OWNER', 'THERAPIST', 'SECRETARY'],
+    category: 'Clinical'
   },
   {
     key: 'sessions',
     icon: <Activity size={20} />,
     path: '/sessions',
     roles: ['OWNER', 'THERAPIST'],
+    category: 'Clinical'
+  },
+  {
+    key: 'exercises',
+    icon: <Activity size={20} />,
+    path: '/exercises',
+    roles: ['OWNER', 'THERAPIST'],
+    category: 'Clinical'
   },
   {
     key: 'invoices',
     icon: <FileText size={20} />,
     path: '/invoices',
     roles: ['OWNER', 'SECRETARY'],
+    category: 'Financial'
+  },
+  {
+    key: 'expenses', 
+    icon: <TrendingDown size={20} />, 
+    path: '/expenses', 
+    roles: ['OWNER'],
+    category: 'Financial'
+  },
+  { 
+    key: 'packages', 
+    icon: <Package size={20} />, 
+    path: '/packages', 
+    roles: ['OWNER', 'SECRETARY', 'THERAPIST'],
+    category: 'Financial'
   },
   {
     key: 'reports',
     icon: <BarChart3 size={20} />,
     path: '/reports',
     roles: ['OWNER'],
+    category: 'Intelligence'
+  },
+  {
+    key: 'intelligence',
+    icon: <BarChart3 size={20} />,
+    path: '/intelligence',
+    roles: ['OWNER', 'MANAGER'],
+    category: 'Intelligence'
+  },
+  {
+    key: 'demandForecast',
+    icon: <BarChart3 size={20} />,
+    path: '/intelligence/demand',
+    roles: ['OWNER', 'MANAGER'],
+    category: 'Intelligence'
+  },
+  {
+    key: 'noShowRisk',
+    icon: <BarChart3 size={20} />,
+    path: '/intelligence/no-show',
+    roles: ['OWNER', 'MANAGER'],
+    category: 'Intelligence'
+  },
+  {
+    key: 'treatmentEffectiveness',
+    icon: <BarChart3 size={20} />,
+    path: '/intelligence/treatment',
+    roles: ['OWNER', 'MANAGER'],
+    category: 'Intelligence'
+  },
+  {
+    key: 'whatsapp',
+    icon: <MessageSquare size={20} />,
+    path: '/integrations/whatsapp',
+    roles: ['OWNER', 'SECRETARY'],
+    category: 'Integrations'
+  },
+  {
+    key: 'video',
+    icon: <Video size={20} />,
+    path: '/integrations/video',
+    roles: ['OWNER', 'SECRETARY', 'THERAPIST'],
+    category: 'Integrations'
+  },
+  {
+    key: 'paymentsIntegration',
+    icon: <CreditCard size={20} />,
+    path: '/integrations/payments',
+    roles: ['OWNER', 'SECRETARY'],
+    category: 'Integrations'
   },
   {
     key: 'users',
     icon: <Users size={20} />,
     path: '/users',
     roles: ['OWNER'],
+    category: 'System'
   },
-  { key: 'expenses', icon: <TrendingDown size={20} />, path: '/expenses', roles: ['OWNER'] },
-{ key: 'inventory', icon: <Boxes size={20} />, path: '/inventory', roles: ['OWNER', 'SECRETARY'] },
-{ key: 'equipment', icon: <Wrench size={20} />, path: '/equipment', roles: ['OWNER', 'SECRETARY'] },
-  { key: 'packages', icon: <Package size={20} />, path: '/packages', roles: ['OWNER', 'SECRETARY', 'THERAPIST'] },
-{ key: 'waitlist', icon: <Clock size={20} />, path: '/waitlist', roles: ['OWNER', 'SECRETARY'] },
+  {
+    key: 'providers',
+    icon: <Users size={20} />,
+    path: '/providers',
+    roles: ['OWNER'],
+    category: 'System'
+  },
+  { 
+    key: 'inventory', 
+    icon: <Boxes size={20} />, 
+    path: '/inventory', 
+    roles: ['OWNER', 'SECRETARY'],
+    category: 'System'
+  },
+  { 
+    key: 'equipment', 
+    icon: <Wrench size={20} />, 
+    path: '/equipment', 
+    roles: ['OWNER', 'SECRETARY'],
+    category: 'System'
+  },
+  { 
+    key: 'waitlist', 
+    icon: <Clock size={20} />, 
+    path: '/waitlist', 
+    roles: ['OWNER', 'SECRETARY'],
+    category: 'System'
+  },
+  {
+    key: 'auditLogs',
+    icon: <Settings size={20} />,
+    path: '/audit-logs',
+    roles: ['OWNER', 'MANAGER'],
+    category: 'System'
+  },
+  {
+    key: 'backups',
+    icon: <Settings size={20} />,
+    path: '/backups',
+    roles: ['OWNER', 'MANAGER'],
+    category: 'System'
+  },
   {
     key: 'settings',
     icon: <Settings size={20} />,
     path: '/settings',
     roles: ['OWNER'],
+    category: 'System'
   },
 ];
 
@@ -213,7 +354,7 @@ export default function AppLayout({
       dir={lang === 'ar' ? 'rtl' : 'ltr'}
     >
       {/* Sidebar */}
-      <aside className="fixed inset-y-0 start-0 z-50 w-64 border-e border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 dark:border-gray-700 dark:bg-gray-800">
+      <aside className="fixed inset-y-0 start-0 z-50 w-64 flex flex-col border-e border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 dark:border-gray-700 dark:bg-gray-800">
         {/* Logo / Center Name */}
         <div className="flex h-16 items-center gap-3 border-b border-gray-200 dark:border-gray-700 px-6 dark:border-gray-700">
           {settings?.centerLogo ? (
@@ -236,9 +377,18 @@ export default function AppLayout({
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-1 px-3 py-4">
-          {visibleItems.map((item) => {
-            const isActive = location.pathname === item.path;
+        <nav className="flex-1 space-y-6 px-3 py-4 overflow-y-auto">
+          {['Core', 'Clinical', 'Financial', 'Intelligence', 'Integrations', 'System'].map(category => {
+            const categoryItems = visibleItems.filter(item => item.category === category || (!item.category && category === 'Core'));
+            if (categoryItems.length === 0) return null;
+            
+            return (
+              <div key={category} className="space-y-1">
+                <div className="px-3 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                  {category}
+                </div>
+                {categoryItems.map((item) => {
+                  const isActive = location.pathname === item.path;
 
             return (
               <button
@@ -255,6 +405,9 @@ export default function AppLayout({
 
                 <span>{getNavLabel(item.key)}</span>
               </button>
+            );
+          })}
+              </div>
             );
           })}
         </nav>

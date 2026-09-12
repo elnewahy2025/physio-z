@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import api from '../lib/api';
 import { useI18n } from '../i18n';
-import { Card, CardHeader, StatCard, EmptyState, Badge } from '../components/ui';
+import { Card, CardHeader, StatCard, EnhancedEmptyState, EmptyState, Badge } from '../components/ui';
 
 const CATEGORY_LABELS: Record<string, { ar: string; en: string }> = {
   TREATMENT: { ar: 'علاجي', en: 'Treatment' },
@@ -143,7 +143,7 @@ export default function Equipment() {
         />
 
         {(equipment || []).length === 0 ? (
-          <EmptyState
+          <EnhancedEmptyState
             icon={<Wrench size={32} />}
             title={L('لا توجد أجهزة', 'No equipment')}
             subtitle={L('أضف جهازك الأول', 'Add your first equipment')}

@@ -1,4 +1,4 @@
-import api from '../../../services/api';
+import api from '../../../lib/api';
 
 export const whatsappService = {
   async getPendingReminders() {
@@ -16,12 +16,20 @@ export const whatsappService = {
     return response.data;
   },
 
+  async sendReminder(data: {
+    appointmentId: string;
+    message?: string;
+  }) {
+    const response = await api.post('/whatsapp/send', data);
+    return response.data;
+  },
+
   async logReminderSent(data: {
     appointmentId: string;
     messageContent: string;
     status?: string;
   }) {
-    const response = await api.post('/integrations/whatsapp/log-sent', data);
+    const response = await api.post('/whatsapp/send', data);
     return response.data;
   },
 

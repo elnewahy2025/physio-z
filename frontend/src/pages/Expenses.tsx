@@ -8,7 +8,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import api from '../lib/api';
 import { useI18n } from '../i18n';
-import { Card, CardHeader, StatCard, EmptyState, Badge } from '../components/ui';
+import { Card, CardHeader, StatCard, EnhancedEmptyState, EmptyState, Badge } from '../components/ui';
 
 const COLORS = ['#2563eb', '#16a34a', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#be185d', '#6b7280'];
 
@@ -216,7 +216,7 @@ export default function Expenses() {
         {listLoading ? (
           <div className="h-32 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
         ) : (expenses || []).length === 0 ? (
-          <EmptyState
+          <EnhancedEmptyState
             icon={<DollarSign size={32} />}
             title={L('لا توجد مصروفات', 'No expenses')}
             subtitle={L('أضف مصروفك الأول', 'Add your first expense')}

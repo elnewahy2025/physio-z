@@ -36,6 +36,7 @@ export interface Appointment {
   duration: number;
   status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
   notes: string | null;
+  videoLink: string | null;
   patient: { id: string; name: string; phone: string };
   therapist: { id: string; name: string };
   room: { id: string; number: number; name: string } | null;

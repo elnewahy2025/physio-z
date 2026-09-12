@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { CameraIcon, TrashIcon } from '@heroicons/react/24/outline';
+import ConfirmModal from '../../../../components/ConfirmModal';
 import { photoProgressService } from '../../services/photo-progress.service';
+import PhotoUpload from './PhotoUpload';
 
 interface PhotoTimelineProps {
   patientId: string;
@@ -11,6 +13,7 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ patientId, onPhotoUpload 
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showUpload, setShowUpload] = useState(false);
+  const [photoToDelete, setPhotoToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     loadPhotos();
@@ -34,12 +37,18 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ patientId, onPhotoUpload 
   };
 
   const handleDelete = async (photoId: string) => {
-    if (confirm('هل أنت متأكد من حذف هذه الصورة؟')) {
+    setPhotoToDelete(photoId);
+  };
+
+  const confirmDelete = async () => {
+    if (photoToDelete) {
       try {
-        await photoProgressService.deletePhoto(photoId);
+        await photoProgressService.deletePhoto(photoToDelete);
         await loadPhotos();
       } catch (error) {
         console.error('Failed to delete photo:', error);
+      } finally {
+        setPhotoToDelete(null);
       }
     }
   };
@@ -110,6 +119,14 @@ const PhotoTimeline: React.FC<PhotoTimelineProps> = ({ patientId, onPhotoUpload 
           ))}
         </div>
       )}
+      
+      <ConfirmModal
+        isOpen={!!photoToDelete}
+        onClose={() => setPhotoToDelete(null)}
+        onConfirm={confirmDelete}
+        title="تأكيد الحذف"
+        message="هل أنت متأكد من حذف هذه الصورة؟"
+      />
     </div>
   );
 };

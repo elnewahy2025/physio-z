@@ -42,6 +42,7 @@ export function NewAppointmentForm({
     dateTime: initialDateTime,
     duration: '45',
     notes: '',
+    videoLink: '',
   });
 
   const createAppointment = useMutation({
@@ -50,6 +51,7 @@ export function NewAppointmentForm({
         ...data,
         duration: parseInt(data.duration),
         roomId: data.roomId || undefined,
+        videoLink: data.videoLink?.trim() ? data.videoLink.trim() : undefined,
       });
     },
 
@@ -256,6 +258,26 @@ export function NewAppointmentForm({
                 ? 'ملاحظات إضافية...'
                 : 'Additional notes...'
             }
+          />
+        </div>
+
+        {/* Video Link */}
+        <div>
+          <label className="label">
+            {lang === 'ar' ? 'رابط مكالمة الفيديو (اختياري)' : 'Video Link (Optional)'}
+          </label>
+
+          <input
+            type="url"
+            value={formData.videoLink}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                videoLink: e.target.value,
+              })
+            }
+            className="input"
+            placeholder="https://zoom.us/j/..."
           />
         </div>
       </div>

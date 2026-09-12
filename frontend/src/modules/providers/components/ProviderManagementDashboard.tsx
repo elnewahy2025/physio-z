@@ -28,6 +28,10 @@ const ProviderManagementDashboard: React.FC = () => {
     }
   };
 
+  const handleEdit = (provider: any) => console.log('Edit', provider);
+  const handleDelete = (provider: any) => console.log('Delete', provider);
+  const handleTest = (provider: any) => console.log('Test', provider);
+
   const typeLabels: Record<string, string> = {
     WHATSAPP: 'واتساب',
     PAYMENT: 'بوابات الدفع',

@@ -34,6 +34,7 @@ enum PaymentMethod {
   CASH
   CARD
   BANK_TRANSFER
+  ONLINE
   OTHER
 }
 
@@ -79,9 +80,10 @@ model User {
   inventoryRecords     InventoryTransaction[] @relation("InventoryRecorder")
   maintenanceRecords   MaintenanceLog[]       @relation("MaintenanceRecorder")
 
-  AuditLog     AuditLog[]     @relation("AuditUser")
-  UserActivity UserActivity[] @relation("UserActivity")
-  MedicalFile  MedicalFile[]  @relation("MedicalFileUploader")
+  AuditLog       AuditLog[]       @relation("AuditUser")
+  UserActivity   UserActivity[]   @relation("UserActivity")
+  MedicalFile    MedicalFile[]    @relation("MedicalFileUploader")
+  IncidentReport IncidentReport[] @relation("IncidentReporter")
 }
 
 model Patient {
@@ -97,6 +99,12 @@ model Patient {
   address               String?
   dateOfBirth           DateTime?
   medicalHistory        String?
+  // Phase 4: Emergency & Safety
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  emergencyContactRelation String?
+  allergies             String[]
+
   userId                String?                @unique
   user                  User?                  @relation("PatientAccount", fields: [userId], references: [id], onDelete: SetNull)
   createdAt             DateTime               @default(now())
@@ -113,6 +121,13 @@ model Patient {
   MedicalFile   MedicalFile[]
   PainMap       PainMap[]
   ProgressPhoto ProgressPhoto[]
+
+  // Phase 4: Gamification & Loyalty
+  loyaltyProfile LoyaltyProfile?
+  patientBadges  PatientBadge[]
+  LoyaltyTransaction LoyaltyTransaction[]
+  PatientEducation PatientEducation[]
+  IncidentReport IncidentReport[]
 }
 
 model Room {
@@ -149,6 +164,7 @@ model Appointment {
   rating                Rating?                @relation("AppointmentRating")
   survey                Survey?                @relation("AppointmentSurvey")
   recurringPatternId    String?
+  videoLink             String?
   MedicalFile           MedicalFile[]
   PainMap               PainMap[]
   ProgressPhoto         ProgressPhoto[]
@@ -212,6 +228,16 @@ model Payment {
   createdAt     DateTime      @default(now())
 
   @@index([invoiceId])
+}
+
+model PaymentGateway {
+  id        String   @id @default(cuid())
+  name      String   // e.g. 'Fawry', 'InstaPay', 'Stripe', 'PayPal'
+  provider  String   // internal identifier
+  isActive  Boolean  @default(true)
+  config    Json     // Store dynamic keys
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Settings {
@@ -1165,3 +1191,92 @@ model ProgressPhoto {
   @@index([patientId, photoDate])
   @@index([photoType])
 }
+
+// ==========================================
+// Phase 4: Gamification, Education, & Safety
+// ==========================================
+
+// --- Gamification & Loyalty ---
+model LoyaltyProfile {
+  id            String   @id @default(cuid())
+  patientId     String   @unique
+  patient       Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  points        Int      @default(0)
+  currentStreak Int      @default(0)
+  longestStreak Int      @default(0)
+  tier          String   @default("BRONZE") // BRONZE, SILVER, GOLD
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Badge {
+  id            String         @id @default(cuid())
+  name          String
+  description   String?
+  icon          String         // Icon identifier (e.g., Lucide icon name)
+  criteriaType  String         // e.g. 'STREAK', 'EXERCISE_COUNT', 'POINTS'
+  criteriaValue Int            // e.g. 7 (for a 7-day streak)
+  createdAt     DateTime       @default(now())
+  PatientBadge  PatientBadge[]
+}
+
+model PatientBadge {
+  id        String   @id @default(cuid())
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  earnedAt  DateTime @default(now())
+
+  @@unique([patientId, badgeId])
+}
+
+model LoyaltyTransaction {
+  id          String   @id @default(cuid())
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  amount      Int      // Positive for earn, negative for spend
+  type        String   // EARN, SPEND
+  description String
+  createdAt   DateTime @default(now())
+}
+
+// --- Education Portal ---
+model EducationArticle {
+  id               String             @id @default(cuid())
+  title            String
+  content          String             @db.Text
+  videoUrl         String?
+  category         String
+  tags             String[]
+  isActive         Boolean            @default(true)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  PatientEducation PatientEducation[]
+}
+
+model PatientEducation {
+  id          String           @id @default(cuid())
+  patientId   String
+  patient     Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  articleId   String
+  article     EducationArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  viewedAt    DateTime         @default(now())
+  isCompleted Boolean          @default(false)
+
+  @@index([patientId, articleId])
+}
+
+// --- Emergency & Safety ---
+model IncidentReport {
+  id          String   @id @default(cuid())
+  patientId   String?
+  patient     Patient? @relation(fields: [patientId], references: [id], onDelete: SetNull)
+  description String   @db.Text
+  severity    String   // LOW, MEDIUM, HIGH, CRITICAL
+  date        DateTime @default(now())
+  reportedById String
+  reportedBy   User     @relation("IncidentReporter", fields: [reportedById], references: [id])
+  createdAt   DateTime @default(now())
+}
+

@@ -5,19 +5,7 @@ import { Download, FileText, Languages, Loader2 } from 'lucide-react';
 import api from '../lib/api';
 import { generateInvoicePDF, generateBilingualInvoicePDF, generateWhatsAppLink } from '../lib/pdf';
 import { useI18n } from '../i18n';
-import type { Invoice } from '../types';
-
-interface Settings {
-  centerName: string;
-  centerLogo: string | null;
-  address: string | null;
-  phone: string | null;
-  email: string | null;
-  googleMapsLink: string | null;
-  sessionPrice: number;
-  currency: string;
-  taxRate: number;
-}
+import type { Invoice, Settings } from '../types';
 
 export function InvoicePdfButton({ invoice }: { invoice: Invoice }) {
   const { lang } = useI18n();

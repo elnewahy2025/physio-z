@@ -6,6 +6,11 @@ import { paginationSchema, appointmentStatusSchema, isoDateSchema } from '../lib
 import { prisma } from '../lib/prisma.js';
 import { HttpError } from '../lib/errors.js';
 
+const videoLinkSchema = z.preprocess(
+  (val) => (typeof val === 'string' && val.trim() === '' ? null : val),
+  z.string().optional().nullable()
+);
+
 const createAppointmentSchema = z.object({
   patientId: z.string().min(1, 'Patient is required'),
   therapistId: z.string().min(1, 'Therapist is required'),
@@ -13,6 +18,7 @@ const createAppointmentSchema = z.object({
   dateTime: isoDateSchema,
   duration: z.number().int().min(15).max(240).optional(),
   notes: z.string().optional().nullable(),
+  videoLink: videoLinkSchema,
 });
 
 const updateAppointmentSchema = z.object({
@@ -20,6 +26,7 @@ const updateAppointmentSchema = z.object({
   duration: z.number().int().min(15).max(240).optional(),
   roomId: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
+  videoLink: videoLinkSchema,
 });
 
 const listQuerySchema = paginationSchema.extend({

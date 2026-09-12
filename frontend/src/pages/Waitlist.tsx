@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Clock, User, Phone, Bell, Check, Trash2, Plus, X, AlertCircle, Loader2 } from 'lucide-react';
 import api from '../lib/api';
 import { useI18n } from '../i18n';
-import { Card, CardHeader, Badge, EmptyState } from '../components/ui';
+import { Card, CardHeader, EnhancedEmptyState, Badge } from '../components/ui';
 
 export default function Waitlist() {
   const { lang } = useI18n();
@@ -65,7 +65,7 @@ export default function Waitlist() {
         />
 
         {entries.length === 0 ? (
-          <EmptyState
+          <EnhancedEmptyState
             icon={<Clock size={32} />}
             title={L('لا أحد في قائمة الانتظار', 'No one on the waitlist')}
           />

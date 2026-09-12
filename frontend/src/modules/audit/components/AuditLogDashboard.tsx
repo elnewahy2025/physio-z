@@ -114,7 +114,7 @@ const AuditLogDashboard: React.FC = () => {
       CRITICAL: 'bg-red-200 text-red-900',
     };
     
-    return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[severity] || styles.INFO}`;
+    return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[severity as keyof typeof styles] || styles.INFO}`;
   };
 
   const actionChartData = {

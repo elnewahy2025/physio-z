@@ -24,6 +24,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <script>
+      window.addEventListener('error', function(e) {
+        var el = document.getElementById('debug-global-error') || document.createElement('div');
+        el.id = 'debug-global-error';
+        el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:999999;background:#b91c1c;color:#fff;padding:20px;font-family:monospace;font-size:14px;white-space:pre-wrap;box-shadow:0 4px 6px rgba(0,0,0,0.3);';
+        el.textContent = 'Runtime JavaScript Error:\n' + (e.error ? (e.error.stack || e.error.message) : (e.message || String(e)));
+        if (!document.getElementById('debug-global-error')) {
+          (document.body || document.documentElement).prepend(el);
+        }
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        var el = document.getElementById('debug-rejection-error') || document.createElement('div');
+        el.id = 'debug-rejection-error';
+        el.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:999999;background:#991b1b;color:#fff;padding:16px;font-family:monospace;font-size:14px;white-space:pre-wrap;box-shadow:0 -4px 6px rgba(0,0,0,0.3);';
+        el.textContent = 'Unhandled Promise Rejection:\n' + (e.reason ? (e.reason.stack || e.reason.message || String(e.reason)) : 'Unknown rejection');
+        if (!document.getElementById('debug-rejection-error')) {
+          (document.body || document.documentElement).appendChild(el);
+        }
+      });
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

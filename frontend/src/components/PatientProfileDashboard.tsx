@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { X, User, Calendar, FileText, Activity, CreditCard, Folder, Phone, Mail, MapPin, Cake, Eye, Download, Trash2 } from 'lucide-react';
+import { X, User, Calendar, FileText, Activity, CreditCard, Folder, Phone, Mail, MapPin, Cake, Eye, Download, Trash2, AlertCircle, Video } from 'lucide-react';
 import api from '../lib/api';
 import { useI18n } from '../i18n';
 import { Spinner, Badge } from './ui';
@@ -154,6 +154,21 @@ export default function PatientProfileDashboard({
                 <p className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
                   {patient.medicalHistory || 'No medical history recorded.'}
                 </p>
+                
+                {patient.allergies && patient.allergies.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                      <AlertCircle size={14} className="text-red-500" /> Allergies
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {patient.allergies.map((allergy: string, i: number) => (
+                        <span key={i} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+                          {allergy}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -196,7 +211,20 @@ export default function PatientProfileDashboard({
                         Dr. {app.therapist?.name} {app.room && `• Room ${app.room.number}`}
                       </p>
                     </div>
-                    <Badge status={app.status} />
+                    <div className="flex items-center gap-2">
+                      {app.videoLink && (
+                        <a
+                          href={app.videoLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-900/40 dark:text-indigo-300 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                        >
+                          <Video size={13} />
+                          {L('انضمام للمكالمة', 'Join Call')}
+                        </a>
+                      )}
+                      <Badge status={app.status} />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -312,13 +340,28 @@ export default function PatientProfileDashboard({
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 p-6 bg-white dark:bg-gray-900">
-          <div className="flex items-center gap-5">
+           <div className="flex items-center gap-5">
              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-2xl font-bold text-white shadow-lg">
                {patient.name.charAt(0)}
              </div>
              <div>
-               <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">{patient.name}</h2>
-               <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1 uppercase tracking-wider">ID: {patient.id.slice(-6)}</p>
+               <div className="flex items-center gap-2">
+                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">{patient.name}</h2>
+                 {patient.allergies && patient.allergies.length > 0 && (
+                   <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-200">
+                     <AlertCircle size={12} />
+                     Allergies
+                   </span>
+                 )}
+               </div>
+               <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1 uppercase tracking-wider">
+                 ID: {patient.id.slice(-6)} 
+                 {patient.emergencyContactPhone && (
+                   <span className="ml-3 inline-flex items-center gap-1 text-red-500">
+                     <Phone size={12} /> Emergency: <a href={`tel:${patient.emergencyContactPhone}`} className="hover:underline">{patient.emergencyContactName} ({patient.emergencyContactPhone})</a>
+                   </span>
+                 )}
+               </p>
              </div>
           </div>
           <button 

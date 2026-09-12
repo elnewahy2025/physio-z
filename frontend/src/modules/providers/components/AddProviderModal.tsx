@@ -150,7 +150,7 @@ const AddProviderModal: React.FC<AddProviderModalProps> = ({
                       {categoryLabels[category] || category}
                     </h5>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {templates.map((template) => (
+                      {(templates as any[]).map((template: any) => (
                         <button
                           key={template.id}
                           onClick={() => handleTemplateSelect(template.id)}

@@ -308,7 +308,7 @@ export default function MyPayments() {
 
                       {/* Actions */}
                       <div className="flex items-center justify-end gap-3">
-                        <InvoicePdfButton invoice={invoice} />
+                        <InvoicePdfButton invoice={invoice as any} />
                       </div>
                     </div>
                   )}

@@ -79,7 +79,7 @@ const DynamicFormRenderer: React.FC<DynamicFormRendererProps> = ({
           <FormField
             key={field.name}
             field={field}
-            value={formData[field.name]}
+            value={(formData as any)[field.name]}
             onChange={(value) => handleFieldChange(field.name, value)}
           />
         ))}

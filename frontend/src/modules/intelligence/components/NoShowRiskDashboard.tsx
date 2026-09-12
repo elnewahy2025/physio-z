@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertTriangleIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { ExclamationTriangleIcon, CheckCircleIcon, XCircleIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { noShowPredictionService } from '../services/no-show-prediction.service';
 
 const NoShowRiskDashboard: React.FC = () => {
@@ -27,9 +27,9 @@ const NoShowRiskDashboard: React.FC = () => {
       case 'LOW':
         return <CheckCircleIcon className="h-5 w-5 text-green-500" />;
       case 'MEDIUM':
-        return <AlertTriangleIcon className="h-5 w-5 text-yellow-500" />;
+        return <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500" />;
       case 'HIGH':
-        return <AlertTriangleIcon className="h-5 w-5 text-orange-500" />;
+        return <ExclamationTriangleIcon className="h-5 w-5 text-orange-500" />;
       case 'CRITICAL':
         return <XCircleIcon className="h-5 w-5 text-red-500" />;
       default:
@@ -45,7 +45,8 @@ const NoShowRiskDashboard: React.FC = () => {
       CRITICAL: 'bg-red-100 text-red-800',
     };
     
-    return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[riskLevel] || styles.LOW}`;
+    const style = styles[riskLevel as keyof typeof styles] || styles.LOW;
+    return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${style}`;
   };
 
   if (loading) {
@@ -84,7 +85,7 @@ const NoShowRiskDashboard: React.FC = () => {
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <AlertTriangleIcon className="h-6 w-6 text-orange-400" />
+                <ExclamationTriangleIcon className="h-6 w-6 text-orange-400" />
               </div>
               <div className="mr-5">
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">مواعيد عالية الخطورة</p>

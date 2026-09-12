@@ -15,7 +15,7 @@ interface PaymentRecord {
   status: string;
 }
 
-interface TemplateData {
+export interface TemplateData {
   // Center info (from Settings)
   centerName: string;
   centerLogo: string | null;

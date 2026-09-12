@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { backupService } from '../services/backup.service';
+import ConfirmModal from '../../../components/ConfirmModal';
 
 const BackupManagement: React.FC = () => {
   const [backups, setBackups] = useState<any[]>([]);
@@ -7,6 +8,7 @@ const BackupManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [backupType, setBackupType] = useState<'FULL' | 'DATABASE_ONLY' | 'FILES_ONLY'>('FULL');
+  const [backupToDelete, setBackupToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     loadBackupData();
@@ -56,13 +58,19 @@ const BackupManagement: React.FC = () => {
     }
   };
 
-  const handleDelete = async (backupId: string) => {
-    if (confirm('هل أنت متأكد من حذف هذا النسخة الاحتياطية؟')) {
+  const handleDelete = (backupId: string) => {
+    setBackupToDelete(backupId);
+  };
+
+  const confirmDelete = async () => {
+    if (backupToDelete) {
       try {
-        await backupService.deleteBackup(backupId);
+        await backupService.deleteBackup(backupToDelete);
         await loadBackupData();
       } catch (error) {
         console.error('Failed to delete backup:', error);
+      } finally {
+        setBackupToDelete(null);
       }
     }
   };
@@ -92,7 +100,7 @@ const BackupManagement: React.FC = () => {
       CANCELLED: 'ملغاة',
     };
     
-    return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status] || styles.PENDING}`;
+    return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status as keyof typeof styles] || styles.PENDING}`;
   };
 
   if (loading) {
@@ -286,6 +294,14 @@ const BackupManagement: React.FC = () => {
           </div>
         )}
       </div>
+      
+      <ConfirmModal
+        isOpen={!!backupToDelete}
+        onClose={() => setBackupToDelete(null)}
+        onConfirm={confirmDelete}
+        title="تأكيد الحذف"
+        message="هل أنت متأكد من حذف هذه النسخة الاحتياطية؟"
+      />
     </div>
   );
 };

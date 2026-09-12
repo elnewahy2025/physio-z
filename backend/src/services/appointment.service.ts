@@ -6,10 +6,11 @@ import { createNotification, notifyRole, NOTIFICATION_TYPES } from './notificati
 export interface CreateAppointmentData {
   patientId: string;
   therapistId: string;
-  roomId?: string;
+  roomId?: string | null;
   dateTime: Date;
   duration?: number;
-  notes?: string;
+  notes?: string | null;
+  videoLink?: string | null;
 }
 
 function intervalsOverlap(
@@ -327,6 +328,7 @@ export async function createAppointment(data: CreateAppointmentData) {
       dateTime: appointmentStart,
       duration,
       notes: data.notes ?? null,
+      videoLink: data.videoLink ?? null,
       status: 'PENDING',
     },
     include: appointmentInclude,
@@ -454,6 +456,7 @@ export async function updateAppointment(
       ...(data.roomId !== undefined && { roomId: data.roomId }),
       ...(data.status && { status: data.status }),
       ...(data.notes !== undefined && { notes: data.notes }),
+      ...(data.videoLink !== undefined && { videoLink: data.videoLink }),
     },
     include: appointmentInclude,
   });

@@ -1,6 +1,7 @@
 import { DashboardSkeleton } from '../components/Skeletons';
 import { useQuery } from '@tanstack/react-query';
 import { DirectionsButton } from '../components/GoogleMapsLink';
+import LoyaltyWallet from '../modules/gamification/components/LoyaltyWallet';
 
 import {
   Calendar,
@@ -8,6 +9,7 @@ import {
   DollarSign,
   FileText,
   Clock,
+  Video,
 } from 'lucide-react';
 
 import api from '../lib/api';
@@ -183,6 +185,12 @@ export default function Dashboard() {
         />
       </div>
 
+      {user?.role === 'PATIENT' && (
+        <div className="mt-8">
+          <LoyaltyWallet />
+        </div>
+      )}
+
       {/* Center info + directions */}
       {(user?.role === 'PATIENT' ||
         user?.role === 'SECRETARY') &&
@@ -252,9 +260,22 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <Badge status={appt.status}>
-                  {statusLabels[appt.status] || appt.status}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  {appt.videoLink && (
+                    <a
+                      href={appt.videoLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-900/40 dark:text-indigo-300 text-xs font-semibold flex items-center gap-1 transition-colors"
+                    >
+                      <Video size={13} />
+                      {lang === 'ar' ? 'انضمام' : 'Join'}
+                    </a>
+                  )}
+                  <Badge status={appt.status}>
+                    {statusLabels[appt.status] || appt.status}
+                  </Badge>
+                </div>
               </div>
             ))}
           </div>

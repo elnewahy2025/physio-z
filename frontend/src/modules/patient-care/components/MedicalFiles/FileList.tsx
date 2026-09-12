@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { DocumentIcon, DownloadIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { DocumentIcon, ArrowDownTrayIcon as DownloadIcon, TrashIcon } from '@heroicons/react/24/outline';
+import ConfirmModal from '../../../../components/ConfirmModal';
 import { medicalFileService } from '../../services/medical-file.service';
 
 interface FileListComponentProps {
@@ -10,6 +11,7 @@ interface FileListComponentProps {
 const FileList: React.FC<FileListComponentProps> = ({ patientId, onFileDeleted }) => {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fileToDelete, setFileToDelete] = useState<string | null>(null);
 
   React.useEffect(() => {
     loadFiles();
@@ -41,14 +43,20 @@ const FileList: React.FC<FileListComponentProps> = ({ patientId, onFileDeleted }
     }
   };
 
-  const handleDelete = async (fileId: string) => {
-    if (confirm('هل أنت متأكد من حذف هذا الملف؟')) {
+  const handleDelete = (fileId: string) => {
+    setFileToDelete(fileId);
+  };
+
+  const confirmDelete = async () => {
+    if (fileToDelete) {
       try {
-        await medicalFileService.deleteFile(fileId);
+        await medicalFileService.deleteFile(fileToDelete);
         await loadFiles();
         onFileDeleted?.();
       } catch (error) {
         console.error('Failed to delete file:', error);
+      } finally {
+        setFileToDelete(null);
       }
     }
   };
@@ -97,6 +105,13 @@ const FileList: React.FC<FileListComponentProps> = ({ patientId, onFileDeleted }
           ))}
         </div>
       )}
+      <ConfirmModal
+        isOpen={!!fileToDelete}
+        onClose={() => setFileToDelete(null)}
+        onConfirm={confirmDelete}
+        title="تأكيد الحذف"
+        message="هل أنت متأكد من حذف هذا الملف؟"
+      />
     </div>
   );
 };

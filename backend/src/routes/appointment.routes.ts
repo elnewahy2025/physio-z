@@ -12,7 +12,7 @@ router.get('/:id', requireRole('OWNER', 'SECRETARY', 'THERAPIST', 'PATIENT'), co
 // Patients can now CREATE appointments (for themselves)
 router.post('/', requireRole('OWNER', 'SECRETARY', 'PATIENT'), controller.create);
 
-router.put('/:id', requireRole('OWNER', 'SECRETARY'), controller.update);
+router.put('/:id', requireRole('OWNER', 'SECRETARY', 'THERAPIST'), controller.update);
 router.patch('/:id/status', requireRole('OWNER', 'SECRETARY', 'THERAPIST'), controller.changeStatus);
 
 export default router;

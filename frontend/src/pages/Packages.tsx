@@ -5,7 +5,7 @@ import { Plus, Package, DollarSign, Users, Trash2, Pencil, X, AlertCircle, Loade
 import api from '../lib/api';
 import { useI18n } from '../i18n';
 import { useAuthStore } from '../store/auth';
-import { Card, CardHeader, EmptyState, StatCard } from '../components/ui';
+import { Card, CardHeader, StatCard, EnhancedEmptyState } from '../components/ui';
 
 export default function Packages() {
   const { lang } = useI18n();
@@ -95,7 +95,7 @@ export default function Packages() {
       {/* Package list */}
       {list.length === 0 ? (
         <Card>
-          <EmptyState
+          <EnhancedEmptyState
             icon={<Package size={32} />}
             title={L('لا توجد باقات', 'No packages')}
             subtitle={L('أنشئ باقتك الأولى', 'Create your first package')}

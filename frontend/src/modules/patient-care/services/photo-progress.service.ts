@@ -1,4 +1,4 @@
-import api from '../../../services/api';
+import api from '../../../lib/api';
 
 export const photoProgressService = {
   async uploadPhoto(formData: FormData) {

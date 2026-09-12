@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { demandForecastingService } from '../services/demand-forecasting.service';
+import { ArrowTrendingUpIcon as TrendingUpIcon, CalendarIcon, ArrowTrendingDownIcon as TrendingDownIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 
 const DemandForecastDashboard: React.FC = () => {
   const [forecast, setForecast] = useState<any>(null);
@@ -54,7 +55,7 @@ const DemandForecastDashboard: React.FC = () => {
       VERY_HIGH: 'bg-red-100 text-red-800',
     };
     
-    return colors[intensity] || colors.LOW;
+    return colors[intensity as keyof typeof colors] || colors.LOW;
   };
 
   const getDayName = (dayOfWeek: number) => {
