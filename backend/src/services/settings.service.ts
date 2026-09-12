@@ -14,6 +14,7 @@ export interface UpdateSettingsData {
   taxRate?: number;
   defaultLanguage?: string;
   whatsappMessageTemplate?: string;
+  enabledFeatures?: Record<string, boolean>;
 }
 
 export async function getSettings() {
@@ -40,6 +41,7 @@ export async function updateSettings(data: UpdateSettingsData) {
       ...(data.taxRate !== undefined && { taxRate: data.taxRate }),
       ...(data.defaultLanguage !== undefined && { defaultLanguage: data.defaultLanguage }),
       ...(data.whatsappMessageTemplate !== undefined && { whatsappMessageTemplate: data.whatsappMessageTemplate }),
+      ...(data.enabledFeatures !== undefined && { enabledFeatures: data.enabledFeatures }),
     },
   });
 }

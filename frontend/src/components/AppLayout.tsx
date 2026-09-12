@@ -25,6 +25,7 @@ import {
   CreditCard,
   Video,
   MessageSquare,
+  Sparkles,
 } from 'lucide-react';
 
 import NotificationBell from './NotificationBell';
@@ -67,18 +68,8 @@ const navLabels: Record<string, { en: string; ar: string }> = {
   waitlist: { en: 'Waitlist', ar: 'قائمة الانتظار' },
   settings: { en: 'Settings', ar: 'الإعدادات' },
   exercises: { en: 'Exercises', ar: 'التمارين' },
-  intelligence: { en: 'AI Intelligence', ar: 'الذكاء الاصطناعي' },
-  demandForecast: { en: 'Demand Forecast', ar: 'توقع الطلب' },
-  noShowRisk: { en: 'No-Show Risk', ar: 'مخاطر التغيب' },
-  treatmentEffectiveness: { en: 'Treatment Effectiveness', ar: 'فعالية العلاج' },
-  whatsapp: { en: 'WhatsApp Reminders', ar: 'تذكيرات واتساب' },
-  video: { en: 'Video Consultations', ar: 'استشارات الفيديو' },
-  paymentsIntegration: { en: 'Payment Integration', ar: 'تكامل الدفع' },
-  providers: { en: 'Providers', ar: 'مقدمي الخدمة' },
-  auditLogs: { en: 'Audit Logs', ar: 'سجلات النظام' },
-  backups: { en: 'Backups', ar: 'النسخ الاحتياطي' },
   education: { en: 'Education Portal', ar: 'التثقيف الصحي' },
-  protocols: { en: 'Clinical Protocols', ar: 'البروتوكولات السريرية' },
+  addons: { en: 'Add-Ons & Pro Features', ar: 'الميزات المتقدمة والإضافات' },
 };
 
 const navItems: NavItem[] = [
@@ -146,20 +137,6 @@ const navItems: NavItem[] = [
     category: 'Clinical'
   },
   {
-    key: 'exercises',
-    icon: <Activity size={20} />,
-    path: '/exercises',
-    roles: ['OWNER', 'THERAPIST'],
-    category: 'Clinical'
-  },
-  {
-    key: 'protocols',
-    icon: <Stethoscope size={20} />,
-    path: '/protocols',
-    roles: ['OWNER', 'THERAPIST', 'SECRETARY'],
-    category: 'Clinical'
-  },
-  {
     key: 'invoices',
     icon: <FileText size={20} />,
     path: '/invoices',
@@ -185,68 +162,19 @@ const navItems: NavItem[] = [
     icon: <BarChart3 size={20} />,
     path: '/reports',
     roles: ['OWNER'],
-    category: 'Intelligence'
+    category: 'Financial'
   },
   {
-    key: 'intelligence',
-    icon: <BarChart3 size={20} />,
-    path: '/intelligence',
-    roles: ['OWNER', 'MANAGER'],
-    category: 'Intelligence'
-  },
-  {
-    key: 'demandForecast',
-    icon: <BarChart3 size={20} />,
-    path: '/intelligence/demand',
-    roles: ['OWNER', 'MANAGER'],
-    category: 'Intelligence'
-  },
-  {
-    key: 'noShowRisk',
-    icon: <BarChart3 size={20} />,
-    path: '/intelligence/no-show',
-    roles: ['OWNER', 'MANAGER'],
-    category: 'Intelligence'
-  },
-  {
-    key: 'treatmentEffectiveness',
-    icon: <BarChart3 size={20} />,
-    path: '/intelligence/treatment',
-    roles: ['OWNER', 'MANAGER'],
-    category: 'Intelligence'
-  },
-  {
-    key: 'whatsapp',
-    icon: <MessageSquare size={20} />,
-    path: '/integrations/whatsapp',
-    roles: ['OWNER', 'SECRETARY'],
-    category: 'Integrations'
-  },
-  {
-    key: 'video',
-    icon: <Video size={20} />,
-    path: '/integrations/video',
-    roles: ['OWNER', 'SECRETARY', 'THERAPIST'],
-    category: 'Integrations'
-  },
-  {
-    key: 'paymentsIntegration',
-    icon: <CreditCard size={20} />,
-    path: '/integrations/payments',
-    roles: ['OWNER', 'SECRETARY'],
-    category: 'Integrations'
+    key: 'addons',
+    icon: <Sparkles size={20} className="text-yellow-500 dark:text-yellow-400" />,
+    path: '/addons',
+    roles: ['OWNER', 'THERAPIST', 'SECRETARY'],
+    category: 'Add-Ons'
   },
   {
     key: 'users',
     icon: <Users size={20} />,
     path: '/users',
-    roles: ['OWNER'],
-    category: 'System'
-  },
-  {
-    key: 'providers',
-    icon: <Users size={20} />,
-    path: '/providers',
     roles: ['OWNER'],
     category: 'System'
   },
@@ -269,20 +197,6 @@ const navItems: NavItem[] = [
     icon: <Clock size={20} />, 
     path: '/waitlist', 
     roles: ['OWNER', 'SECRETARY'],
-    category: 'System'
-  },
-  {
-    key: 'auditLogs',
-    icon: <Settings size={20} />,
-    path: '/audit-logs',
-    roles: ['OWNER', 'MANAGER'],
-    category: 'System'
-  },
-  {
-    key: 'backups',
-    icon: <Settings size={20} />,
-    path: '/backups',
-    roles: ['OWNER', 'MANAGER'],
     category: 'System'
   },
   {
@@ -386,14 +300,23 @@ export default function AppLayout({
 
         {/* Navigation */}
         <nav className="flex-1 space-y-6 px-3 py-4 overflow-y-auto">
-          {['Core', 'Clinical', 'Financial', 'Intelligence', 'Integrations', 'System'].map(category => {
+          {['Core', 'Clinical', 'Financial', 'Add-Ons', 'System'].map(category => {
             const categoryItems = visibleItems.filter(item => item.category === category || (!item.category && category === 'Core'));
             if (categoryItems.length === 0) return null;
+
+            const categoryTitles: Record<string, { en: string; ar: string }> = {
+              Core: { en: 'Core Operations', ar: 'العمليات الأساسية' },
+              Clinical: { en: 'Clinical Care', ar: 'الرعاية السريرية' },
+              Financial: { en: 'Financial', ar: 'المالية والفواتير' },
+              'Add-Ons': { en: 'Pro Add-Ons', ar: 'الميزات المتقدمة' },
+              System: { en: 'Administration', ar: 'إدارة النظام' },
+            };
+            const categoryTitle = lang === 'ar' ? categoryTitles[category]?.ar : categoryTitles[category]?.en;
             
             return (
               <div key={category} className="space-y-1">
-                <div className="px-3 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
-                  {category}
+                <div className="px-3 text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                  {categoryTitle || category}
                 </div>
                 {categoryItems.map((item) => {
                   const isActive = location.pathname === item.path;

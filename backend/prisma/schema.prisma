@@ -261,6 +261,7 @@ model Settings {
   taxRate                 Decimal  @default(0) @db.Decimal(5, 2)
   defaultLanguage         String   @default("ar")
   whatsappMessageTemplate String?
+  enabledFeatures         Json?
   updatedAt               DateTime @updatedAt
 }
 

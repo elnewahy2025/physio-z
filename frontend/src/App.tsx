@@ -41,6 +41,8 @@ import AuditLogDashboard from './modules/audit/components/AuditLogDashboard';
 import BackupManagement from './modules/backup/components/BackupManagement';
 import ProviderManagementDashboard from './modules/providers/components/ProviderManagementDashboard';
 import ProtocolsLibrary from './modules/clinical/components/ProtocolsLibrary';
+import AddonsHub from './pages/AddonsHub';
+import FeatureRouteGuard from './components/FeatureRouteGuard';
 
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -192,19 +194,20 @@ function App() {
           />
 <Route path="/packages" element={<ProtectedRoute><Packages /></ProtectedRoute>} />
 <Route path="/waitlist" element={<ProtectedRoute><Waitlist /></ProtectedRoute>} />
-<Route path="/intelligence" element={<ProtectedRoute><IntelligenceDashboard /></ProtectedRoute>} />
-<Route path="/intelligence/demand" element={<ProtectedRoute><DemandForecastDashboard /></ProtectedRoute>} />
-<Route path="/intelligence/no-show" element={<ProtectedRoute><NoShowRiskDashboard /></ProtectedRoute>} />
-<Route path="/intelligence/treatment" element={<ProtectedRoute><TreatmentEffectivenessDashboard /></ProtectedRoute>} />
-<Route path="/exercises" element={<ProtectedRoute><ExerciseLibrary /></ProtectedRoute>} />
-<Route path="/integrations/whatsapp" element={<ProtectedRoute><WhatsAppReminders /></ProtectedRoute>} />
-<Route path="/integrations/video" element={<ProtectedRoute><VideoConsultation /></ProtectedRoute>} />
-<Route path="/integrations/payments" element={<ProtectedRoute><PaymentManagement /></ProtectedRoute>} />
-<Route path="/audit-logs" element={<ProtectedRoute><AuditLogDashboard /></ProtectedRoute>} />
-<Route path="/backups" element={<ProtectedRoute><BackupManagement /></ProtectedRoute>} />
+<Route path="/addons" element={<ProtectedRoute><AddonsHub /></ProtectedRoute>} />
+<Route path="/intelligence" element={<ProtectedRoute><FeatureRouteGuard featureKey="intelligence"><IntelligenceDashboard /></FeatureRouteGuard></ProtectedRoute>} />
+<Route path="/intelligence/demand" element={<ProtectedRoute><FeatureRouteGuard featureKey="intelligence"><DemandForecastDashboard /></FeatureRouteGuard></ProtectedRoute>} />
+<Route path="/intelligence/no-show" element={<ProtectedRoute><FeatureRouteGuard featureKey="intelligence"><NoShowRiskDashboard /></FeatureRouteGuard></ProtectedRoute>} />
+<Route path="/intelligence/treatment" element={<ProtectedRoute><FeatureRouteGuard featureKey="intelligence"><TreatmentEffectivenessDashboard /></FeatureRouteGuard></ProtectedRoute>} />
+<Route path="/exercises" element={<ProtectedRoute><FeatureRouteGuard featureKey="exercises"><ExerciseLibrary /></FeatureRouteGuard></ProtectedRoute>} />
+<Route path="/integrations/whatsapp" element={<ProtectedRoute><FeatureRouteGuard featureKey="whatsapp"><WhatsAppReminders /></FeatureRouteGuard></ProtectedRoute>} />
+<Route path="/integrations/video" element={<ProtectedRoute><FeatureRouteGuard featureKey="video"><VideoConsultation /></FeatureRouteGuard></ProtectedRoute>} />
+<Route path="/integrations/payments" element={<ProtectedRoute><FeatureRouteGuard featureKey="payments"><PaymentManagement /></FeatureRouteGuard></ProtectedRoute>} />
+<Route path="/audit-logs" element={<ProtectedRoute><FeatureRouteGuard featureKey="audit"><AuditLogDashboard /></FeatureRouteGuard></ProtectedRoute>} />
+<Route path="/backups" element={<ProtectedRoute><FeatureRouteGuard featureKey="backups"><BackupManagement /></FeatureRouteGuard></ProtectedRoute>} />
 <Route path="/providers" element={<ProtectedRoute><ProviderManagementDashboard /></ProtectedRoute>} />
 <Route path="/education" element={<ProtectedRoute><EducationPortal /></ProtectedRoute>} />
-<Route path="/protocols" element={<ProtectedRoute><ProtocolsLibrary /></ProtectedRoute>} />
+<Route path="/protocols" element={<ProtectedRoute><FeatureRouteGuard featureKey="protocols"><ProtocolsLibrary /></FeatureRouteGuard></ProtectedRoute>} />
 
           <Route
             path="*"
