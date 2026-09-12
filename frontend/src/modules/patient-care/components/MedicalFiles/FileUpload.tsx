@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { CloudArrowUpIcon, DocumentIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { UploadCloud, FileText, XCircle } from 'lucide-react';
 import { medicalFileService } from '../../services/medical-file.service';
 
 interface FileUploadProps {
@@ -68,7 +68,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md"
+          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md"
           dir="rtl"
         >
           {allowedCategories.map((category) => (
@@ -84,12 +84,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
         {...getRootProps()}
         className={`
           border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-          ${isDragActive ? 'border-primary-500 bg-primary-50' : 'border-gray-300 hover:border-gray-400'}
+          ${isDragActive ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'}
           ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
         `}
       >
         <input {...getInputProps()} />
-        <CloudArrowUpIcon className="mx-auto h-12 w-12 text-gray-400" />
+        <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           {isDragActive ? (
             'أسحب الملفات هنا...'
@@ -107,22 +107,22 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
       {/* Upload Progress */}
       {uploading && (
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4">
           <div className="flex items-center">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-            <span className="ms-2 text-sm text-blue-700">جارٍ رفع الملفات...</span>
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 dark:border-blue-400"></div>
+            <span className="ms-2 text-sm text-blue-700 dark:text-blue-300">جارٍ رفع الملفات...</span>
           </div>
         </div>
       )}
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
           <div className="flex">
-            <XMarkIcon className="h-5 w-5 text-red-400" />
+            <XCircle className="h-5 w-5 text-red-400 dark:text-red-500" />
             <div className="ms-3">
-              <h3 className="text-sm font-medium text-red-800">خطأ في الرفع</h3>
-              <p className="text-sm text-red-700">{error}</p>
+              <h3 className="text-sm font-medium text-red-800 dark:text-red-300">خطأ في الرفع</h3>
+              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
             </div>
           </div>
         </div>

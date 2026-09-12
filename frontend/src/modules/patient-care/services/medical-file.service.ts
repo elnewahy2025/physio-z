@@ -1,8 +1,8 @@
-import api from '../../../services/api';
+import api from "../../../lib/api";
 
 export const medicalFileService = {
   async uploadMedicalFile(formData: FormData) {
-    const response = await api.post('/patient-care/medical-files/upload', formData, {
+    const response = await api.post('/patient-care/files/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

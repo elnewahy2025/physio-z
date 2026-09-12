@@ -1,9 +1,10 @@
 // backend/src/controllers/patient-care.controller.ts
 // Phase 4: Patient Care - All controllers (P1-P5)
 
-import type { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { z } from 'zod';
 import multer from 'multer';
+import { HttpError } from '../lib/errors.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import * as intakeFormService from '../services/intake-form.service.js';
 import * as consentFormService from '../services/consent-form.service.js';
@@ -241,6 +242,14 @@ export const downloadMedicalFile = asyncHandler(async (req: Request, res: Respon
     req.userRole || 'PATIENT'
   );
   
+  if (req.query.format === 'base64') {
+    return res.json({
+      mimeType: file.mimeType,
+      fileName: file.fileName,
+      data: file.data.toString('base64'),
+    });
+  }
+
   res.set({
     'Content-Type': file.mimeType,
     'Content-Disposition': `attachment; filename="${encodeURIComponent(file.fileName)}"`,

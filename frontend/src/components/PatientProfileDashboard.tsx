@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { X, User, Calendar, FileText, Activity, CreditCard, Folder, Phone, Mail, MapPin, Cake } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { X, User, Calendar, FileText, Activity, CreditCard, Folder, Phone, Mail, MapPin, Cake, Eye, Download, Trash2 } from 'lucide-react';
 import api from '../lib/api';
 import { useI18n } from '../i18n';
 import { Spinner, Badge } from './ui';
+import FileUpload from '../modules/patient-care/components/MedicalFiles/FileUpload';
 
 export default function PatientProfileDashboard({
   patientId,
@@ -13,7 +14,10 @@ export default function PatientProfileDashboard({
   onClose: () => void;
 }) {
   const { lang } = useI18n();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('overview');
+  const [viewingDoc, setViewingDoc] = useState<{ url: string; type: string; name: string } | null>(null);
+  const [deletingDoc, setDeletingDoc] = useState<any>(null);
 
   const { data: patient, isLoading, error } = useQuery({
     queryKey: ['patient', patientId],
@@ -36,6 +40,67 @@ export default function PatientProfileDashboard({
       options.minute = '2-digit';
     }
     return d.toLocaleString(lang === 'ar' ? 'ar-EG' : 'en-US', options);
+  };
+
+  const handleViewDocument = async (doc: any) => {
+    try {
+      const isMedicalFile = !!doc.originalName || !!doc.category;
+      let endpoint = isMedicalFile ? `/patient-care/files/${doc.id}/download?format=base64` : `/files/${doc.id}/download?format=base64`;
+      
+      const response = await api.get(endpoint);
+      const { data, mimeType, fileName: backendFileName } = response.data;
+      
+      const fileName = backendFileName || doc.filename || doc.originalName || doc.fileName || 'Document';
+      let type = mimeType || doc.mimeType || 'application/octet-stream';
+      if (fileName.toLowerCase().endsWith('.pdf')) {
+        type = 'application/pdf';
+      }
+
+      const fileURL = `data:${type};base64,${data}`;
+      
+      setViewingDoc({
+        url: fileURL,
+        type,
+        name: fileName
+      });
+    } catch (err) {
+      console.error('Failed to view document:', err);
+    }
+  };
+
+  const handleDownloadDocument = async (doc: any) => {
+    try {
+      const isMedicalFile = !!doc.originalName || !!doc.category;
+      let endpoint = isMedicalFile ? `/patient-care/files/${doc.id}/download` : `/files/${doc.id}/download`;
+      
+      const response = await api.get(endpoint, { responseType: 'blob' });
+      const blobData = response.data;
+      
+      const url = window.URL.createObjectURL(blobData);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', doc.filename || doc.originalName || doc.fileName || 'Document');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to download document:', err);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingDoc) return;
+    try {
+      const isMedicalFile = !!deletingDoc.originalName || !!deletingDoc.category;
+      let endpoint = isMedicalFile ? `/patient-care/files/${deletingDoc.id}` : `/files/${deletingDoc.id}`;
+      
+      await api.delete(endpoint);
+      setDeletingDoc(null);
+      queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
+    } catch (err) {
+      console.error('Failed to delete document:', err);
+    }
   };
 
   if (isLoading) {
@@ -188,21 +253,45 @@ export default function PatientProfileDashboard({
           </div>
         );
       case 'documents':
-        const docsCount = (patient.files?.length || 0) + (patient.ConsentForm?.length || 0) + (patient.MedicalFile?.length || 0) + (patient.ProgressPhoto?.length || 0) + (patient.PainMap?.length || 0);
+        const allDocs = [...(patient.files || []), ...(patient.ConsentForm || []), ...(patient.MedicalFile || []), ...(patient.ProgressPhoto || []), ...(patient.PainMap || [])].filter(f => f.isActive !== false);
+        const docsCount = allDocs.length;
         return (
-          <div className="space-y-4">
+          <div className="space-y-6">
+             <div className="bg-white dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Upload Document</h3>
+                <FileUpload 
+                  patientId={patientId} 
+                  onUploadComplete={() => {
+                    queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
+                  }} 
+                />
+             </div>
+             
              {docsCount === 0 ? (
               <p className="text-center text-gray-500 py-8">No documents uploaded.</p>
             ) : (
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {patient.files?.map((f: any) => (
-                    <div key={f.id} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-white dark:bg-gray-800/50 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                  {allDocs.map((f: any, i: number) => (
+                    <div key={f.id || i} className="group flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-white dark:bg-gray-800/50 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
                        <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
                           <FileText size={24} />
                        </div>
                        <div className="flex-1 min-w-0">
-                         <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{f.filename || 'Document'}</p>
+                         <p className="text-sm font-semibold text-gray-900 dark:text-white truncate" title={f.filename || f.originalName || f.fileName || 'Document'}>
+                           {f.filename || f.originalName || f.fileName || 'Document'}
+                         </p>
                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{formatDate(f.createdAt)}</p>
+                       </div>
+                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                         <button onClick={(e) => { e.stopPropagation(); handleViewDocument(f); }} className="p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors" title="View">
+                           <Eye size={18} />
+                         </button>
+                         <button onClick={(e) => { e.stopPropagation(); handleDownloadDocument(f); }} className="p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors" title="Download">
+                           <Download size={18} />
+                         </button>
+                         <button onClick={(e) => { e.stopPropagation(); setDeletingDoc(f); }} className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors" title="Delete">
+                           <Trash2 size={18} />
+                         </button>
                        </div>
                     </div>
                   ))}
@@ -266,6 +355,59 @@ export default function PatientProfileDashboard({
           {renderTabContent()}
         </div>
       </div>
+
+      {/* Document Viewer Modal */}
+      {viewingDoc && (
+        <div className="fixed inset-0 z-[60] flex flex-col bg-black/95 backdrop-blur-md" dir="ltr">
+          <div className="flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800 text-white">
+            <h3 className="font-medium text-lg truncate max-w-[80%]">{viewingDoc.name}</h3>
+            <button 
+              onClick={() => {
+                URL.revokeObjectURL(viewingDoc.url);
+                setViewingDoc(null);
+              }}
+              className="p-2 bg-gray-800 hover:bg-gray-700 rounded-full transition-colors"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
+            {viewingDoc.type?.startsWith('image/') ? (
+              <img src={viewingDoc.url} alt={viewingDoc.name} className="max-w-full max-h-full object-contain rounded-lg shadow-2xl" />
+            ) : viewingDoc.type === 'application/pdf' ? (
+              <iframe src={viewingDoc.url} className="w-full h-full rounded-xl bg-white shadow-2xl" title={viewingDoc.name} />
+            ) : (
+              <div className="text-center text-white bg-gray-800 p-8 rounded-xl">
+                <FileText size={64} className="mx-auto mb-4 opacity-50" />
+                <p className="mb-4">Cannot preview this file type directly.</p>
+                <a href={viewingDoc.url} download={viewingDoc.name} className="btn-primary inline-flex items-center gap-2">
+                  Download File
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingDoc && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-sm p-6 transform transition-all">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Delete Document</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+              Are you sure you want to permanently remove <span className="font-medium text-gray-700 dark:text-gray-300">{deletingDoc.filename || deletingDoc.originalName || deletingDoc.fileName || 'this document'}</span>? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setDeletingDoc(null)} className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                Cancel
+              </button>
+              <button onClick={confirmDelete} className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
