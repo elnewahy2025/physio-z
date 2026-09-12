@@ -51,6 +51,34 @@
     background: #374151;
     border-radius: 4px;
   }
+
+  /* ─── Universal dark mode for all form inputs, selects, textareas ─── */
+  html.dark input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='submit']):not([type='button']):not([type='file']),
+  html.dark select,
+  html.dark textarea {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f3f4f6 !important;
+    color-scheme: dark;
+  }
+
+  html.dark input::placeholder,
+  html.dark textarea::placeholder {
+    color: #9ca3af !important;
+  }
+
+  html.dark select option {
+    background-color: #1f2937 !important;
+    color: #f3f4f6 !important;
+  }
+
+  html.dark input:focus,
+  html.dark select:focus,
+  html.dark textarea:focus {
+    border-color: #3b82f6 !important;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35) !important;
+  }
 }
 
 @layer components {

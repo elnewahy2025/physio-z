@@ -2,13 +2,17 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   MagnifyingGlassIcon,
   FunnelIcon,
-  PlusIcon,
 } from '@heroicons/react/24/outline';
 import { exerciseService } from '../services/exercise.service';
 import ExerciseCard from './ExerciseCard';
 import ExerciseDetailModal from './ExerciseDetailModal';
+import { useI18n } from '../../../i18n';
 
 const ExerciseLibrary: React.FC = () => {
+  const { lang } = useI18n();
+  const isRTL = lang === 'ar';
+  const L = (ar: string, en: string) => (isRTL ? ar : en);
+
   const [exercises, setExercises] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -82,129 +86,129 @@ const ExerciseLibrary: React.FC = () => {
     setPagination(prev => ({ ...prev, page: newPage }));
   };
 
-  const categoryLabels: Record<string, string> = {
-    STRETCHING: 'تمديد',
-    STRENGTHENING: 'تقوية',
-    MOBILITY: 'مرونة',
-    BALANCE: 'توازن',
-    CARDIO: 'قلب وأوعية دموية',
-    FUNCTIONAL: 'وظيفي',
-    MANUAL_THERAPY: 'علاج يدوي',
-    POST_SURGICAL: 'بعد الجراحة',
-    SPORTS_SPECIFIC: 'رياضي خاص',
-    GERIATRIC: 'مسنين',
-    PEDIATRIC: 'أطفال',
+  const categoryLabels: Record<string, { ar: string; en: string }> = {
+    STRETCHING: { ar: 'تمديد وإطالة', en: 'Stretching' },
+    STRENGTHENING: { ar: 'تقوية عضلية', en: 'Strengthening' },
+    MOBILITY: { ar: 'مرونة ومدى حركي', en: 'Mobility' },
+    BALANCE: { ar: 'توازن وتوافق', en: 'Balance' },
+    CARDIO: { ar: 'لياقة وقدرة تحمل', en: 'Cardio' },
+    FUNCTIONAL: { ar: 'تدريب وظيفي', en: 'Functional' },
+    MANUAL_THERAPY: { ar: 'علاج يدوي', en: 'Manual Therapy' },
+    POST_SURGICAL: { ar: 'تأهيل بعد الجراحة', en: 'Post-Surgical' },
+    SPORTS_SPECIFIC: { ar: 'رياضي تخصصي', en: 'Sports-Specific' },
+    GERIATRIC: { ar: 'تأهيل كبار السن', en: 'Geriatric' },
+    PEDIATRIC: { ar: 'تأهيل الأطفال', en: 'Pediatric' },
   };
 
-  const difficultyLabels: Record<string, string> = {
-    BEGINNER: 'مبتدئ',
-    INTERMEDIATE: 'متوسط',
-    ADVANCED: 'متقدم',
+  const difficultyLabels: Record<string, { ar: string; en: string }> = {
+    BEGINNER: { ar: 'مبتدئ', en: 'Beginner' },
+    INTERMEDIATE: { ar: 'متوسط', en: 'Intermediate' },
+    ADVANCED: { ar: 'متقدم', en: 'Advanced' },
   };
 
-  if (loading && exercises.length === 0) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
+  const bodyPartLabels: Record<string, { ar: string; en: string }> = {
+    neck: { ar: 'الرقبة', en: 'Neck' },
+    shoulder: { ar: 'الكتف', en: 'Shoulder' },
+    back: { ar: 'الظهر', en: 'Back' },
+    knee: { ar: 'الركبة', en: 'Knee' },
+    hip: { ar: 'الورك', en: 'Hip' },
+    ankle: { ar: 'الكاحل', en: 'Ankle' },
+    core: { ar: 'عضلات الجذع والبطن', en: 'Core' },
+  };
 
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">مكتبة التمارين</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            {L('مكتبة التمارين العلاجية', 'Therapeutic Exercise Library')}
+          </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            استعرض وابحث عن التمارين العلاجية
+            {L('استعرض وابحث عن التمارين العلاجية وإرشاداتها للمرضى', 'Browse and search therapeutic exercises and rehabilitation instructions')}
           </p>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
-        <div className="flex items-center space-x-4 space-x-reverse">
-          <div className="flex-1">
-            <div className="relative">
-              <MagnifyingGlassIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="ابحث عن تمرين..."
-                value={search}
-                onChange={handleSearchChange}
-                className="w-full pr-10 pl-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-              />
-            </div>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-3">
+          <div className="flex-1 relative">
+            <MagnifyingGlassIcon className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400`} />
+            <input
+              type="text"
+              placeholder={L('ابحث عن تمرين باسمه أو الغرض منه...', 'Search exercises by name or target...')}
+              value={search}
+              onChange={handleSearchChange}
+              className={`w-full ${isRTL ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-primary-500 focus:border-primary-500 text-sm`}
+            />
           </div>
           
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-900"
+            className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
           >
-            <FunnelIcon className="h-5 w-5 ml-2" />
-            فلاتر
+            <FunnelIcon className="h-4 w-4" />
+            {L('فلاتر', 'Filters')}
           </button>
         </div>
 
         {showFilters && (
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                الفئة
+              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                {L('الفئة العلاجية', 'Category')}
               </label>
               <select
                 name="category"
                 value={filters.category}
                 onChange={handleFilterChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                className="block w-full border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm focus:ring-primary-500 focus:border-primary-500 text-xs p-2.5"
               >
-                <option value="">الكل</option>
+                <option value="">{L('كافة الفئات', 'All Categories')}</option>
                 {Object.entries(categoryLabels).map(([value, label]) => (
                   <option key={value} value={value}>
-                    {label}
+                    {isRTL ? label.ar : label.en}
                   </option>
                 ))}
               </select>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                مستوى الصعوبة
+              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                {L('مستوى الصعوبة', 'Difficulty Level')}
               </label>
               <select
                 name="difficulty"
                 value={filters.difficulty}
                 onChange={handleFilterChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                className="block w-full border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm focus:ring-primary-500 focus:border-primary-500 text-xs p-2.5"
               >
-                <option value="">الكل</option>
+                <option value="">{L('كافة المستويات', 'All Levels')}</option>
                 {Object.entries(difficultyLabels).map(([value, label]) => (
                   <option key={value} value={value}>
-                    {label}
+                    {isRTL ? label.ar : label.en}
                   </option>
                 ))}
               </select>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                جزء الجسم
+              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                {L('المنطقة المستهدفة من الجسم', 'Target Body Part')}
               </label>
               <select
                 name="bodyPart"
                 value={filters.bodyPart}
                 onChange={handleFilterChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                className="block w-full border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm focus:ring-primary-500 focus:border-primary-500 text-xs p-2.5"
               >
-                <option value="">الكل</option>
-                <option value="neck">الرقبة</option>
-                <option value="shoulder">الكتف</option>
-                <option value="back">الظهر</option>
-                <option value="knee">الركبة</option>
-                <option value="hip">الورك</option>
-                <option value="ankle">الكاحل</option>
-                <option value="core">البطن</option>
+                <option value="">{L('كافة المناطق', 'All Body Parts')}</option>
+                {Object.entries(bodyPartLabels).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {isRTL ? label.ar : label.en}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -213,15 +217,21 @@ const ExerciseLibrary: React.FC = () => {
 
       {/* Results Count */}
       <div className="flex justify-between items-center">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {pagination.total} تمرين
+        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+          {pagination.total} {L('تمريناً مسجلاً', 'exercises found')}
         </p>
       </div>
 
       {/* Exercise Grid */}
-      {exercises.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 dark:text-gray-400">لا توجد تمارين مطابقة للبحث</p>
+      {loading ? (
+        <div className="flex justify-center items-center py-20 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+        </div>
+      ) : exercises.length === 0 ? (
+        <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {L('لا توجد تمارين مطابقة للبحث أو الفلاتر المحددة', 'No exercises match the search criteria')}
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -237,25 +247,25 @@ const ExerciseLibrary: React.FC = () => {
 
       {/* Pagination */}
       {pagination.totalPages > 1 && (
-        <div className="flex justify-center space-x-2 space-x-reverse">
+        <div className="flex justify-center items-center gap-2">
           <button
             onClick={() => handlePageChange(Math.max(1, pagination.page - 1))}
             disabled={pagination.page === 1}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-900 disabled:opacity-50"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 transition"
           >
-            السابق
+            {L('السابق', 'Previous')}
           </button>
           
-          <span className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-            صفحة {pagination.page} من {pagination.totalPages}
+          <span className="px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300">
+            {L('صفحة', 'Page')} {pagination.page} {L('من', 'of')} {pagination.totalPages}
           </span>
           
           <button
             onClick={() => handlePageChange(Math.min(pagination.totalPages, pagination.page + 1))}
             disabled={pagination.page === pagination.totalPages}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-900 disabled:opacity-50"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 transition"
           >
-            التالي
+            {L('التالي', 'Next')}
           </button>
         </div>
       )}

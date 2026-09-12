@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { backupService } from '../services/backup.service';
 import ConfirmModal from '../../../components/ConfirmModal';
+import { useI18n } from '../../../i18n';
 
 const BackupManagement: React.FC = () => {
+  const { lang } = useI18n();
+  const isRTL = lang === 'ar';
+  const L = (ar: string, en: string) => (isRTL ? ar : en);
+
   const [backups, setBackups] = useState<any[]>([]);
   const [statistics, setStatistics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -58,49 +63,24 @@ const BackupManagement: React.FC = () => {
     }
   };
 
-  const handleDelete = (backupId: string) => {
-    setBackupToDelete(backupId);
-  };
 
-  const confirmDelete = async () => {
-    if (backupToDelete) {
-      try {
-        await backupService.deleteBackup(backupToDelete);
-        await loadBackupData();
-      } catch (error) {
-        console.error('Failed to delete backup:', error);
-      } finally {
-        setBackupToDelete(null);
-      }
+  const handleDelete = async () => {
+    if (!backupToDelete) return;
+    try {
+      await backupService.deleteBackup(backupToDelete);
+      await loadBackupData();
+      setBackupToDelete(null);
+    } catch (error) {
+      console.error('Failed to delete backup:', error);
     }
   };
 
-  const formatSize = (bytes: number): string => {
-    if (bytes === 0) return '0 بايت';
+  const formatSize = (bytes: number) => {
+    if (bytes === 0) return '0 B';
     const k = 1024;
-    const sizes = ['بايت', 'كيلوبايت', 'ميجابايت', 'جيجابايت'];
+    const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  const getStatusBadge = (status: string) => {
-    const styles = {
-      PENDING: 'bg-gray-100 text-gray-800 dark:text-gray-200',
-      IN_PROGRESS: 'bg-blue-100 text-blue-800',
-      COMPLETED: 'bg-green-100 text-green-800',
-      FAILED: 'bg-red-100 text-red-800',
-      CANCELLED: 'bg-yellow-100 text-yellow-800',
-    };
-    
-    const labels = {
-      PENDING: 'في الانتظار',
-      IN_PROGRESS: 'قيد التنفيذ',
-      COMPLETED: 'مكتملة',
-      FAILED: 'فشلت',
-      CANCELLED: 'ملغاة',
-    };
-    
-    return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status as keyof typeof styles] || styles.PENDING}`;
   };
 
   if (loading) {
@@ -112,179 +92,189 @@ const BackupManagement: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">إدارة النسخ الاحتياطية</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          {L('إدارة النسخ الاحتياطي للبيانات', 'Database & System Backups')}
+        </h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          إنشاء وإدارة النسخ الاحتياطية للبيانات
+          {L('إنشاء وتنزيل وإدارة النسخ الاحتياطية الآمنة لبيانات المركز والمرضى', 'Create, download, and manage encrypted system backups')}
         </p>
       </div>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V9M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                </svg>
-              </div>
-              <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">إجمالي النسخ</p>
-                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{statistics?.totalBackups || 0}</p>
-              </div>
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 rounded-2xl p-5">
+          <div className="flex items-center">
+            <div className="flex-shrink-0 text-blue-500">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V9M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+              </svg>
+            </div>
+            <div className={`${isRTL ? 'mr-4' : 'ml-4'}`}>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
+                {L('إجمالي النسخ', 'Total Backups')}
+              </p>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{statistics?.totalBackups || 0}</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">نسخ ناجحة</p>
-                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{statistics?.successfulBackups || 0}</p>
-              </div>
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 rounded-2xl p-5">
+          <div className="flex items-center">
+            <div className="flex-shrink-0 text-emerald-500">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className={`${isRTL ? 'mr-4' : 'ml-4'}`}>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
+                {L('النسخ الناجحة', 'Successful Backups')}
+              </p>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{statistics?.successfulBackups || 0}</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">نسخ فاشلة</p>
-                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{statistics?.failedBackups || 0}</p>
-              </div>
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 rounded-2xl p-5">
+          <div className="flex items-center">
+            <div className="flex-shrink-0 text-red-500">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className={`${isRTL ? 'mr-4' : 'ml-4'}`}>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
+                {L('النسخ الفاشلة', 'Failed Backups')}
+              </p>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{statistics?.failedBackups || 0}</p>
             </div>
           </div>
         </div>
         
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V9M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-                </svg>
-              </div>
-              <div className="mr-5">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">الحجم الإجمالي</p>
-                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  {formatSize(statistics?.totalSize || 0)}
-                </p>
-              </div>
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 rounded-2xl p-5">
+          <div className="flex items-center">
+            <div className="flex-shrink-0 text-purple-500">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+              </svg>
+            </div>
+            <div className={`${isRTL ? 'mr-4' : 'ml-4'}`}>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 truncate">
+                {L('الحجم الإجمالي', 'Total Storage Used')}
+              </p>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                {formatSize(statistics?.totalSize || 0)}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Create Backup */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">إنشاء نسخة احتياطية</h3>
-        <div className="flex items-center space-x-4 space-x-reverse">
+      <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 rounded-2xl p-6">
+        <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-4">
+          {L('إنشاء نسخة احتياطية جديدة', 'Create On-Demand Backup')}
+        </h3>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <select
             value={backupType}
             onChange={(e) => setBackupType(e.target.value as any)}
-            className="border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+            className="border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm focus:ring-primary-500 focus:border-primary-500 text-xs p-2.5"
           >
-            <option value="FULL">نسخة كاملة (قاعدة البيانات + الملفات)</option>
-            <option value="DATABASE_ONLY">قاعدة البيانات فقط</option>
-            <option value="FILES_ONLY">الملفات فقط</option>
+            <option value="FULL">{L('نسخة كاملة (قاعدة البيانات + الملفات)', 'Full Backup (Database + Files)')}</option>
+            <option value="DATABASE_ONLY">{L('قاعدة البيانات فقط', 'Database Only')}</option>
+            <option value="FILES_ONLY">{L('الملفات والمستندات فقط', 'Files Only')}</option>
           </select>
           
           <button
             onClick={handleCreateBackup}
             disabled={creating}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+            className="px-5 py-2.5 bg-primary-600 text-white rounded-xl text-xs font-bold hover:bg-primary-700 disabled:opacity-50 transition shadow-sm"
           >
-            {creating ? 'جارٍ الإنشاء...' : 'إنشاء نسخة احتياطية'}
+            {creating ? L('جارٍ الإنشاء...', 'Creating Backup...') : L('إنشاء نسخة الآن', 'Create Backup Now')}
           </button>
         </div>
       </div>
 
       {/* Backup History */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">سجل النسخ الاحتياطية</h3>
+      <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 rounded-2xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+          <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+            {L('سجل النسخ الاحتياطية السابقة', 'Backup History')}
+          </h3>
         </div>
         
         {backups.length === 0 ? (
-          <div className="p-6 text-center text-gray-500 dark:text-gray-400">
-            لا توجد نسخ احتياطية بعد
+          <div className="p-8 text-center text-xs font-semibold text-gray-500 dark:text-gray-400">
+            {L('لا توجد نسخ احتياطية مسجلة بعد', 'No backups created yet')}
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-900/60">
                 <tr>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    اسم الملف
+                  <th className="px-6 py-3.5 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {L('اسم الملف', 'Filename')}
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    النوع
+                  <th className="px-6 py-3.5 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {L('النوع', 'Type')}
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    الحجم
+                  <th className="px-6 py-3.5 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {L('الحجم', 'Size')}
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    الحالة
+                  <th className="px-6 py-3.5 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {L('الحالة', 'Status')}
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    التاريخ
+                  <th className="px-6 py-3.5 text-start text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {L('التاريخ', 'Date')}
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    الإجراءات
+                  <th className="px-6 py-3.5 text-end text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {L('الإجراءات', 'Actions')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
                 {backups.map((backup) => (
-                  <tr key={backup.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <tr key={backup.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition">
+                    <td className="px-6 py-4 whitespace-nowrap text-xs font-mono font-medium text-gray-900 dark:text-gray-100">
                       {backup.filename}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {backup.type === 'FULL' ? 'كامل' : 
-                       backup.type === 'DATABASE_ONLY' ? 'قاعدة بيانات' : 'ملفات'}
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
+                      {backup.type === 'FULL' ? L('كامل', 'Full') : 
+                       backup.type === 'DATABASE_ONLY' ? L('قاعدة بيانات', 'Database') : L('ملفات', 'Files')}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
                       {formatSize(backup.size)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={getStatusBadge(backup.status)}>
-                        {backup.status === 'COMPLETED' ? 'مكتملة' : 
-                         backup.status === 'IN_PROGRESS' ? 'قيد التنفيذ' : 
-                         backup.status === 'FAILED' ? 'فشلت' : 'في الانتظار'}
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                        backup.status === 'SUCCESS' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300' :
+                        backup.status === 'FAILED' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' :
+                        'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300'
+                      }`}>
+                        {backup.status === 'SUCCESS' ? L('ناجح', 'Success') :
+                         backup.status === 'FAILED' ? L('فشل', 'Failed') : L('قيد المعالجة', 'In Progress')}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {new Date(backup.createdAt).toLocaleString('ar-EG')}
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400 font-mono">
+                      {new Date(backup.createdAt).toLocaleString(isRTL ? 'ar-EG' : 'en-US')}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-end text-xs font-semibold space-x-2 space-x-reverse">
+                      {backup.status === 'SUCCESS' && (
+                        <button
+                          onClick={() => handleDownload(backup.id)}
+                          className="text-primary-600 dark:text-primary-400 hover:underline px-1"
+                        >
+                          {L('تنزيل', 'Download')}
+                        </button>
+                      )}
                       <button
-                        onClick={() => handleDownload(backup.id)}
-                        className="text-primary-600 hover:text-primary-900 ml-3"
-                        disabled={backup.status !== 'COMPLETED'}
+                        onClick={() => setBackupToDelete(backup.id)}
+                        className="text-red-600 dark:text-red-400 hover:underline px-1"
                       >
-                        تحميل
-                      </button>
-                      <button
-                        onClick={() => handleDelete(backup.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        حذف
+                        {L('حذف', 'Delete')}
                       </button>
                     </td>
                   </tr>
@@ -294,13 +284,14 @@ const BackupManagement: React.FC = () => {
           </div>
         )}
       </div>
-      
+
       <ConfirmModal
         isOpen={!!backupToDelete}
         onClose={() => setBackupToDelete(null)}
-        onConfirm={confirmDelete}
-        title="تأكيد الحذف"
-        message="هل أنت متأكد من حذف هذه النسخة الاحتياطية؟"
+        onConfirm={handleDelete}
+        title={L('حذف النسخة الاحتياطية', 'Delete Backup')}
+        message={L('هل أنت متأكد من حذف هذه النسخة الاحتياطية؟ لا يمكن التراجع عن هذا الإجراء.', 'Are you sure you want to permanently delete this backup file?')}
+        variant="danger"
       />
     </div>
   );

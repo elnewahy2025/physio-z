@@ -30,8 +30,8 @@ export const auditService = {
     return response.data;
   },
 
-  async exportAuditLogs() {
-    const response = await api.post('/audit/logs/export', {}, {
+  async exportAuditLogs(filters?: any) {
+    const response = await api.post('/audit/logs/export', filters || {}, {
       responseType: 'blob',
     });
     return response.data;
