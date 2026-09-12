@@ -40,6 +40,7 @@ import PaymentManagement from './modules/integrations/components/PaymentManageme
 import AuditLogDashboard from './modules/audit/components/AuditLogDashboard';
 import BackupManagement from './modules/backup/components/BackupManagement';
 import ProviderManagementDashboard from './modules/providers/components/ProviderManagementDashboard';
+import ProtocolsLibrary from './modules/clinical/components/ProtocolsLibrary';
 
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -203,6 +204,7 @@ function App() {
 <Route path="/backups" element={<ProtectedRoute><BackupManagement /></ProtectedRoute>} />
 <Route path="/providers" element={<ProtectedRoute><ProviderManagementDashboard /></ProtectedRoute>} />
 <Route path="/education" element={<ProtectedRoute><EducationPortal /></ProtectedRoute>} />
+<Route path="/protocols" element={<ProtectedRoute><ProtocolsLibrary /></ProtectedRoute>} />
 
           <Route
             path="*"

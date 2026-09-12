@@ -1280,3 +1280,27 @@ model IncidentReport {
   createdAt   DateTime @default(now())
 }
 
+// --- Clinical Decision Support System ---
+model TreatmentProtocol {
+  id                    String   @id @default(cuid())
+  title                 String
+  titleAr               String
+  diagnosisCode         String?
+  bodyRegion            String   // KNEE, SHOULDER, LUMBAR, CERVICAL, ANKLE, NEURO, ELBOW
+  category              String   // ORTHOPEDIC, SPORTS, NEUROLOGICAL, PEDIATRIC, GERIATRIC
+  description           String   @db.Text
+  descriptionAr         String   @db.Text
+  phases                Json     // Array of phases: { phaseNumber, title, titleAr, weeks, goals, modalities, precautions, exercises }
+  expectedDurationWeeks Int      @default(12)
+  evidenceSource        String
+  precautions           String[]
+  successRatePct        Int      @default(85)
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([bodyRegion, category])
+  @@index([isActive])
+}
+
+

@@ -1,7 +1,9 @@
-// frontend/src/pages/Sessions.tsx
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, FileEdit, Activity, AlertCircle } from 'lucide-react';
+import { Plus, FileEdit, Activity, AlertCircle, Sparkles, BookOpen } from 'lucide-react';
+import ClinicalDecisionModal from '../modules/clinical/components/ClinicalDecisionModal';
+import { type TreatmentProtocol } from '../modules/clinical/services/clinical-decision.service';
 import api from '../lib/api';
 import { useI18n } from '../i18n';
 import { ar } from '../ar';
@@ -27,6 +29,7 @@ interface TherapySession {
 
 export default function Sessions() {
   const { t, lang } = useI18n();
+  const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const L = (arText: string, enText: string) => (lang === 'ar' ? arText : enText);
 
@@ -47,12 +50,22 @@ export default function Sessions() {
       <Card>
         <CardHeader
           title={t('sessions')}
-          subtitle={`${sessions.length} ${L('\u062c\u0644\u0633\u0629', 'sessions')}`}
+          subtitle={`${sessions.length} ${L('جلسة', 'sessions')}`}
           action={
-            <button onClick={() => setShowForm(!showForm)} className="btn-primary">
-              <Plus size={16} />
-              {L('\u0625\u0636\u0627\u0641\u0629 \u062c\u0644\u0633\u0629', 'Add Session Notes')}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => navigate('/protocols')}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50/70 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 text-xs font-bold transition"
+              >
+                <BookOpen size={15} />
+                {L('البروتوكولات السريرية', 'Clinical Protocols')}
+              </button>
+              <button onClick={() => setShowForm(!showForm)} className="btn-primary">
+                <Plus size={16} />
+                {L('إضافة جلسة', 'Add Session Notes')}
+              </button>
+            </div>
           }
         />
 
@@ -147,6 +160,7 @@ function NewSessionForm({ onClose }: { onClose: () => void }) {
   const { t, lang } = useI18n();
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
+  const [showCDSS, setShowCDSS] = useState(false);
   const L = (arText: string, enText: string) => (lang === 'ar' ? arText : enText);
 
   const { data: completedAppointments } = useQuery({
@@ -166,6 +180,34 @@ function NewSessionForm({ onClose }: { onClose: () => void }) {
     notes: '',
     painLevel: '',
   });
+
+  const handleApplyProtocol = (protocol: TreatmentProtocol) => {
+    const phases = (protocol.phases as any[]) || [];
+    const phasesText = phases
+      .map(
+        (p) =>
+          `• ${lang === 'ar' ? 'المرحلة' : 'Phase'} ${p.phaseNumber} (${p.weeks}):\n  - ${lang === 'ar' ? 'الأهداف' : 'Goals'}: ${(p.goals || []).join('، ')}\n  - ${lang === 'ar' ? 'التدخلات والتمارين' : 'Interventions'}: ${(p.interventions || []).join('، ')}`
+      )
+      .join('\n\n');
+
+    const generatedPlan = [
+      `${lang === 'ar' ? 'البروتوكول السريري المعتمد' : 'Clinical Protocol'}: ${lang === 'ar' ? protocol.titleAr : protocol.title} (${protocol.evidenceSource})`,
+      `${lang === 'ar' ? 'المدة المتوقعة' : 'Expected Duration'}: ${protocol.expectedDurationWeeks} ${lang === 'ar' ? 'أسابيع' : 'weeks'} | ${lang === 'ar' ? 'نسبة النجاح' : 'Success Rate'}: ${protocol.successRatePct}%`,
+      protocol.precautions?.length
+        ? `${lang === 'ar' ? 'محاذير هامة' : 'Precautions'}: ${protocol.precautions.join('، ')}`
+        : '',
+      phasesText ? `${lang === 'ar' ? 'الخطة المرحلية' : 'Phases'}:\n${phasesText}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n\n');
+
+    setFormData((prev) => ({
+      ...prev,
+      diagnosis: prev.diagnosis.trim() ? prev.diagnosis : (lang === 'ar' ? protocol.titleAr : protocol.title),
+      treatmentPlan: generatedPlan,
+    }));
+    setShowCDSS(false);
+  };
 
   const createSession = useMutation({
     mutationFn: async (data: any) => {
@@ -193,61 +235,108 @@ function NewSessionForm({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 rounded-xl border border-teal-200 bg-teal-50/50 p-6">
-      {error && (
-        <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
-          <AlertCircle size={16} />
-          <span>{error}</span>
-        </div>
+    <>
+      {showCDSS && (
+        <ClinicalDecisionModal
+          onClose={() => setShowCDSS(false)}
+          onSelectProtocol={handleApplyProtocol}
+          initialDiagnosis={formData.diagnosis}
+        />
       )}
 
-      <div className="mb-4 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
-        {L(
-          '\u064a\u0645\u0643\u0646\u0643 \u0625\u0636\u0627\u0641\u0629 \u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u0644\u062c\u0644\u0633\u0629 \u0641\u0642\u0637 \u0644\u0644\u0645\u0648\u0627\u0639\u064a\u062f \u0627\u0644\u0645\u0643\u062a\u0645\u0644\u0629',
-          'You can only add session notes to COMPLETED appointments',
+      <form onSubmit={handleSubmit} className="mb-6 rounded-xl border border-teal-200 bg-teal-50/50 p-6">
+        {error && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+            <AlertCircle size={16} />
+            <span>{error}</span>
+          </div>
         )}
-      </div>
 
-      <div className="grid grid-cols-1 gap-4">
-        <div>
-          <label className="label">
-            {L('\u0627\u0644\u0645\u0648\u0639\u062f \u0627\u0644\u0645\u0643\u062a\u0645\u0644', 'Completed Appointment')} *
-          </label>
-          <select
-            value={formData.appointmentId}
-            onChange={(e) => setFormData({ ...formData, appointmentId: e.target.value })}
-            className="input"
-            required
+        <div className="mb-4 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
+          {L(
+            'يمكنك إضافة ملاحظات الجلسة فقط للمواعيد المكتملة',
+            'You can only add session notes to COMPLETED appointments',
+          )}
+        </div>
+
+        {/* CDSS Assistant Quick Bar */}
+        <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-600 p-3.5 text-white shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/20">
+              <Sparkles size={18} className="text-yellow-300" />
+            </div>
+            <div>
+              <p className="text-xs font-bold">
+                {L('المساعد السريري ودعم القرار (CDSS)', 'Clinical Decision Support Assistant')}
+              </p>
+              <p className="text-[11px] text-indigo-100">
+                {L(
+                  'تحليل الأعراض، اقتراح الفحوصات والتشخيص، وتطبيق بروتوكول علاجي متكامل بنقرة واحدة',
+                  'Suggest diagnosis & apply evidence-based protocol in 1-click'
+                )}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowCDSS(true)}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-indigo-700 hover:bg-indigo-50 shadow-sm transition"
           >
-            <option value="">
-              {L('\u0627\u062e\u062a\u0631 \u0645\u0648\u0639\u062f', 'Select appointment')}
-            </option>
-            {(completedAppointments || []).map((appt) => (
-              <option key={appt.id} value={appt.id}>
-                {appt.patient?.name} — {new Date(appt.dateTime).toLocaleDateString()} —{' '}
-                {appt.therapist?.name}
-              </option>
-            ))}
-          </select>
+            <Sparkles size={13} className="text-indigo-600" />
+            {L('استشارة المساعد السريري', 'Consult CDSS Assistant')}
+          </button>
         </div>
 
-        <div>
-          <label className="label">
-            {L('\u0627\u0644\u062a\u0634\u062e\u064a\u0635', 'Diagnosis')} *
-          </label>
-          <textarea
-            value={formData.diagnosis}
-            onChange={(e) => setFormData({ ...formData, diagnosis: e.target.value })}
-            className="input"
-            rows={2}
-            required
-            minLength={3}
-            placeholder={L(
-              '\u0627\u0644\u062a\u0634\u062e\u064a\u0635 \u0627\u0644\u0637\u0628\u064a...',
-              'Medical diagnosis...',
-            )}
-          />
-        </div>
+        <div className="grid grid-cols-1 gap-4">
+          <div>
+            <label className="label">
+              {L('الموعد المكتمل', 'Completed Appointment')} *
+            </label>
+            <select
+              value={formData.appointmentId}
+              onChange={(e) => setFormData({ ...formData, appointmentId: e.target.value })}
+              className="input"
+              required
+            >
+              <option value="">
+                {L('اختر موعد', 'Select appointment')}
+              </option>
+              {(completedAppointments || []).map((appt) => (
+                <option key={appt.id} value={appt.id}>
+                  {appt.patient?.name} — {new Date(appt.dateTime).toLocaleDateString()} —{' '}
+                  {appt.therapist?.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <label className="label">
+                {L('التشخيص', 'Diagnosis')} *
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowCDSS(true)}
+                className="text-xs font-medium text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 inline-flex items-center gap-1"
+              >
+                <Sparkles size={12} />
+                {L('مساعدة في التشخيص', 'Diagnostic Suggestion')}
+              </button>
+            </div>
+            <textarea
+              value={formData.diagnosis}
+              onChange={(e) => setFormData({ ...formData, diagnosis: e.target.value })}
+              className="input"
+              rows={2}
+              required
+              minLength={3}
+              placeholder={L(
+                'التشخيص الطبي...',
+                'Medical diagnosis...',
+              )}
+            />
+          </div>
 
         <div>
           <label className="label">
@@ -311,5 +400,6 @@ function NewSessionForm({ onClose }: { onClose: () => void }) {
         </button>
       </div>
     </form>
+  </>
   );
 }

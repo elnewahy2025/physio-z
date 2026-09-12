@@ -78,6 +78,7 @@ const navLabels: Record<string, { en: string; ar: string }> = {
   auditLogs: { en: 'Audit Logs', ar: 'سجلات النظام' },
   backups: { en: 'Backups', ar: 'النسخ الاحتياطي' },
   education: { en: 'Education Portal', ar: 'التثقيف الصحي' },
+  protocols: { en: 'Clinical Protocols', ar: 'البروتوكولات السريرية' },
 };
 
 const navItems: NavItem[] = [
@@ -149,6 +150,13 @@ const navItems: NavItem[] = [
     icon: <Activity size={20} />,
     path: '/exercises',
     roles: ['OWNER', 'THERAPIST'],
+    category: 'Clinical'
+  },
+  {
+    key: 'protocols',
+    icon: <Stethoscope size={20} />,
+    path: '/protocols',
+    roles: ['OWNER', 'THERAPIST', 'SECRETARY'],
     category: 'Clinical'
   },
   {
