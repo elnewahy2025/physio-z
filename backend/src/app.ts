@@ -7,6 +7,10 @@ import whatsappRoutes from './routes/whatsapp.routes.js';
 import paymentGatewayRoutes from './routes/payment-gateway.routes.js';
 import clinicalDecisionRoutes from './routes/clinical-decision.routes.js';
 import insuranceRoutes from './routes/insurance.routes.js';
+import gamificationRoutes from './routes/gamification.routes.js';
+import patientAuthRoutes from './routes/patient-auth.routes.js';
+import otpRequestsRoutes from './routes/otp-requests.routes.js';
+import portalRoutes from './routes/portal.routes.js';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -71,6 +75,9 @@ export function createApp() {
 
   // ─── Routes ───
   app.use('/api/auth', authRoutes);
+  app.use('/api/patient-auth', patientAuthRoutes);
+  app.use('/api/otp-requests', otpRequestsRoutes);
+  app.use('/api/portal', portalRoutes);
   app.use('/api/patients', patientRoutes);
   app.use('/api/users', userRoutes);
   app.use('/api/appointments', appointmentRoutes);
@@ -95,6 +102,7 @@ export function createApp() {
   app.use('/api/integrations/payments', paymentGatewayRoutes);
   app.use('/api/clinical-decision', clinicalDecisionRoutes);
   app.use('/api/insurance', insuranceRoutes);
+  app.use('/api/gamification', gamificationRoutes);
 
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   app.use(notFoundHandler);
