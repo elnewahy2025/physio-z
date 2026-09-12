@@ -41,6 +41,7 @@ import AuditLogDashboard from './modules/audit/components/AuditLogDashboard';
 import BackupManagement from './modules/backup/components/BackupManagement';
 import ProviderManagementDashboard from './modules/providers/components/ProviderManagementDashboard';
 import ProtocolsLibrary from './modules/clinical/components/ProtocolsLibrary';
+import InsuranceManagementPage from './modules/insurance/pages/InsuranceManagementPage';
 import AddonsHub from './pages/AddonsHub';
 import FeatureRouteGuard from './components/FeatureRouteGuard';
 
@@ -208,6 +209,7 @@ function App() {
 <Route path="/providers" element={<ProtectedRoute><ProviderManagementDashboard /></ProtectedRoute>} />
 <Route path="/education" element={<ProtectedRoute><EducationPortal /></ProtectedRoute>} />
 <Route path="/protocols" element={<ProtectedRoute><FeatureRouteGuard featureKey="protocols"><ProtocolsLibrary /></FeatureRouteGuard></ProtectedRoute>} />
+<Route path="/insurance" element={<ProtectedRoute><FeatureRouteGuard featureKey="insurance"><InsuranceManagementPage /></FeatureRouteGuard></ProtectedRoute>} />
 
           <Route
             path="*"

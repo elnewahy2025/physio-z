@@ -6,6 +6,7 @@ import providerRoutes from './routes/provider.routes.js';
 import whatsappRoutes from './routes/whatsapp.routes.js';
 import paymentGatewayRoutes from './routes/payment-gateway.routes.js';
 import clinicalDecisionRoutes from './routes/clinical-decision.routes.js';
+import insuranceRoutes from './routes/insurance.routes.js';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -93,6 +94,7 @@ export function createApp() {
   app.use('/api/payment-gateways', paymentGatewayRoutes);
   app.use('/api/integrations/payments', paymentGatewayRoutes);
   app.use('/api/clinical-decision', clinicalDecisionRoutes);
+  app.use('/api/insurance', insuranceRoutes);
 
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   app.use(notFoundHandler);

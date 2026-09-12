@@ -98,12 +98,24 @@ export const ADDON_FEATURES: AddonFeatureDef[] = [
     icon: '💾',
     category: 'system',
   },
+  {
+    key: 'insurance',
+    nameEn: 'Insurance & Claims Management',
+    nameAr: 'إدارة التأمين والمطالبات',
+    descriptionEn: 'End-to-end medical insurance claims, co-pay calculation, pre-authorization, and provider billing.',
+    descriptionAr: 'إدارة مطالبات التأمين الطبي وحساب نسبة التحمل (الكو-باي) والموافقات المسبقة ومطالبات الشركات.',
+    path: '/insurance',
+    icon: '🏥',
+    category: 'finance',
+    isPopular: true,
+  },
 ];
 
 export const DEFAULT_ENABLED_FEATURES: Record<string, boolean> = {
   whatsapp: true,
   video: true,
   payments: true,
+  insurance: true,
   protocols: true,
   exercises: true,
   intelligence: true,
