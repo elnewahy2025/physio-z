@@ -104,9 +104,11 @@ model Patient {
   emergencyContactPhone String?
   emergencyContactRelation String?
   allergies             String[]
+  gender                String?
 
   userId                String?                @unique
   user                  User?                  @relation("PatientAccount", fields: [userId], references: [id], onDelete: SetNull)
+  patientOtps           PatientOTP[]
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
   appointments          Appointment[]
@@ -266,6 +268,7 @@ model Settings {
   taxRate                 Decimal  @default(0) @db.Decimal(5, 2)
   defaultLanguage         String   @default("ar")
   whatsappMessageTemplate String?
+  maxConcurrentRooms      Int      @default(5)
   enabledFeatures         Json?
   updatedAt               DateTime @updatedAt
 }
@@ -1392,4 +1395,30 @@ model InsuranceClaim {
 }
 
 
+// --- Patient Portal & Authentication ---
+model PatientOTP {
+  id         String   @id @default(cuid())
+  identifier String   // phone or email
+  type       String   // PHONE, EMAIL
+  code       String
+  patientId  String?  // null if new customer
+  patient    Patient? @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  isUsed     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  otpRequest OtpRequest?
 
+  @@index([identifier, code])
+}
+
+model OtpRequest {
+  id         String   @id @default(cuid())
+  phone      String
+  status     String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  otpId      String?  @unique
+  otp        PatientOTP? @relation(fields: [otpId], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([status])
+}

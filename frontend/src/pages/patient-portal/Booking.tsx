@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { StarRating } from '../components/StarRating';
-
+import { StarRating } from '../../components/StarRating';
+import { usePatientAuth } from '../../store/patient-auth';
+import { useNavigate } from 'react-router-dom';
 import {
   ChevronLeft,
   ChevronRight,
@@ -14,9 +15,9 @@ import {
   Stethoscope,
 } from 'lucide-react';
 
-import api from '../lib/api';
-import { useI18n } from '../i18n';
-import { Card, EmptyState } from '../components/ui';
+import api from '../../lib/api';
+import { useI18n } from '../../i18n';
+import { Card, EmptyState } from '../../components/ui';
 
 interface Therapist {
   id: string;
@@ -292,7 +293,13 @@ function SimpleCalendar({
 // ─── Main component ───
 
 export default function PatientBooking() {
-  const { lang } = useI18n();
+  const { t, lang } = useI18n();
+  const { patient } = usePatientAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!patient) navigate('/portal/login');
+  }, [patient, navigate]);
 
   const L = (arText: string, enText: string) =>
     lang === 'ar' ? arText : enText;
@@ -312,20 +319,14 @@ export default function PatientBooking() {
 
   const {
     data: therapists,
-    isLoading: thLoading,
+    isLoading: therapistsLoading,
   } = useQuery({
-    queryKey: ['booking-therapists'],
+    queryKey: ['portal-therapists'],
     queryFn: async () => {
-      const res = await api.get('/users', {
-        params: {
-          role: 'THERAPIST',
-        },
-      });
-
-      return (res.data as Therapist[]).filter(
-        (th) => th.isActive,
-      );
+      const res = await api.get('/portal/therapists');
+      return res.data as Therapist[];
     },
+    enabled: !!patient,
   });
 
   // ─── Fetch ratings for all therapists ───
@@ -390,19 +391,15 @@ export default function PatientBooking() {
         .toISOString()
         .split('T')[0];
 
-      const [appointmentsRes, settingsRes] = await Promise.all([
-        api.get('/appointments', {
-          params: {
-            date: dateStr,
-            limit: 100,
-          },
-        }),
-        api.get('/settings'),
-      ]);
+      const res = await api.get('/portal/appointments/availability', {
+        params: {
+          date: dateStr,
+        },
+      });
 
       return {
-        appointments: appointmentsRes.data.data as Appointment[],
-        maxConcurrentRooms: (settingsRes.data?.maxConcurrentRooms as number) || 5,
+        appointments: res.data.data as Appointment[],
+        maxConcurrentRooms: res.data.maxConcurrentRooms as number,
       };
     },
     enabled:
@@ -499,7 +496,7 @@ export default function PatientBooking() {
         0,
       );
 
-      await api.post('/appointments', {
+      await api.post('/portal/appointments', {
         therapistId: selectedTherapist.id,
         dateTime: dateTime.toISOString(),
         duration: SLOT_DURATION,
@@ -668,7 +665,7 @@ export default function PatientBooking() {
             )}
           </h2>
 
-          {thLoading ? (
+          {therapistsLoading ? (
             <div className="flex justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
             </div>

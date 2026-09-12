@@ -303,6 +303,23 @@ export default function Login() {
             </Link>
           </p>
         </div>
+        
+        {/* Patient Portal link */}
+        <div className="mt-3 text-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {lang === 'ar'
+              ? 'هل أنت مريض؟'
+              : 'Are you a patient?'}{' '}
+            <Link
+              to="/portal/login"
+              className="font-medium text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+            >
+              {lang === 'ar'
+                ? 'تسجيل دخول بوابة المرضى'
+                : 'Patient Portal Login'}
+            </Link>
+          </p>
+        </div>
 
         {/* Footer */}
         <p className="mt-6 text-center text-xs text-gray-400 dark:text-gray-500 dark:text-gray-400">

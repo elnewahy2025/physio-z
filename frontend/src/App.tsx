@@ -45,6 +45,13 @@ import InsuranceManagementPage from './modules/insurance/pages/InsuranceManageme
 import AddonsHub from './pages/AddonsHub';
 import FeatureRouteGuard from './components/FeatureRouteGuard';
 
+// Patient Portal
+import PatientLogin from './pages/patient-portal/Login';
+import PatientDashboard from './pages/patient-portal/Dashboard';
+import PortalBooking from './pages/patient-portal/Booking';
+import PatientAppointments from './pages/patient-portal/Appointments';
+import PatientInvoices from './pages/patient-portal/Invoices';
+
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
@@ -77,6 +84,13 @@ function App() {
             }
           />
 
+          {/* Patient Portal Routes */}
+          <Route path="/portal/login" element={<PatientLogin />} />
+          <Route path="/portal/dashboard" element={<PatientDashboard />} />
+          <Route path="/portal/book" element={<PortalBooking />} />
+          <Route path="/portal/appointments" element={<PatientAppointments />} />
+          <Route path="/portal/invoices" element={<PatientInvoices />} />
+          
           <Route
             path="/register"
             element={

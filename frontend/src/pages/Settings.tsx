@@ -22,6 +22,7 @@ export default function Settings() {
   const [formData, setFormData] = useState({
     centerName: '', phone: '', email: '', address: '', googleMapsLink: '',
     sessionPrice: '', currency: 'EGP', taxRate: '0', whatsappMessageTemplate: '',
+    maxConcurrentRooms: 5,
   });
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function Settings() {
         sessionPrice: String(settings.sessionPrice || ''),
         currency: settings.currency || 'EGP', taxRate: String(settings.taxRate || '0'),
         whatsappMessageTemplate: settings.whatsappMessageTemplate || '',
+        maxConcurrentRooms: settings.maxConcurrentRooms ?? 5,
       });
     }
   }, [settings]);
@@ -43,7 +45,9 @@ export default function Settings() {
         centerName: data.centerName, phone: data.phone || null, email: data.email || null,
         address: data.address || null, googleMapsLink: data.googleMapsLink || null,
         sessionPrice: parseFloat(data.sessionPrice) || 0, currency: data.currency,
-        taxRate: parseFloat(data.taxRate) || 0, whatsappMessageTemplate: data.whatsappMessageTemplate || null,
+        taxRate: parseFloat(data.taxRate) || 0, defaultLanguage: 'ar',
+        whatsappMessageTemplate: data.whatsappMessageTemplate || null,
+        maxConcurrentRooms: data.maxConcurrentRooms,
       });
     },
     onSuccess: () => { 
@@ -109,6 +113,17 @@ export default function Settings() {
                 <input type="url" value={formData.googleMapsLink}
                   onChange={(e) => setFormData({ ...formData, googleMapsLink: e.target.value })}
                   className="input" dir="ltr" placeholder="https://maps.google.com/..." />
+              </div>
+              <div className="sm:col-span-2 border-t border-gray-100 dark:border-gray-700 pt-4">
+                <label className="label flex items-center gap-2">
+                  {L('الحد الأقصى للغرف المتزامنة (R)', 'Number of Rooms (R)')}
+                </label>
+                <p className="text-xs text-gray-500 mb-2">
+                  {L('أقصى عدد من الحجوزات المسموح بها في نفس الوقت لجميع الأخصائيين', 'Maximum number of concurrent bookings allowed across all therapists in any given time slot.')}
+                </p>
+                <input type="number" value={formData.maxConcurrentRooms || 5}
+                  onChange={(e) => setFormData({ ...formData, maxConcurrentRooms: parseInt(e.target.value) || 5 })}
+                  className="input w-1/3" min="1" step="1" required />
               </div>
             </div>
           </section>

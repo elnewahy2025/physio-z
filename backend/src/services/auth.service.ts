@@ -4,7 +4,7 @@ import { HttpError } from '../lib/errors.js';
 import { signAccessToken, signRefreshToken, verifyRefreshToken, type RefreshTokenPayload } from '../lib/tokens.js';
 
 export interface LoginResult {
-  user: { id: string; name: string; phone: string; email: string | null; role: string };
+  user: { id: string; name: string; phone: string; email: string | null; role: string; patientId?: string | null };
   accessToken: string;
   refreshToken: string;
 }
@@ -12,12 +12,13 @@ export interface LoginResult {
 export async function login(identifier: string, password: string): Promise<LoginResult> {
   const user = await prisma.user.findFirst({
     where: { OR: [{ phone: identifier }, { email: identifier }] },
+    include: { patient: true },
   });
   if (!user || !user.isActive) throw new HttpError(401, 'Invalid credentials');
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) throw new HttpError(401, 'Invalid credentials');
   return {
-    user: { id: user.id, name: user.name, phone: user.phone, email: user.email, role: user.role },
+    user: { id: user.id, name: user.name, phone: user.phone, email: user.email, role: user.role, patientId: user.patient?.id },
     accessToken: signAccessToken(user.id, user.role),
     refreshToken: signRefreshToken(user.id),
   };
@@ -30,7 +31,7 @@ export async function refresh(refreshToken: string): Promise<{ accessToken: stri
   } catch {
     throw new HttpError(401, 'Invalid or expired refresh token');
   }
-  const user = await prisma.user.findUnique({ where: { id: payload.sub } });
+  const user = await prisma.user.findUnique({ where: { id: payload.sub }, include: { patient: true } });
   if (!user || !user.isActive) throw new HttpError(401, 'User no longer active');
   return {
     accessToken: signAccessToken(user.id, user.role),
@@ -45,7 +46,7 @@ export async function changePassword(
   newPassword: string,
 ): Promise<{ user: LoginResult['user']; accessToken: string; refreshToken: string }> {
   // 1. Find the user
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+  const user = await prisma.user.findUnique({ where: { id: userId }, include: { patient: true } });
   if (!user) throw new HttpError(404, 'User not found');
   if (!user.isActive) throw new HttpError(403, 'Account is deactivated');
 
@@ -89,6 +90,7 @@ export async function changePassword(
       phone: user.phone,
       email: user.email,
       role: user.role,
+      patientId: user.patient?.id,
     },
     accessToken: signAccessToken(user.id, user.role),
     refreshToken: signRefreshToken(user.id),

@@ -12,7 +12,22 @@ const api = axios.create({
 // ─── Request interceptor: attach token + offline queueing ───
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
+    let token = localStorage.getItem('accessToken');
+
+    // Fallback to patient portal token if staff token doesn't exist
+    if (!token) {
+      try {
+        const patientStorage = localStorage.getItem('patient-auth-storage');
+        if (patientStorage) {
+          const parsed = JSON.parse(patientStorage);
+          if (parsed?.state?.token) {
+            token = parsed.state.token;
+          }
+        }
+      } catch (e) {
+        // ignore parse error
+      }
+    }
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

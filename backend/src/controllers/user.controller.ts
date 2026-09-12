@@ -17,6 +17,13 @@ const listQuerySchema = z.object({ role: roleSchema.optional(), search: z.string
 
 export const list = asyncHandler(async (req: Request, res: Response) => {
   const { role, search } = listQuerySchema.parse(req.query);
+
+  // Patients can only list therapists
+  if (req.user?.role === 'PATIENT' && role !== 'THERAPIST') {
+    res.status(403).json({ message: 'Patients can only list therapists' });
+    return;
+  }
+
   res.json(await userService.listUsers(role, search));
 });
 

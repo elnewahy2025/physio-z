@@ -16,6 +16,7 @@ const updateSettingsSchema = z.object({
   taxRate: z.number().min(0).max(100).optional(),
   defaultLanguage: z.enum(['ar', 'en']).optional(),
   whatsappMessageTemplate: z.string().optional(),
+  maxConcurrentRooms: z.number().int().min(1).optional(),
 });
 
 export const get = asyncHandler(async (_req: Request, res: Response) => {

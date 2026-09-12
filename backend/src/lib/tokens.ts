@@ -4,7 +4,7 @@ import { env } from '../config/env.js';
 
 export interface AccessTokenPayload {
   sub: string;
-  role: Role;
+  role: Role | 'PATIENT_PORTAL' | 'PATIENT_REGISTRATION';
   type: 'access';
 }
 
@@ -13,7 +13,7 @@ export interface RefreshTokenPayload {
   type: 'refresh';
 }
 
-export function signAccessToken(userId: string, role: Role): string {
+export function signAccessToken(userId: string, role: Role | 'PATIENT_PORTAL' | 'PATIENT_REGISTRATION'): string {
   return jwt.sign({ sub: userId, role, type: 'access' }, env.JWT_ACCESS_SECRET, {
     expiresIn: env.JWT_ACCESS_EXPIRES,
   });

@@ -1,7 +1,7 @@
 import { DashboardSkeleton } from '../components/Skeletons';
 import { useQuery } from '@tanstack/react-query';
 import { DirectionsButton } from '../components/GoogleMapsLink';
-import LoyaltyWallet from '../modules/gamification/components/LoyaltyWallet';
+import OtpRequestsWidget from '../components/staff/OtpRequestsWidget';
 
 import {
   Calendar,
@@ -61,7 +61,7 @@ export default function Dashboard() {
         return 0;
       }
     },
-    enabled: user?.role !== 'PATIENT',
+    enabled: user?.role === 'OWNER' || user?.role === 'SECRETARY',
   });
 
   const { data: invoices } = useQuery({
@@ -75,10 +75,7 @@ export default function Dashboard() {
 
       return res.data.data as Invoice[];
     },
-    enabled:
-      user?.role === 'OWNER' ||
-      user?.role === 'SECRETARY' ||
-      user?.role === 'PATIENT',
+    enabled: user?.role === 'OWNER' || user?.role === 'SECRETARY',
   });
 
   const { data: settings } = useQuery({
@@ -88,10 +85,7 @@ export default function Dashboard() {
 
       return res.data;
     },
-    enabled:
-      user?.role === 'PATIENT' ||
-      user?.role === 'OWNER' ||
-      user?.role === 'SECRETARY',
+    enabled: user?.role === 'OWNER' || user?.role === 'SECRETARY',
   });
 
   if (apptLoading) {
@@ -149,27 +143,16 @@ export default function Dashboard() {
           color="primary"
         />
 
-        {user?.role !== 'PATIENT' && (
-          <StatCard
-            title={t('totalPatients')}
-            value={totalPatients}
-            icon={<Users size={24} />}
-            color="green"
-          />
-        )}
-
-        {user?.role !== 'PATIENT' && (
-          <StatCard
-            title={t('pendingInvoices')}
-            value={
-              (invoices || []).filter(
-                (inv) => inv.status !== 'PAID',
-              ).length
-            }
-            icon={<FileText size={24} />}
-            color="yellow"
-          />
-        )}
+        <StatCard
+          title={t('pendingInvoices')}
+          value={
+            (invoices || []).filter(
+              (inv) => inv.status !== 'PAID',
+            ).length
+          }
+          icon={<FileText size={24} />}
+          color="yellow"
+        />
 
         <StatCard
           title={t('upcomingAppointments')}
@@ -185,15 +168,14 @@ export default function Dashboard() {
         />
       </div>
 
-      {user?.role === 'PATIENT' && (
+      {(user?.role === 'OWNER' || user?.role === 'SECRETARY') && (
         <div className="mt-8">
-          <LoyaltyWallet />
+          <OtpRequestsWidget />
         </div>
       )}
 
       {/* Center info + directions */}
-      {(user?.role === 'PATIENT' ||
-        user?.role === 'SECRETARY') &&
+      {(user?.role === 'OWNER' || user?.role === 'SECRETARY') &&
         settings && (
           <Card>
             <div className="flex items-center justify-between gap-4">

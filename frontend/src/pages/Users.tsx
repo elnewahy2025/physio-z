@@ -413,7 +413,7 @@ function NewUserForm({ onClose }: { onClose: () => void }) {
           </label>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {['THERAPIST', 'SECRETARY'].map((role) => (
+            {['THERAPIST', 'SECRETARY', 'PATIENT'].map((role) => (
               <button
                 key={role}
                 type="button"

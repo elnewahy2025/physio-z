@@ -64,6 +64,50 @@ export async function checkTherapistConcurrency(
   }
 }
 
+export async function checkGlobalConcurrency(
+  newStart: Date,
+  newDuration: number,
+  excludeId?: string,
+): Promise<void> {
+  const newStartMs = newStart.getTime();
+  const newEndMs = newStartMs + newDuration * 60000;
+  const windowStart = new Date(newStartMs - 8 * 3600000);
+  const windowEnd = new Date(newStartMs + 8 * 3600000);
+
+  const where: Prisma.AppointmentWhereInput = {
+    status: { in: ['PENDING', 'CONFIRMED'] },
+    dateTime: { gte: windowStart, lte: windowEnd },
+    ...(excludeId && { id: { not: excludeId } }),
+  };
+
+  const [existing, settings] = await Promise.all([
+    prisma.appointment.findMany({
+      where,
+      select: { dateTime: true, duration: true },
+    }),
+    prisma.settings.findFirst(),
+  ]);
+
+  const maxConcurrentRooms = settings?.maxConcurrentRooms ?? 5;
+  let concurrentCount = 0;
+
+  for (const appt of existing) {
+    const eStart = appt.dateTime.getTime();
+    const eEnd = eStart + appt.duration * 60000;
+
+    if (intervalsOverlap(eStart, eEnd, newStartMs, newEndMs)) {
+      concurrentCount++;
+    }
+  }
+
+  if (concurrentCount >= maxConcurrentRooms) {
+    throw new HttpError(
+      409,
+      `The clinic has reached its maximum capacity of ${maxConcurrentRooms} rooms for this time slot.`,
+    );
+  }
+}
+
 export async function checkRoomAvailability(
   roomId: string,
   newStart: Date,
@@ -100,51 +144,7 @@ export async function checkRoomAvailability(
   }
 }
 
-export async function checkGlobalConcurrency(
-  newStart: Date,
-  newDuration: number,
-  excludeId?: string,
-): Promise<void> {
-  const newStartMs = newStart.getTime();
-  const newEndMs = newStartMs + newDuration * 60000;
-  const windowStart = new Date(newStartMs - 8 * 3600000);
-  const windowEnd = new Date(newStartMs + 8 * 3600000);
 
-  const totalRooms = await prisma.room.count();
-  
-  // If there are no rooms configured, we can't accept any appointments!
-  // Alternatively, if the center is strictly room-based, capacity = totalRooms.
-  // For safety, let's assume if totalRooms = 0, we bypass or allow at least 1.
-  const capacity = Math.max(totalRooms, 1);
-
-  const where: Prisma.AppointmentWhereInput = {
-    status: { in: ['PENDING', 'CONFIRMED'] },
-    dateTime: { gte: windowStart, lte: windowEnd },
-    ...(excludeId && { id: { not: excludeId } }),
-  };
-
-  const existing = await prisma.appointment.findMany({
-    where,
-    select: { dateTime: true, duration: true },
-  });
-
-  let concurrentCount = 0;
-  for (const appt of existing) {
-    const eStart = appt.dateTime.getTime();
-    const eEnd = eStart + appt.duration * 60000;
-
-    if (intervalsOverlap(eStart, eEnd, newStartMs, newEndMs)) {
-      concurrentCount++;
-    }
-  }
-
-  if (concurrentCount >= capacity) {
-    throw new HttpError(
-      409,
-      `Center is at maximum capacity (${capacity} patients) for this time slot.`,
-    );
-  }
-}
 
 const VALID_STATUS_TRANSITIONS: Record<
   AppointmentStatus,

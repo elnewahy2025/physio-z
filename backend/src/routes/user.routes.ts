@@ -4,7 +4,7 @@ import * as controller from '../controllers/user.controller.js';
 
 const router = Router();
 router.use(requireAuth);
-router.get('/', requireRole('OWNER', 'SECRETARY'), controller.list);
+router.get('/', requireRole('OWNER', 'SECRETARY', 'PATIENT'), controller.list);
 router.get('/:id', requireRole('OWNER', 'SECRETARY'), controller.getById);
 router.post('/', requireRole('OWNER'), controller.create);
 router.put('/:id', requireRole('OWNER'), controller.update);

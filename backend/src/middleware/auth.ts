@@ -7,6 +7,7 @@ declare global {
     interface Request {
       userId?: string;
       userRole?: Role;
+      patientId?: string;
     }
   }
 }
@@ -45,4 +46,31 @@ export function requireRole(...roles: Role[]) {
     }
     next();
   };
+}
+
+export function requirePatientAuth(req: Request, res: Response, next: NextFunction): void {
+  const header = req.headers.authorization;
+  
+  let token: string | null = null;
+  if (header?.startsWith('Bearer ')) {
+    token = header.slice(7);
+  } else if (typeof req.query.token === 'string') {
+    token = req.query.token;
+  }
+
+  if (!token) {
+    res.status(401).json({ message: 'Authentication required' });
+    return;
+  }
+  
+  try {
+    const payload = verifyAccessToken(token);
+    if (payload.type !== 'access' || payload.role !== 'PATIENT_PORTAL') {
+      throw new Error('Invalid token type or role');
+    }
+    req.patientId = payload.sub;
+    next();
+  } catch {
+    res.status(401).json({ message: 'Invalid or expired patient token' });
+  }
 }
