@@ -18,6 +18,9 @@ export const getAppointments = async (
         therapist: {
           select: { id: true, name: true, role: true },
         },
+        patient: {
+          select: { id: true, name: true, phone: true },
+        }
       },
       orderBy: {
         dateTime: 'desc',

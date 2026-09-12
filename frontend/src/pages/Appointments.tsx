@@ -12,11 +12,7 @@ export default function Appointments() {
   const { t, lang } = useI18n();
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
-  const today = new Date();
-  const tzOffset = today.getTimezoneOffset() * 60000;
-  const localToday = new Date(today.getTime() - tzOffset).toISOString().split('T')[0];
-  
-  const [filterDate, setFilterDate] = useState<string>(localToday);
+  const [filterDate, setFilterDate] = useState<string>('');
   const [showForm, setShowForm] = useState(false);
 
   const { data: appointments, isLoading } = useQuery({
@@ -93,12 +89,26 @@ export default function Appointments() {
           subtitle={`${list.length} ${L(ar.appointmentCount, 'appointments')}`}
           action={
             <div className="flex items-center gap-3">
-              <input
-                type="date"
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-                className="input !w-auto"
-              />
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-500 font-medium hidden sm:inline-block">
+                  {L('تصفية بالتاريخ:', 'Filter by Date:')}
+                </span>
+                <input
+                  type="date"
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                  className="input !w-auto"
+                />
+                {filterDate && (
+                  <button 
+                    onClick={() => setFilterDate('')}
+                    className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                    title={L('مسح الفلتر', 'Clear Filter')}
+                  >
+                    <XCircle className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
               {(user?.role === 'OWNER' || user?.role === 'SECRETARY' || user?.role === 'PATIENT') && (
                 <button onClick={() => setShowForm(!showForm)} className="btn-primary">
                   <Plus size={16} />

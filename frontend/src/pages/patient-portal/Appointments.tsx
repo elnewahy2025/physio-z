@@ -18,7 +18,7 @@ export default function PatientAppointments() {
   const tzOffset = today.getTimezoneOffset() * 60000;
   const localToday = new Date(today.getTime() - tzOffset).toISOString().split('T')[0];
   
-  const [filterDate, setFilterDate] = useState<string>(localToday);
+  const [filterDate, setFilterDate] = useState<string>('');
 
   useEffect(() => {
     if (!patient) navigate('/portal/login');
@@ -34,6 +34,14 @@ export default function PatientAppointments() {
     },
     enabled: !!patient
   });
+
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
 
   const formatTime = (iso: string) =>
     new Date(iso).toLocaleTimeString(lang === 'ar' ? 'ar-EG' : 'en-US', {
@@ -83,15 +91,31 @@ export default function PatientAppointments() {
         <Card>
           <CardHeader
             title={t('appointments')}
-            subtitle={`${list.length} ${L(ar.appointmentCount, 'appointments')} for selected date`}
+            subtitle={
+              filterDate 
+                ? `${list.length} ${L(ar.appointmentCount, 'appointments')} for selected date` 
+                : `${list.length} ${L(ar.appointmentCount, 'appointments')} in total`
+            }
             action={
               <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-500 font-medium hidden sm:inline-block">
+                  {L('تصفية بالتاريخ:', 'Filter by Date:')}
+                </span>
                 <input
                   type="date"
                   value={filterDate}
                   onChange={(e) => setFilterDate(e.target.value)}
                   className="input !w-auto"
                 />
+                {filterDate && (
+                  <button 
+                    onClick={() => setFilterDate('')}
+                    className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                    title={L('مسح الفلتر', 'Clear Filter')}
+                  >
+                    <XCircle className="w-5 h-5" />
+                  </button>
+                )}
               </div>
             }
           />
@@ -104,7 +128,13 @@ export default function PatientAppointments() {
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-gray-700">
                     <th className="pb-3 font-medium text-gray-500 dark:text-gray-400">
+                      Date
+                    </th>
+                    <th className="pb-3 font-medium text-gray-500 dark:text-gray-400">
                       Time
+                    </th>
+                    <th className="pb-3 font-medium text-gray-500 dark:text-gray-400">
+                      Patient
                     </th>
                     <th className="pb-3 font-medium text-gray-500 dark:text-gray-400">
                       Therapist
@@ -118,7 +148,13 @@ export default function PatientAppointments() {
                   {list.map((appt) => (
                     <tr key={appt.id} className="group hover:bg-gray-50 dark:hover:bg-gray-800/50">
                       <td className="py-4 text-gray-900 dark:text-gray-100 font-medium">
+                        {formatDate(appt.dateTime)}
+                      </td>
+                      <td className="py-4 text-gray-900 dark:text-gray-100 font-medium">
                         {formatTime(appt.dateTime)}
+                      </td>
+                      <td className="py-4 text-gray-900 dark:text-gray-100">
+                        {appt.patient?.name || '-'}
                       </td>
                       <td className="py-4 text-gray-700 dark:text-gray-300">
                         {appt.therapist?.name || 'Any Therapist'}

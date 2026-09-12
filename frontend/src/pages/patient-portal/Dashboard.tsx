@@ -57,7 +57,7 @@ export default function PatientDashboard() {
           </div>
           <div className="mt-6 sm:mt-0 flex space-x-4">
             <button 
-              onClick={() => navigate('/book')}
+              onClick={() => navigate('/portal/book')}
               className="flex items-center space-x-2 bg-white text-primary-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors shadow-sm"
             >
               <Calendar className="w-4 h-4" />
@@ -85,7 +85,7 @@ export default function PatientDashboard() {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Quick Links</h3>
               <div className="space-y-3">
                 <button 
-                  onClick={() => navigate('/appointments')}
+                  onClick={() => navigate('/portal/appointments')}
                   className="w-full flex items-center p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border border-gray-100 dark:border-gray-700"
                 >
                   <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg mr-3">
@@ -98,7 +98,7 @@ export default function PatientDashboard() {
                 </button>
                 
                 <button 
-                  onClick={() => navigate('/invoices')}
+                  onClick={() => navigate('/portal/invoices')}
                   className="w-full flex items-center p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border border-gray-100 dark:border-gray-700"
                 >
                   <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg mr-3">

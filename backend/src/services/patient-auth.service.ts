@@ -1,7 +1,9 @@
 import { prisma } from '../lib/prisma.js';
 import { HttpError } from '../lib/errors.js';
 import { signAccessToken } from '../lib/tokens.js';
+import { env } from '../config/env.js';
 import crypto from 'crypto';
+import nodemailer from 'nodemailer';
 
 function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -14,7 +16,44 @@ async function getClinicPhone() {
 
 async function getClinicEmail() {
   const settings = await prisma.settings.findFirst();
-  return settings?.email || 'noreply@physio-z.com';
+  return settings?.email || '';
+}
+
+async function sendEmail(to: string, subject: string, html: string) {
+  const host = env.SMTP_HOST;
+  const user = env.SMTP_USER;
+  const pass = env.SMTP_PASS;
+
+  if (!host || !user || !pass) {
+    console.log(`\n======================================`);
+    console.log(`📧 EMAIL (SMTP not configured — logging only)`);
+    console.log(`To: ${to}`);
+    console.log(`Subject: ${subject}`);
+    console.log(`Body: ${html}`);
+    console.log(`======================================\n`);
+    return;
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host,
+      port: env.SMTP_PORT || 587,
+      secure: false,
+      auth: { user, pass },
+    });
+
+    await transporter.sendMail({
+      from: env.SMTP_FROM || user,
+      to,
+      subject,
+      html,
+    });
+
+    console.log(`📧 Email sent to ${to}`);
+  } catch (err: any) {
+    console.error(`📧 Email failed to ${to}: ${err.message}`);
+    // Don't throw — the OTP is still saved, user can retry
+  }
 }
 
 export async function requestPhoneOtp(phone: string) {
@@ -35,32 +74,37 @@ export async function requestPhoneOtp(phone: string) {
 }
 
 export async function requestEmailOtp(email: string) {
-  // Directly generate and 'send' the email OTP
   const code = generateOTP();
   
-  // See if patient exists
   const patient = await prisma.patient.findFirst({ where: { email } });
 
-  const otpRecord = await prisma.patientOTP.create({
+  await prisma.patientOTP.create({
     data: {
       identifier: email,
       type: 'EMAIL',
       code,
       patientId: patient?.id || null,
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes validity
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
     }
   });
 
-  const clinicEmail = await getClinicEmail();
-  
-  // MOCK SEND EMAIL
-  console.log(`\n======================================`);
-  console.log(`📧 MOCK EMAIL DISPATCH`);
-  console.log(`From: ${clinicEmail}`);
-  console.log(`To: ${email}`);
-  console.log(`Subject: Your Physio-Z Login Code`);
-  console.log(`Body: Your OTP code is ${code}. It expires in 5 minutes.`);
-  console.log(`======================================\n`);
+  const settings = await prisma.settings.findFirst();
+  const centerName = settings?.centerName || 'Physio Center';
+
+  await sendEmail(
+    email,
+    `${centerName} — Your Login Code`,
+    `
+    <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; background: #f9fafb; border-radius: 12px;">
+      <h2 style="color: #1a1a2e; margin-bottom: 8px;">${centerName}</h2>
+      <p style="color: #555; font-size: 15px;">Your one-time login code is:</p>
+      <div style="background: #1a1a2e; color: #fff; font-size: 32px; font-weight: bold; letter-spacing: 8px; text-align: center; padding: 16px; border-radius: 8px; margin: 16px 0;">
+        ${code}
+      </div>
+      <p style="color: #888; font-size: 13px;">This code expires in <strong>5 minutes</strong>. Do not share it with anyone.</p>
+    </div>
+    `
+  );
 
   return { message: 'OTP sent to your email.' };
 }

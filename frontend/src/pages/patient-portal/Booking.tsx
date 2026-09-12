@@ -13,6 +13,8 @@ import {
   AlertCircle,
   Loader2,
   Stethoscope,
+  ArrowLeft,
+  LogOut,
 } from 'lucide-react';
 
 import api from '../../lib/api';
@@ -294,7 +296,7 @@ function SimpleCalendar({
 
 export default function PatientBooking() {
   const { t, lang } = useI18n();
-  const { patient } = usePatientAuth();
+  const { patient, logout } = usePatientAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -569,7 +571,33 @@ export default function PatientBooking() {
   ];
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-12">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10 mb-6">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6">
+          <div className="flex justify-between h-14 items-center">
+            <button
+              onClick={() => navigate('/portal/dashboard')}
+              className="flex items-center text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 mr-1" />
+              <span className="text-sm font-medium">{L('العودة', 'Back')}</span>
+            </button>
+            <h1 className="text-lg font-bold text-gray-900 dark:text-white">
+              {L('حجز موعد', 'Book Appointment')}
+            </h1>
+            <button
+              onClick={() => { logout(); navigate('/portal/login'); }}
+              className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              title="Log out"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+    <div className="mx-auto max-w-2xl px-4 space-y-6">
       {/* Header */}
       <div className="text-center">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -1252,7 +1280,7 @@ export default function PatientBooking() {
             </button>
 
             <a
-              href="/appointments"
+              href="/portal/appointments"
               className="btn-secondary"
             >
               {L(
@@ -1260,9 +1288,20 @@ export default function PatientBooking() {
                 'View My Appointments',
               )}
             </a>
+
+            <a
+              href="/portal/dashboard"
+              className="btn-secondary !bg-gray-100 !text-gray-700 hover:!bg-gray-200 dark:!bg-gray-800 dark:!text-gray-300 dark:hover:!bg-gray-700"
+            >
+              {L(
+                'العودة للرئيسية',
+                'Back to Dashboard',
+              )}
+            </a>
           </div>
         </Card>
       )}
+    </div>
     </div>
   );
 }
