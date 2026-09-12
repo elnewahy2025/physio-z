@@ -35,13 +35,13 @@ export async function updateSettings(data: UpdateSettingsData) {
       ...(data.phone !== undefined && { phone: data.phone }),
       ...(data.email !== undefined && { email: data.email }),
       ...(data.googleMapsLink !== undefined && { googleMapsLink: data.googleMapsLink }),
-      ...(data.workingHours !== undefined && { workingHours: data.workingHours }),
+      ...(data.workingHours !== undefined && { workingHours: data.workingHours as any }),
       ...(data.sessionPrice !== undefined && { sessionPrice: data.sessionPrice }),
       ...(data.currency !== undefined && { currency: data.currency }),
       ...(data.taxRate !== undefined && { taxRate: data.taxRate }),
       ...(data.defaultLanguage !== undefined && { defaultLanguage: data.defaultLanguage }),
       ...(data.whatsappMessageTemplate !== undefined && { whatsappMessageTemplate: data.whatsappMessageTemplate }),
-      ...(data.enabledFeatures !== undefined && { enabledFeatures: data.enabledFeatures }),
+      ...(data.enabledFeatures !== undefined && { enabledFeatures: data.enabledFeatures as any }),
     },
   });
 }
