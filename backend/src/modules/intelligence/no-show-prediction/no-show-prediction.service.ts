@@ -96,6 +96,7 @@ export class NoShowPredictionService {
       appointmentId,
       patientId: appointment.patientId,
       patientName: appointment.patient.name,
+      patientPhone: appointment.patient.phone,
       appointmentDate: appointmentDate,
       riskScore,
       riskLevel,
