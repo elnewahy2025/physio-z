@@ -8,12 +8,6 @@ export default function PatientDashboard() {
   const { patient, logout } = usePatientAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!patient) {
-      navigate('/portal/login');
-    }
-  }, [patient, navigate]);
-
   if (!patient) return null;
 
   return (

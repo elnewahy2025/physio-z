@@ -328,7 +328,7 @@ export async function createAppointment(data: CreateAppointmentData) {
       dateTime: appointmentStart,
       duration,
       notes: data.notes ?? null,
-      videoLink: data.videoLink ?? null,
+      videoLink: data.videoLink || 'https://meet.google.com/generic-physio-z',
       status: 'PENDING',
     },
     include: appointmentInclude,

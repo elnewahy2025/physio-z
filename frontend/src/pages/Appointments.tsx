@@ -204,7 +204,7 @@ function NewAppointmentForm({
   const localIso = new Date(defaultDate.getTime() - formTzOffset).toISOString().slice(0, 16);
 
   const [formData, setFormData] = useState({
-    patientId: '', therapistId: '', roomId: '', dateTime: localIso, duration: '45', notes: '',
+    patientId: '', therapistId: '', roomId: '', dateTime: localIso, duration: '45', notes: '', videoLink: '',
   });
 
   const L = (arText: string, enText: string) => (lang === 'ar' ? arText : enText);
@@ -305,6 +305,15 @@ function NewAppointmentForm({
             type="text" value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             className="input" placeholder={L(ar.notesPlaceholder, 'Additional notes...')}
+          />
+        </div>
+        <div className="sm:col-span-2 lg:col-span-3">
+          <label className="label">{L('رابط استشارة فيديو (اختياري)', 'Video Link (Optional)')}</label>
+          <input
+            type="url" value={formData.videoLink}
+            onChange={(e) => setFormData({ ...formData, videoLink: e.target.value })}
+            className="input" placeholder="https://zoom.us/j/... or https://meet.google.com/..."
+            dir="ltr"
           />
         </div>
       </div>

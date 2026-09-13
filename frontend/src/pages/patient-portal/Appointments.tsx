@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Clock, CheckCircle, XCircle, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, AlertCircle, ArrowLeft, Video } from 'lucide-react';
 import api from '../../lib/api';
 import { useI18n } from '../../i18n';
 import { ar } from '../../ar';
@@ -20,9 +20,7 @@ export default function PatientAppointments() {
   
   const [filterDate, setFilterDate] = useState<string>('');
 
-  useEffect(() => {
-    if (!patient) navigate('/portal/login');
-  }, [patient, navigate]);
+  // Auth check is handled by PatientProtectedRoute
 
   const { data: appointments, isLoading } = useQuery({
     queryKey: ['portal-appointments'],
@@ -142,6 +140,9 @@ export default function PatientAppointments() {
                     <th className="pb-3 font-medium text-gray-500 dark:text-gray-400">
                       Status
                     </th>
+                    <th className="pb-3 font-medium text-gray-500 dark:text-gray-400 text-right">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -185,6 +186,19 @@ export default function PatientAppointments() {
                             {statusLabels[appt.status]}
                           </span>
                         </Badge>
+                      </td>
+                      <td className="py-4 text-right">
+                        {appt.videoLink && (
+                          <a
+                            href={appt.videoLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg text-sm font-medium transition-colors"
+                          >
+                            <Video size={16} />
+                            {L('انضمام', 'Join')}
+                          </a>
+                        )}
                       </td>
                     </tr>
                   ))}

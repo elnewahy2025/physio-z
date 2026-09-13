@@ -139,11 +139,19 @@ api.interceptors.response.use(
     // ─── Token refresh on 401 ───
     if (
       error.response?.status === 401 &&
-      !original?._retry
+      !original?._retry &&
+      !original?.url?.includes('/auth/login')
     ) {
       original._retry = true;
 
+      const isPatientPortal = window.location.pathname.startsWith('/portal');
+
       try {
+        if (isPatientPortal) {
+          // Patient portal doesn't use refresh tokens.
+          throw new Error('Patient token expired');
+        }
+
         const refreshToken =
           localStorage.getItem('refreshToken');
 
@@ -176,15 +184,22 @@ api.interceptors.response.use(
 
         return api(original);
       } catch (refreshError) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
+        if (isPatientPortal) {
+          localStorage.removeItem('patient-auth-storage');
+          if (window.location.pathname !== '/portal/login') {
+            window.location.href = '/portal/login';
+          }
+        } else {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('user');
 
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
+          if (window.location.pathname !== '/login') {
+            window.location.href = '/login';
+          }
         }
 
-        return Promise.reject(refreshError);
+        return Promise.reject(error); // Reject with original error so the UI sees the real 401 message
       }
     }
 

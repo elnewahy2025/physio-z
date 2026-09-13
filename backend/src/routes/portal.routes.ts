@@ -10,5 +10,6 @@ router.get('/appointments/availability', controller.getAvailability);
 router.post('/appointments', controller.createAppointment);
 router.get('/therapists', controller.getTherapists);
 router.get('/invoices', controller.getInvoices);
+router.get('/me', controller.getProfile);
 
 export default router;

@@ -14,9 +14,7 @@ export default function PatientInvoices() {
   const { patient } = usePatientAuth();
   const navigate = useNavigate();
   
-  useEffect(() => {
-    if (!patient) navigate('/portal/login');
-  }, [patient, navigate]);
+  // Auth check is handled by PatientProtectedRoute
 
   const { data: invoices, isLoading } = useQuery({
     queryKey: ['portal-invoices'],

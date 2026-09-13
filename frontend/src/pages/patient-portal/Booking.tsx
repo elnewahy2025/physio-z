@@ -300,7 +300,7 @@ export default function PatientBooking() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!patient) navigate('/portal/login');
+    // Redundant auth check removed since we are using PatientProtectedRoute
   }, [patient, navigate]);
 
   const L = (arText: string, enText: string) =>

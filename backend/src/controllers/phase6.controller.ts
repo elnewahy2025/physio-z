@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import * as whatsappService from '../services/whatsapp.service';
-import * as paymentService from '../services/payment.service';
-import * as exerciseService from '../services/exercise.service';
-import * as videoService from '../services/video.service';
+import * as whatsappService from '../services/whatsapp.service.js';
+import * as paymentService from '../services/payment.service.js';
+import * as exerciseService from '../services/exercise.service.js';
+import * as videoService from '../services/video.service.js';
 
 export const getWhatsAppReminders = async (req: Request, res: Response) => {
   const data = await whatsappService.getReminders();

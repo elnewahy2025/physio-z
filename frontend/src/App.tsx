@@ -51,6 +51,8 @@ import PatientDashboard from './pages/patient-portal/Dashboard';
 import PortalBooking from './pages/patient-portal/Booking';
 import PatientAppointments from './pages/patient-portal/Appointments';
 import PatientInvoices from './pages/patient-portal/Invoices';
+import PatientProfile from './pages/patient-portal/Profile';
+import PatientProtectedRoute from './components/PatientProtectedRoute';
 
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -86,11 +88,14 @@ function App() {
 
           {/* Patient Portal Routes */}
           <Route path="/portal/login" element={<PatientLogin />} />
-          <Route path="/portal/dashboard" element={<PatientDashboard />} />
-          <Route path="/portal/book" element={<PortalBooking />} />
-          <Route path="/portal/appointments" element={<PatientAppointments />} />
-          <Route path="/portal/invoices" element={<PatientInvoices />} />
           
+          <Route element={<PatientProtectedRoute />}>
+            <Route path="/portal/dashboard" element={<PatientDashboard />} />
+            <Route path="/portal/book" element={<PortalBooking />} />
+            <Route path="/portal/appointments" element={<PatientAppointments />} />
+            <Route path="/portal/invoices" element={<PatientInvoices />} />
+            <Route path="/portal/profile" element={<PatientProfile />} />
+          </Route>
           <Route
             path="/register"
             element={

@@ -6,7 +6,7 @@ declare global {
   namespace Express {
     interface Request {
       userId?: string;
-      userRole?: Role;
+      userRole?: Role | 'PATIENT_PORTAL' | 'PATIENT_REGISTRATION';
       patientId?: string;
     }
   }
@@ -40,7 +40,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
 
 export function requireRole(...roles: Role[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    if (!req.userRole || !roles.includes(req.userRole)) {
+    if (!req.userRole || !roles.includes(req.userRole as Role)) {
       res.status(403).json({ message: 'You do not have permission to perform this action' });
       return;
     }

@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { requireAuth, requireRole } from '../middleware/auth';
-import * as controller from '../controllers/phase6.controller';
+import { requireAuth, requireRole } from '../middleware/auth.js';
+import * as controller from '../controllers/phase6.controller.js';
 
 const router = Router();
 router.use(requireAuth);

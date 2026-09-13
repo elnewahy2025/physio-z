@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import * as auditService from '../services/audit.service';
-import * as backupService from '../services/backup.service';
+import * as auditService from '../services/audit.service.js';
+import * as backupService from '../services/backup.service.js';
 
 export const getLogs = async (req: Request, res: Response) => {
   const data = await auditService.getAuditLogs();

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Phone, Mail, ArrowRight, ShieldCheck, User } from 'lucide-react';
 import api from '../../lib/api';
@@ -9,8 +9,14 @@ type Step = 'method' | 'input' | 'waiting' | 'otp' | 'register';
 
 export default function PatientLogin() {
   const navigate = useNavigate();
-  const { setAuth } = usePatientAuth();
+  const { patient, setAuth } = usePatientAuth();
   
+  useEffect(() => {
+    if (patient) {
+      navigate('/portal/dashboard', { replace: true });
+    }
+  }, [patient, navigate]);
+
   const [step, setStep] = useState<Step>('method');
   const [method, setMethod] = useState<LoginMethod>('phone');
   const [identifier, setIdentifier] = useState('');

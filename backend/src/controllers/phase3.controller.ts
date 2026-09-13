@@ -100,8 +100,8 @@ export const getEquipmentStats = asyncHandler(async (_req: Request, res: Respons
 
 export const createEquipment = asyncHandler(async (req: Request, res: Response) => {
   const data = createEquipmentSchema.parse(req.body);
-  if (data.purchaseDate) data.purchaseDate = new Date(data.purchaseDate);
-  res.status(201).json(await equipmentService.createEquipment(data));
+  const payload = { ...data, purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : undefined };
+  res.status(201).json(await equipmentService.createEquipment(payload as any));
 });
 
 export const updateEquipment = asyncHandler(async (req: Request, res: Response) => {

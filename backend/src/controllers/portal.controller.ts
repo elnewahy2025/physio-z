@@ -110,6 +110,7 @@ export const createAppointment = async (
         dateTime: new Date(dateTime),
         duration,
         status: 'PENDING',
+        videoLink: 'https://meet.google.com/generic-physio-z',
       },
       include: {
         therapist: {
@@ -171,6 +172,42 @@ export const getInvoices = async (
     });
 
     res.json({ data: invoices, pagination: { total: invoices.length } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const patientId = req.patientId;
+
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+      select: {
+        id: true,
+        name: true,
+        phone: true,
+        email: true,
+        address: true,
+        dateOfBirth: true,
+        gender: true,
+        medicalHistory: true,
+        emergencyContactName: true,
+        emergencyContactPhone: true,
+        emergencyContactRelation: true,
+        allergies: true,
+      },
+    });
+
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+
+    res.json({ data: patient });
   } catch (error) {
     next(error);
   }

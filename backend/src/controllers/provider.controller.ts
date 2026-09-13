@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import * as providerService from '../services/provider.service';
+import * as providerService from '../services/provider.service.js';
 
 export const syncEvent = async (req: Request, res: Response) => {
   const result = await providerService.syncCalendar('system', req.body);

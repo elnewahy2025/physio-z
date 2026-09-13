@@ -19,7 +19,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
   const { role, search } = listQuerySchema.parse(req.query);
 
   // Patients can only list therapists
-  if (req.user?.role === 'PATIENT' && role !== 'THERAPIST') {
+  if (req.userRole === 'PATIENT' && role !== 'THERAPIST') {
     res.status(403).json({ message: 'Patients can only list therapists' });
     return;
   }
