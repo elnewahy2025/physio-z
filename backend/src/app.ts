@@ -2,6 +2,8 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger.js';
 import phase6Routes from './routes/phase6.routes.js';
 import phase7Routes from './routes/phase7.routes.js';
+import inventoryRoutes from './routes/inventory.routes.js';
+import equipmentRoutes from './routes/equipment.routes.js';
 import providerRoutes from './routes/provider.routes.js';
 import whatsappRoutes from './routes/whatsapp.routes.js';
 import paymentGatewayRoutes from './routes/payment-gateway.routes.js';
@@ -93,6 +95,8 @@ export function createApp() {
   app.use('/api/ratings', ratingRoutes);
   app.use('/api', foundationRoutes);
   app.use('/api/payroll', payrollRoutes);
+  app.use('/api/inventory', inventoryRoutes);
+  app.use('/api/equipment', equipmentRoutes);
   app.use('/api/surveys', surveyRoutes);
   app.use('/api', phase2Routes);
   app.use('/api', phase6Routes);

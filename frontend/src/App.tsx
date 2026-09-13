@@ -44,6 +44,7 @@ import ProtocolsLibrary from './modules/clinical/components/ProtocolsLibrary';
 import InsuranceManagementPage from './modules/insurance/pages/InsuranceManagementPage';
 import AddonsHub from './pages/AddonsHub';
 import FeatureRouteGuard from './components/FeatureRouteGuard';
+import { RouteGuard } from './components/RouteGuard';
 
 // Patient Portal
 import PatientLogin from './pages/patient-portal/Login';
@@ -129,92 +130,28 @@ function App() {
               </ProtectedRoute>
             }
           />
-<Route path="/expenses" element={<ProtectedRoute><Expenses /></ProtectedRoute>} />
-<Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
-<Route path="/equipment" element={<ProtectedRoute><Equipment /></ProtectedRoute>} />
-          <Route
-            path="/my-payments"
-            element={
-              <ProtectedRoute>
-                <MyPayments />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/book"
-            element={
-              <ProtectedRoute>
-                <PatientBooking />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/patients"
-            element={
-              <ProtectedRoute>
-                <Patients />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/invoices"
-            element={
-              <ProtectedRoute>
-                <Invoices />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/sessions"
-            element={
-              <ProtectedRoute>
-                <Sessions />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/users"
-            element={
-              <ProtectedRoute>
-                <Users />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/reports"
-            element={
-              <ProtectedRoute>
-                <Reports />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/my-records"
-            element={
-              <ProtectedRoute>
-                <MyRecords />
-              </ProtectedRoute>
-            }
-          />
-<Route path="/packages" element={<ProtectedRoute><Packages /></ProtectedRoute>} />
-<Route path="/waitlist" element={<ProtectedRoute><Waitlist /></ProtectedRoute>} />
-<Route path="/addons" element={<ProtectedRoute><AddonsHub /></ProtectedRoute>} />
+          {/* ADVANCED+ only */}
+          <Route path="/expenses" element={<ProtectedRoute><RouteGuard allowedRoles={['OWNER', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM']}><Expenses /></RouteGuard></ProtectedRoute>} />
+          {/* ADVANCED+ only */}
+          <Route path="/inventory" element={<ProtectedRoute><RouteGuard allowedRoles={['OWNER', 'SECRETARY', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM']}><Inventory /></RouteGuard></ProtectedRoute>} />
+          {/* ADVANCED+ only */}
+          <Route path="/equipment" element={<ProtectedRoute><RouteGuard allowedRoles={['OWNER', 'SECRETARY', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM']}><Equipment /></RouteGuard></ProtectedRoute>} />
+          <Route path="/my-payments" element={<ProtectedRoute><MyPayments /></ProtectedRoute>} />
+          <Route path="/book" element={<ProtectedRoute><PatientBooking /></ProtectedRoute>} />
+          <Route path="/patients" element={<ProtectedRoute><Patients /></ProtectedRoute>} />
+          <Route path="/invoices" element={<ProtectedRoute><Invoices /></ProtectedRoute>} />
+          <Route path="/sessions" element={<ProtectedRoute><Sessions /></ProtectedRoute>} />
+          {/* OWNER only */}
+          <Route path="/users" element={<ProtectedRoute><RouteGuard allowedRoles={['OWNER']}><Users /></RouteGuard></ProtectedRoute>} />
+          {/* ADVANCED+ only */}
+          <Route path="/reports" element={<ProtectedRoute><RouteGuard allowedRoles={['OWNER', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM']}><Reports /></RouteGuard></ProtectedRoute>} />
+          {/* PREMIUM+ only */}
+          <Route path="/settings" element={<ProtectedRoute><RouteGuard allowedRoles={['OWNER', 'MANAGER_PREMIUM']}><Settings /></RouteGuard></ProtectedRoute>} />
+          <Route path="/my-records" element={<ProtectedRoute><MyRecords /></ProtectedRoute>} />
+          <Route path="/packages" element={<ProtectedRoute><Packages /></ProtectedRoute>} />
+          <Route path="/waitlist" element={<ProtectedRoute><Waitlist /></ProtectedRoute>} />
+          {/* PREMIUM+ only */}
+          <Route path="/addons" element={<ProtectedRoute><RouteGuard allowedRoles={['OWNER', 'MANAGER_PREMIUM']}><AddonsHub /></RouteGuard></ProtectedRoute>} />
 <Route path="/intelligence" element={<ProtectedRoute><FeatureRouteGuard featureKey="intelligence"><IntelligenceDashboard /></FeatureRouteGuard></ProtectedRoute>} />
 <Route path="/intelligence/demand" element={<ProtectedRoute><FeatureRouteGuard featureKey="intelligence"><DemandForecastDashboard /></FeatureRouteGuard></ProtectedRoute>} />
 <Route path="/intelligence/no-show" element={<ProtectedRoute><FeatureRouteGuard featureKey="intelligence"><NoShowRiskDashboard /></FeatureRouteGuard></ProtectedRoute>} />

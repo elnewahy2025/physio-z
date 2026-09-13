@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const roleSchema = z.enum(['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT']);
+export const roleSchema = z.enum(['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT', 'MANAGER_BASIC', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM']);
 export const appointmentStatusSchema = z.enum(['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'NO_SHOW']);
 export const invoiceStatusSchema = z.enum(['UNPAID', 'PARTIALLY_PAID', 'PAID', 'OVERDUE', 'CANCELLED']);
 export const paymentMethodSchema = z.enum(['CASH', 'CARD', 'BANK_TRANSFER', 'OTHER']);

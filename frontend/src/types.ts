@@ -1,4 +1,4 @@
-export type Role = 'OWNER' | 'THERAPIST' | 'SECRETARY' | 'PATIENT';
+export type Role = 'OWNER' | 'THERAPIST' | 'SECRETARY' | 'PATIENT' | 'MANAGER_BASIC' | 'MANAGER_ADVANCED' | 'MANAGER_PREMIUM';
 
 export interface AuthUser {
   id: string;

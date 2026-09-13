@@ -77,14 +77,14 @@ const navItems: NavItem[] = [
     key: 'dashboard',
     icon: <LayoutDashboard size={20} />,
     path: '/',
-    roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT'],
+    roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT', 'MANAGER_BASIC', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'Core'
   },
   {
     key: 'calendar',
     icon: <CalendarDays size={20} />,
     path: '/calendar',
-    roles: ['OWNER', 'THERAPIST', 'SECRETARY'],
+    roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'MANAGER_BASIC', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'Core'
   },
   {
@@ -98,7 +98,7 @@ const navItems: NavItem[] = [
     key: 'appointments',
     icon: <Calendar size={20} />,
     path: '/appointments',
-    roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT'],
+    roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT', 'MANAGER_BASIC', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'Core'
   },
   {
@@ -126,84 +126,91 @@ const navItems: NavItem[] = [
     key: 'patients',
     icon: <Users size={20} />,
     path: '/patients',
-    roles: ['OWNER', 'THERAPIST', 'SECRETARY'],
+    roles: ['OWNER', 'THERAPIST', 'SECRETARY', 'MANAGER_BASIC', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'Clinical'
   },
   {
     key: 'sessions',
     icon: <Activity size={20} />,
     path: '/sessions',
-    roles: ['OWNER', 'THERAPIST'],
+    roles: ['OWNER', 'THERAPIST', 'MANAGER_BASIC', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'Clinical'
   },
   {
     key: 'invoices',
     icon: <FileText size={20} />,
     path: '/invoices',
-    roles: ['OWNER', 'SECRETARY'],
+    roles: ['OWNER', 'SECRETARY', 'MANAGER_BASIC', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'Financial'
   },
   {
-    key: 'expenses', 
-    icon: <TrendingDown size={20} />, 
-    path: '/expenses', 
-    roles: ['OWNER'],
+    key: 'expenses',
+    icon: <TrendingDown size={20} />,
+    path: '/expenses',
+    // ADVANCED+ only
+    roles: ['OWNER', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'Financial'
   },
-  { 
-    key: 'packages', 
-    icon: <Package size={20} />, 
-    path: '/packages', 
-    roles: ['OWNER', 'SECRETARY', 'THERAPIST'],
+  {
+    key: 'packages',
+    icon: <Package size={20} />,
+    path: '/packages',
+    roles: ['OWNER', 'SECRETARY', 'THERAPIST', 'MANAGER_BASIC', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'Financial'
   },
   {
     key: 'reports',
     icon: <BarChart3 size={20} />,
     path: '/reports',
-    roles: ['OWNER'],
+    // ADVANCED+ only
+    roles: ['OWNER', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'Financial'
   },
   {
     key: 'addons',
     icon: <Sparkles size={20} className="text-yellow-500 dark:text-yellow-400" />,
     path: '/addons',
-    roles: ['OWNER', 'THERAPIST', 'SECRETARY'],
+    // PREMIUM+ only
+    roles: ['OWNER', 'MANAGER_PREMIUM'],
     category: 'Add-Ons'
   },
   {
     key: 'users',
     icon: <Users size={20} />,
     path: '/users',
+    // OWNER only
     roles: ['OWNER'],
     category: 'System'
   },
-  { 
-    key: 'inventory', 
-    icon: <Boxes size={20} />, 
-    path: '/inventory', 
-    roles: ['OWNER', 'SECRETARY'],
+  {
+    key: 'inventory',
+    icon: <Boxes size={20} />,
+    path: '/inventory',
+    // ADVANCED+ only
+    roles: ['OWNER', 'SECRETARY', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'System'
   },
-  { 
-    key: 'equipment', 
-    icon: <Wrench size={20} />, 
-    path: '/equipment', 
-    roles: ['OWNER', 'SECRETARY'],
+  {
+    key: 'equipment',
+    icon: <Wrench size={20} />,
+    path: '/equipment',
+    // ADVANCED+ only
+    roles: ['OWNER', 'SECRETARY', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'System'
   },
-  { 
-    key: 'waitlist', 
-    icon: <Clock size={20} />, 
-    path: '/waitlist', 
-    roles: ['OWNER', 'SECRETARY'],
+  {
+    key: 'waitlist',
+    icon: <Clock size={20} />,
+    path: '/waitlist',
+    roles: ['OWNER', 'SECRETARY', 'MANAGER_BASIC', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM'],
     category: 'System'
   },
   {
     key: 'settings',
     icon: <Settings size={20} />,
     path: '/settings',
-    roles: ['OWNER'],
+    // PREMIUM+ only
+    roles: ['OWNER', 'MANAGER_PREMIUM'],
     category: 'System'
   },
 ];

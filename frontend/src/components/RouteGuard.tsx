@@ -1,26 +1,16 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import type { Role } from '../types';
 
 interface RouteGuardProps {
   children: React.ReactNode;
-  allowedRoles?: Array<'OWNER' | 'THERAPIST' | 'SECRETARY' | 'PATIENT'>;
+  allowedRoles?: Role[];
   redirectTo?: string;
 }
 
 /**
  * Route guard component that checks user authentication and role
- * 
- * @param children - Component to render if authorized
- * @param allowedRoles - Array of roles allowed to access this route
- * @param redirectTo - Where to redirect if unauthorized (default: /login)
- * 
- * @example
- * ```tsx
- * <RouteGuard allowedRoles={['OWNER', 'THERAPIST']}>
- *   <DashboardPage />
- * </RouteGuard>
- * ```
  */
 export const RouteGuard: React.FC<RouteGuardProps> = ({
   children,
@@ -30,7 +20,6 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({
   const { user, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
-  // Show loading spinner while checking authentication
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen" dir="rtl">
@@ -40,67 +29,61 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({
     );
   }
 
-  // Redirect to login if not authenticated
   if (!isAuthenticated) {
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
   }
 
-  // Check role-based access if roles are specified
   if (allowedRoles.length > 0 && user && !allowedRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  // Render children if all checks pass
   return <>{children}</>;
 };
 
-/**
- * OWNER-only route guard
- * Use for admin-only features like provider management, system settings
- */
-export const OwnerRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <RouteGuard allowedRoles={['OWNER']}>
-      {children}
-    </RouteGuard>
-  );
-};
+/** OWNER-only route guard */
+export const OwnerRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <RouteGuard allowedRoles={['OWNER']}>{children}</RouteGuard>
+);
 
-/**
- * Therapist and above route guard
- * Use for clinical features like patient care, intelligence reports
- */
-export const TherapistRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <RouteGuard allowedRoles={['OWNER', 'THERAPIST']}>
-      {children}
-    </RouteGuard>
-  );
-};
+/** All managers + OWNER (BASIC feature access) */
+export const ManagerBasicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <RouteGuard allowedRoles={['OWNER', 'MANAGER_BASIC', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM']}>
+    {children}
+  </RouteGuard>
+);
 
-/**
- * Staff route guard (OWNER, THERAPIST, SECRETARY)
- * Use for general staff features like patient management, appointments
- */
-export const StaffRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <RouteGuard allowedRoles={['OWNER', 'THERAPIST', 'SECRETARY']}>
-      {children}
-    </RouteGuard>
-  );
-};
+/** ADVANCED managers + OWNER */
+export const ManagerAdvancedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <RouteGuard allowedRoles={['OWNER', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM']}>
+    {children}
+  </RouteGuard>
+);
 
-/**
- * Patient-accessible route guard
- * Use for features patients can access like their own prescriptions
- */
-export const PatientRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <RouteGuard allowedRoles={['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT']}>
-      {children}
-    </RouteGuard>
-  );
-};
+/** PREMIUM managers + OWNER */
+export const ManagerPremiumRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <RouteGuard allowedRoles={['OWNER', 'MANAGER_PREMIUM']}>
+    {children}
+  </RouteGuard>
+);
+
+/** Therapist and above route guard */
+export const TherapistRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <RouteGuard allowedRoles={['OWNER', 'THERAPIST']}>{children}</RouteGuard>
+);
+
+/** Staff route guard (OWNER, THERAPIST, SECRETARY + all managers) */
+export const StaffRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <RouteGuard allowedRoles={['OWNER', 'THERAPIST', 'SECRETARY', 'MANAGER_BASIC', 'MANAGER_ADVANCED', 'MANAGER_PREMIUM']}>
+    {children}
+  </RouteGuard>
+);
+
+/** Patient-accessible route guard */
+export const PatientRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <RouteGuard allowedRoles={['OWNER', 'THERAPIST', 'SECRETARY', 'PATIENT']}>
+    {children}
+  </RouteGuard>
+);
 
 /**
  * Unauthorized page component

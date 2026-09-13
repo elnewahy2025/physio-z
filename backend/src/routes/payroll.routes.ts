@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { requireAuth, requireRole } from '../middleware/auth.js';
+import { requireAuth, requireRole, ADVANCED_MANAGER_OR_OWNER } from '../middleware/auth.js';
 import * as payrollController from '../controllers/payroll.controller.js';
 
 const router = Router();
 
-// Protect all routes
+// Protect all routes - Payroll is an ADVANCED+ feature (Expenses category)
 router.use(requireAuth);
-router.use(requireRole('OWNER', 'SECRETARY'));
+router.use(requireRole(...ADVANCED_MANAGER_OR_OWNER));
 
 // Get eligible staff for payroll
 router.get('/eligible-staff', payrollController.getEligibleStaff);

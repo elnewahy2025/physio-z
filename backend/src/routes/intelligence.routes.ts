@@ -2,7 +2,7 @@
 // Phase 5: Intelligence - All routes (I1-I3)
 
 import { Router } from 'express';
-import { requireAuth, requireRole } from '../middleware/auth.js';
+import { requireAuth, requireRole, ADVANCED_MANAGER_OR_OWNER } from '../middleware/auth.js';
 import * as controller from '../controllers/intelligence.controller.js';
 
 const router = Router();
@@ -16,25 +16,25 @@ router.use(requireAuth);
 
 // Predict no-show risk for specific appointment
 router.get('/no-show-prediction/appointment/:appointmentId',
-  requireRole('OWNER', 'THERAPIST', 'SECRETARY'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST', 'SECRETARY'),
   controller.predictNoShowRisk
 );
 
 // Get patient risk profile
 router.get('/no-show-prediction/patient/:patientId',
-  requireRole('OWNER', 'THERAPIST', 'SECRETARY'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST', 'SECRETARY'),
   controller.getPatientRiskProfile
 );
 
 // Get upcoming appointments risk (next 7 days)
 router.get('/no-show-prediction/upcoming',
-  requireRole('OWNER', 'THERAPIST', 'SECRETARY'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST', 'SECRETARY'),
   controller.getUpcomingAppointmentsRisk
 );
 
 // Get no-show statistics
 router.get('/no-show-prediction/statistics',
-  requireRole('OWNER', 'THERAPIST', 'SECRETARY'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST', 'SECRETARY'),
   controller.getNoShowStatistics
 );
 
@@ -44,31 +44,31 @@ router.get('/no-show-prediction/statistics',
 
 // Get demand forecast
 router.get('/demand-forecasting',
-  requireRole('OWNER', 'THERAPIST', 'SECRETARY'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST', 'SECRETARY'),
   controller.getDemandForecast
 );
 
 // Get calendar heatmap
 router.get('/demand-forecasting/calendar',
-  requireRole('OWNER', 'THERAPIST', 'SECRETARY'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST', 'SECRETARY'),
   controller.getCalendarHeatmap
 );
 
 // Get weekly patterns
 router.get('/demand-forecasting/weekly-patterns',
-  requireRole('OWNER', 'THERAPIST', 'SECRETARY'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST', 'SECRETARY'),
   controller.getWeeklyPatterns
 );
 
 // Get hourly distribution
 router.get('/demand-forecasting/hourly-distribution',
-  requireRole('OWNER', 'THERAPIST', 'SECRETARY'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST', 'SECRETARY'),
   controller.getHourlyDistribution
 );
 
 // Get monthly comparison
 router.get('/demand-forecasting/monthly-comparison',
-  requireRole('OWNER', 'THERAPIST', 'SECRETARY'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST', 'SECRETARY'),
   controller.getMonthlyComparison
 );
 
@@ -78,19 +78,19 @@ router.get('/demand-forecasting/monthly-comparison',
 
 // Get treatment effectiveness analysis
 router.get('/treatment-effectiveness',
-  requireRole('OWNER', 'THERAPIST'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST'),
   controller.getTreatmentEffectiveness
 );
 
 // Get therapist effectiveness
 router.get('/treatment-effectiveness/therapist/:therapistId',
-  requireRole('OWNER', 'THERAPIST'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST'),
   controller.getTherapistEffectiveness
 );
 
 // Get treatment trends
 router.get('/treatment-effectiveness/trends',
-  requireRole('OWNER', 'THERAPIST'),
+  requireRole(...ADVANCED_MANAGER_OR_OWNER, 'THERAPIST'),
   controller.getTreatmentTrends
 );
 
