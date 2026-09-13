@@ -8,39 +8,42 @@ datasource db {
 }
 
 model User {
-  id                   String                 @id @default(cuid())
-  name                 String
-  phone                String                 @unique
-  email                String?                @unique
-  passwordHash         String
-  role                 Role                   @default(PATIENT)
-  isActive             Boolean                @default(true)
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  isDeleted            Boolean                @default(false)
-  appointments         Appointment[]          @relation("AppointmentTherapist")
-  AuditLog             AuditLog[]             @relation("AuditUser")
-  blockedSlots         BlockedSlot[]
-  prescriptionsCreated ExercisePrescription[] @relation("PrescriptionTherapist")
-  expensesCreated      Expense[]              @relation("ExpenseCreator")
-  filesUploaded        File[]                 @relation("FileUploader")
-  IncidentReport       IncidentReport[]       @relation("IncidentReporter")
-  inventoryRecords     InventoryTransaction[] @relation("InventoryRecorder")
-  invoicesCreated      Invoice[]              @relation("InvoiceCreator")
-  maintenanceRecords   MaintenanceLog[]       @relation("MaintenanceRecorder")
-  MedicalFile          MedicalFile[]          @relation("MedicalFileUploader")
-  notifications        Notification[]         @relation("UserNotifications")
-  patient              Patient?               @relation("PatientAccount")
-  packagesSold         PatientPackage[]       @relation("PackageSeller")
-  paymentsConfirmed    PaymentReference[]     @relation("PaymentConfirmer")
-  photosTaken          ProgressPhoto[]        @relation("PhotoTaker")
-  therapistRatings     Rating[]               @relation("TherapistRatings")
-  surveyTherapist      Survey[]               @relation("SurveyTherapist")
-  therapySessions      TherapySession[]       @relation("SessionTherapist")
-  UserActivity         UserActivity[]         @relation("UserActivity")
-  videosCreated        VideoConsultation[]    @relation("VideoCreator")
-  waitlistTherapist    WaitlistEntry[]        @relation("WaitlistTherapist")
-  whatsappSent         WhatsAppReminderLog[]  @relation("WhatsAppSender")
+  id                                        String                 @id @default(cuid())
+  name                                      String
+  phone                                     String                 @unique
+  email                                     String?                @unique
+  passwordHash                              String
+  role                                      Role                   @default(PATIENT)
+  isActive                                  Boolean                @default(true)
+  createdAt                                 DateTime               @default(now())
+  updatedAt                                 DateTime               @updatedAt
+  isDeleted                                 Boolean                @default(false)
+  appointments                              Appointment[]          @relation("AppointmentTherapist")
+  AuditLog                                  AuditLog[]             @relation("AuditUser")
+  blockedSlots                              BlockedSlot[]
+  prescriptionsCreated                      ExercisePrescription[] @relation("PrescriptionTherapist")
+  expensesCreated                           Expense[]              @relation("ExpenseCreator")
+  Expense_Expense_staffIdToUser             Expense[]              @relation("Expense_staffIdToUser")
+  filesUploaded                             File[]                 @relation("FileUploader")
+  IncidentReport                            IncidentReport[]       @relation("IncidentReporter")
+  inventoryRecords                          InventoryTransaction[] @relation("InventoryRecorder")
+  invoicesCreated                           Invoice[]              @relation("InvoiceCreator")
+  maintenanceRecords                        MaintenanceLog[]       @relation("MaintenanceRecorder")
+  MedicalFile                               MedicalFile[]          @relation("MedicalFileUploader")
+  notifications                             Notification[]         @relation("UserNotifications")
+  patient                                   Patient?               @relation("PatientAccount")
+  packagesSold                              PatientPackage[]       @relation("PackageSeller")
+  paymentsConfirmed                         PaymentReference[]     @relation("PaymentConfirmer")
+  photosTaken                               ProgressPhoto[]        @relation("PhotoTaker")
+  therapistRatings                          Rating[]               @relation("TherapistRatings")
+  StaffSalary_StaffSalary_createdByIdToUser StaffSalary[]          @relation("StaffSalary_createdByIdToUser")
+  StaffSalary_StaffSalary_userIdToUser      StaffSalary[]          @relation("StaffSalary_userIdToUser")
+  surveyTherapist                           Survey[]               @relation("SurveyTherapist")
+  therapySessions                           TherapySession[]       @relation("SessionTherapist")
+  UserActivity                              UserActivity[]         @relation("UserActivity")
+  videosCreated                             VideoConsultation[]    @relation("VideoCreator")
+  waitlistTherapist                         WaitlistEntry[]        @relation("WaitlistTherapist")
+  whatsappSent                              WhatsAppReminderLog[]  @relation("WhatsAppSender")
 }
 
 model Patient {
@@ -294,16 +297,18 @@ model BlockedSlot {
 }
 
 model Expense {
-  id            String   @id @default(cuid())
-  category      String
-  description   String
-  amount        Decimal  @db.Decimal(10, 2)
-  date          DateTime
-  paymentMethod String?
-  notes         String?
-  createdById   String
-  createdAt     DateTime @default(now())
-  createdBy     User     @relation("ExpenseCreator", fields: [createdById], references: [id])
+  id                         String   @id @default(cuid())
+  category                   String
+  description                String
+  amount                     Decimal  @db.Decimal(10, 2)
+  date                       DateTime
+  paymentMethod              String?
+  notes                      String?
+  createdById                String
+  createdAt                  DateTime @default(now())
+  staffId                    String?
+  createdBy                  User     @relation("ExpenseCreator", fields: [createdById], references: [id])
+  User_Expense_staffIdToUser User?    @relation("Expense_staffIdToUser", fields: [staffId], references: [id])
 
   @@index([date])
   @@index([category])
@@ -1110,6 +1115,21 @@ model OtpRequest {
   otp       PatientOTP? @relation(fields: [otpId], references: [id])
 
   @@index([status])
+}
+
+model StaffSalary {
+  id                                 String   @id
+  userId                             String
+  baseSalary                         Decimal  @db.Decimal(10, 2)
+  effectiveFrom                      DateTime @default(now())
+  notes                              String?
+  createdById                        String
+  createdAt                          DateTime @default(now())
+  updatedAt                          DateTime
+  User_StaffSalary_createdByIdToUser User     @relation("StaffSalary_createdByIdToUser", fields: [createdById], references: [id])
+  User_StaffSalary_userIdToUser      User     @relation("StaffSalary_userIdToUser", fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 enum Role {
