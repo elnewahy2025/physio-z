@@ -141,7 +141,8 @@ export const getProfitLoss = asyncHandler(async (req: Request, res: Response) =>
   }
 
   const start = new Date(startDate);
-  const end = new Date(endDate);
+  const end   = new Date(endDate);
+  end.setHours(23, 59, 59, 999); // include the entire end day
 
   // Revenue: collected payments
   const payments = await prisma.payment.findMany({
@@ -180,29 +181,40 @@ export const getProfitLoss = asyncHandler(async (req: Request, res: Response) =>
     return sum + (Number(inv.total) - paid);
   }, 0);
 
+  // Also get total invoiced for a complete picture
+  const totalInvoiced = await prisma.invoice.aggregate({
+    where: { createdAt: { gte: start, lte: end } },
+    _sum: { total: true },
+  });
+  const billedTotal = Number(totalInvoiced._sum.total || 0);
+
   const profit = totalRevenue - totalExpenses;
 
   res.json({
     period: { start: start.toISOString(), end: end.toISOString() },
     revenue: {
-      collected: totalRevenue,
+      collected:   totalRevenue,
       outstanding: totalOutstanding,
-      total: totalRevenue + totalOutstanding,
+      total:       totalRevenue + totalOutstanding,
     },
     expenses: {
-      total: totalExpenses,
+      total:      totalExpenses,
       byCategory: expensesByCategory,
       list: expenses.slice(0, 20).map((e) => ({
-        id: e.id,
-        category: e.category,
+        id:          e.id,
+        category:    e.category,
         description: e.description,
-        amount: Number(e.amount),
-        date: e.date,
+        amount:      Number(e.amount),
+        date:        e.date,
       })),
     },
     profit: {
-      net: profit,
-      margin: totalRevenue > 0 ? Math.round((profit / totalRevenue) * 100) : 0,
+      net:    profit,
+      // cashMargin = profit as % of cash collected (cash-basis accounting)
+      cashMargin: totalRevenue > 0 ? Math.round((profit / totalRevenue) * 100) : 0,
+      // accrualMargin = profit as % of total billed (accrual-basis accounting)
+      accrualMargin: billedTotal > 0 ? Math.round((profit / billedTotal) * 100) : 0,
+      margin: totalRevenue > 0 ? Math.round((profit / totalRevenue) * 100) : 0, // backward compat
       status: profit > 0 ? 'PROFIT' : profit < 0 ? 'LOSS' : 'BREAK_EVEN',
     },
   });

@@ -16,9 +16,14 @@ export async function getFinancialReport(startDate: Date, endDate: Date) {
     }),
   ]);
 
-  const totalInvoiced = invoices.reduce((s, inv) => s + Number(inv.total), 0);
-  const totalCollected = payments.reduce((s, p) => s + Number(p.amount), 0);
-  const totalOutstanding = totalInvoiced - totalCollected;
+  const totalInvoiced  = invoices.reduce((s, inv) => s + Number(inv.total), 0);
+  const totalCollected = payments.reduce((s, p)   => s + Number(p.amount), 0);
+
+  // Outstanding = sum of remaining balance on each invoice (never negative)
+  const totalOutstanding = invoices.reduce((sum, inv) => {
+    const paid = inv.payments.reduce((s, p) => s + Number(p.amount), 0);
+    return sum + Math.max(0, Number(inv.total) - paid);
+  }, 0);
 
   // Payment method breakdown
   const byMethod: Record<string, number> = {};
@@ -26,11 +31,11 @@ export async function getFinancialReport(startDate: Date, endDate: Date) {
     byMethod[p.method] = (byMethod[p.method] || 0) + Number(p.amount);
   }
 
-  // Revenue by month (for chart)
+  // Revenue by month — use collected payments, not invoiced totals
   const revenueByMonth: Record<string, number> = {};
-  for (const inv of invoices) {
-    const monthKey = inv.createdAt.toISOString().slice(0, 7); // YYYY-MM
-    revenueByMonth[monthKey] = (revenueByMonth[monthKey] || 0) + Number(inv.total);
+  for (const p of payments) {
+    const monthKey = p.paymentDate.toISOString().slice(0, 7); // YYYY-MM
+    revenueByMonth[monthKey] = (revenueByMonth[monthKey] || 0) + Number(p.amount);
   }
 
   // Status breakdown
@@ -49,10 +54,9 @@ export async function getFinancialReport(startDate: Date, endDate: Date) {
     },
     byStatus,
     byMethod,
-    revenueByMonth: Object.entries(revenueByMonth).map(([month, total]) => ({
-      month,
-      total: Math.round(total),
-    })),
+    revenueByMonth: Object.entries(revenueByMonth)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, total]) => ({ month, total: Math.round(total) })),
     recentInvoices: invoices.slice(0, 10).map((inv) => ({
       number: inv.number,
       patientName: inv.patient.name,
@@ -117,8 +121,10 @@ export async function getOutstandingBalances() {
     if (inv.createdAt < existing.oldestInvoiceDate) {
       existing.oldestInvoiceDate = inv.createdAt;
     }
+    // daysOverdue: use dueDate when available, fall back to createdAt
+    const referenceDate = inv.dueDate ?? inv.createdAt;
     existing.daysOverdue = Math.floor(
-      (Date.now() - existing.oldestInvoiceDate.getTime()) / (1000 * 60 * 60 * 24),
+      (Date.now() - referenceDate.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     existing.invoices.push({
@@ -375,17 +381,25 @@ export async function getTaxReport(startDate: Date, endDate: Date) {
     select: { amount: true, tax: true, total: true, createdAt: true },
   });
 
-  const totalRevenue = invoices.reduce((s, inv) => s + Number(inv.total), 0);
-  const totalTax = invoices.reduce((s, inv) => s + Number(inv.tax), 0);
-  const totalNet = invoices.reduce((s, inv) => s + Number(inv.amount), 0);
+  const grossRevenue = invoices.reduce((s, inv) => s + Number(inv.total), 0);
+  // taxCharged = what was actually written on each invoice at the time of creation
+  const taxCharged  = invoices.reduce((s, inv) => s + Number(inv.tax), 0);
+  // taxImplied = what current taxRate implies against gross revenue (useful when old invoices had taxRate=0)
+  const taxImplied  = Math.round(grossRevenue * (taxRate / 100) * 100) / 100;
+  // netBilled = sum of pre-tax subtotals (inv.amount)
+  const netBilled   = invoices.reduce((s, inv) => s + Number(inv.amount), 0);
 
   return {
     period: { start: startDate.toISOString(), end: endDate.toISOString() },
     taxRate,
     totals: {
-      grossRevenue: totalRevenue,
-      taxCollected: totalTax,
-      netRevenue: totalNet,
+      grossRevenue,
+      taxCharged,   // tax that was actually recorded on invoices
+      taxImplied,   // tax implied by current tax rate on gross revenue
+      netBilled,    // gross - taxCharged (billed excl. tax)
+      // Keep backward-compat aliases
+      taxCollected: taxCharged,
+      netRevenue: netBilled,
       invoiceCount: invoices.length,
     },
     monthlyBreakdown: (() => {

@@ -1470,40 +1470,28 @@ export default function Reports() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <StatCard
-                    title={L(
-                      'الإيرادات الإجمالية',
-                      'Gross Revenue',
-                    )}
+                    title={L('الإيرادات الإجمالية', 'Gross Revenue')}
                     value={`${taxData.totals.grossRevenue.toFixed(0)} ${currency}`}
                     icon={<DollarSign size={24} />}
                     color="primary"
                   />
 
                   <StatCard
-                    title={L(
-                      'الضريبة المحصلة',
-                      'Tax Collected',
-                    )}
-                    value={`${taxData.totals.taxCollected.toFixed(0)} ${currency}`}
+                    title={L('الضريبة المُسجَّلة على الفواتير', 'Tax Charged on Invoices')}
+                    value={`${taxData.totals.taxCharged.toFixed(0)} ${currency}`}
                     icon={<FileText size={24} />}
                     color="yellow"
                   />
 
                   <StatCard
-                    title={L(
-                      'الإيرادات الصافية',
-                      'Net Revenue',
-                    )}
-                    value={`${taxData.totals.netRevenue.toFixed(0)} ${currency}`}
+                    title={L('الإجمالي قبل الضريبة', 'Total Billed (excl. tax)')}
+                    value={`${taxData.totals.netBilled.toFixed(0)} ${currency}`}
                     icon={<TrendingUp size={24} />}
                     color="green"
                   />
 
                   <StatCard
-                    title={L(
-                      'نسبة الضريبة',
-                      'Tax Rate',
-                    )}
+                    title={L('نسبة الضريبة الحالية', 'Current Tax Rate')}
                     value={`${taxData.taxRate}%`}
                     icon={<Activity size={24} />}
                     color="red"
@@ -1512,67 +1500,90 @@ export default function Reports() {
 
                 <Card>
                   <CardHeader
-                    title={L(
-                      'تقرير الضريبة',
-                      'Tax Report',
-                    )}
-                    subtitle={L(
-                      'لأغراض التقديم الضريبي',
-                      'For tax filing purposes',
-                    )}
+                    title={L('تقرير الضريبة التفصيلي', 'Detailed Tax Report')}
+                    subtitle={L('لأغراض التقديم الضريبي', 'For tax filing purposes')}
                   />
 
                   <div className="space-y-4">
-                    <div className="rounded-lg bg-gray-50 dark:bg-gray-900 p-4 dark:bg-gray-800">
+                    <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+                      {/* Row 1: Gross */}
                       <div className="flex justify-between py-2">
-                        <span>
-                          {L(
-                            'إجمالي الفواتير',
-                            'Total Invoices (Gross)',
-                          )}
+                        <span className="text-gray-600 dark:text-gray-300">
+                          {L('إجمالي الفواتير (شامل الضريبة)', 'Total Invoices (Gross incl. tax)')}
                         </span>
-
                         <span className="font-semibold">
-                          {taxData.totals.grossRevenue.toFixed(
-                            2,
-                          )}{' '}
-                          {currency}
+                          {taxData.totals.grossRevenue.toFixed(2)} {currency}
                         </span>
                       </div>
 
+                      {/* Row 2: Tax actually on invoices */}
                       <div className="flex justify-between py-2">
-                        <span>
-                          {L(
-                            'الضريبة المستحقة',
-                            'Tax Due',
-                          )}{' '}
-                          ({taxData.taxRate}%)
-                        </span>
-
+                        <div>
+                          <span className="text-gray-600 dark:text-gray-300">
+                            {L('ضريبة مسجَّلة على الفواتير', 'Tax recorded on invoices')}
+                          </span>
+                          <p className="text-xs text-gray-400">
+                            {L('القيمة الفعلية المدوَّنة في كل فاتورة', 'Actual value written on each invoice')}
+                          </p>
+                        </div>
                         <span className="font-semibold text-yellow-600">
-                          {taxData.totals.taxCollected.toFixed(
-                            2,
-                          )}{' '}
-                          {currency}
+                          {taxData.totals.taxCharged.toFixed(2)} {currency}
                         </span>
                       </div>
 
-                      <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 py-2 pt-4 dark:border-gray-700">
-                        <span className="font-semibold">
-                          {L(
-                            'الإيرادات الصافية (قبل الضريبة)',
-                            'Net Revenue (before tax)',
-                          )}
-                        </span>
+                      {/* Row 3: Tax implied by current rate (advisory) */}
+                      {taxData.taxRate > 0 && (
+                        <div className="flex justify-between py-2">
+                          <div>
+                            <span className="text-gray-600 dark:text-gray-300">
+                              {L(`ضريبة محتسبة بالنسبة الحالية (${taxData.taxRate}%)`, `Tax at current rate (${taxData.taxRate}%)`)}
+                            </span>
+                            <p className="text-xs text-gray-400">
+                              {L('للمقارنة — مفيد إذا كانت فواتير قديمة بدون ضريبة', 'Advisory — useful if old invoices had no tax')}
+                            </p>
+                          </div>
+                          <span className="font-semibold text-orange-500">
+                            {taxData.totals.taxImplied.toFixed(2)} {currency}
+                          </span>
+                        </div>
+                      )}
 
+                      {/* Row 4: Net (excl. tax) */}
+                      <div className="flex justify-between border-t border-gray-200 py-2 pt-4 dark:border-gray-700">
+                        <span className="font-semibold">
+                          {L('إجمالي الفواتير (بدون ضريبة)', 'Total Billed (excl. tax)')}
+                        </span>
                         <span className="font-bold text-green-600">
-                          {taxData.totals.netRevenue.toFixed(
-                            2,
-                          )}{' '}
-                          {currency}
+                          {taxData.totals.netBilled.toFixed(2)} {currency}
                         </span>
                       </div>
                     </div>
+
+                    {/* Monthly breakdown table */}
+                    {taxData.monthlyBreakdown?.length > 0 && (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-gray-100 text-left text-xs font-semibold uppercase text-gray-500 dark:border-gray-700">
+                              <th className="pb-3">{L('الشهر', 'Month')}</th>
+                              <th className="pb-3 text-right">{L('إجمالي', 'Gross')}</th>
+                              <th className="pb-3 text-right">{L('ضريبة مسجَّلة', 'Tax Charged')}</th>
+                              <th className="pb-3 text-right">{L('صافي', 'Net')}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {taxData.monthlyBreakdown.map((row: any) => (
+                              <tr key={row.month} className="border-b border-gray-50 dark:border-gray-700">
+                                <td className="py-2 font-medium">{row.month}</td>
+                                <td className="py-2 text-right">{row.revenue.toLocaleString()} {currency}</td>
+                                <td className="py-2 text-right text-yellow-600">{row.tax.toLocaleString()} {currency}</td>
+                                <td className="py-2 text-right text-green-600">{row.net.toLocaleString()} {currency}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
 
                     <p className="text-xs text-gray-400">
                       {L(
@@ -1584,6 +1595,7 @@ export default function Reports() {
                 </Card>
               </div>
             )}
+
 
             {/* ═══ PROFIT & LOSS REPORT ═══ */}
             {activeTab === 'pl' && plData && (
