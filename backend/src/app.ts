@@ -33,6 +33,7 @@ import { apiLimiter } from './middleware/rateLimiter.js';
 import { sanitizeInput } from './middleware/sanitize.js';
 import { setCacheHeaders } from './middleware/cacheHeaders.js';
 import foundationRoutes from './routes/foundation.routes.js';
+import payrollRoutes from './routes/payroll.routes.js';
 import surveyRoutes from './routes/survey.routes.js';
 import phase2Routes from './routes/phase2.routes.js';
 
@@ -91,6 +92,7 @@ export function createApp() {
   app.use('/api/notifications', notificationRoutes);
   app.use('/api/ratings', ratingRoutes);
   app.use('/api', foundationRoutes);
+  app.use('/api/payroll', payrollRoutes);
   app.use('/api/surveys', surveyRoutes);
   app.use('/api', phase2Routes);
   app.use('/api', phase6Routes);
@@ -110,3 +112,4 @@ export function createApp() {
   
   return app;
 }
+

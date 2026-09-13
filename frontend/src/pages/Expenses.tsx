@@ -9,6 +9,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import api from '../lib/api';
 import { useI18n } from '../i18n';
 import { Card, CardHeader, StatCard, EnhancedEmptyState, EmptyState, Badge } from '../components/ui';
+import PayrollTab from '../components/expenses/PayrollTab';
 
 const COLORS = ['#2563eb', '#16a34a', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#be185d', '#6b7280'];
 
@@ -27,6 +28,7 @@ export default function Expenses() {
   const { lang } = useI18n();
   const L = (ar: string, en: string) => (lang === 'ar' ? ar : en);
   const queryClient = useQueryClient();
+  const [activeMainTab, setActiveMainTab] = useState<'expenses' | 'payroll'>('expenses');
   const [showAdd, setShowAdd] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -34,8 +36,9 @@ export default function Expenses() {
   // Date range (default: current month)
   const today = new Date();
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
   const [startDate, setStartDate] = useState(startOfMonth.toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState(today.toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(endOfMonth.toISOString().split('T')[0]);
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['expense-stats', startDate, endDate],
@@ -100,14 +103,42 @@ export default function Expenses() {
             {L('تتبع جميع مصروفات المركز', 'Track all center expenses')}
           </p>
         </div>
-        <button onClick={() => setShowAdd(true)} className="btn-primary">
+        <button onClick={() => setShowAdd(true)} className="btn-primary" style={{ display: activeMainTab === 'expenses' ? 'flex' : 'none' }}>
           <Plus size={16} />
           {L('مصروف جديد', 'Add Expense')}
         </button>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      {/* Main Tabs */}
+      <div className="flex border-b border-gray-200 dark:border-gray-700">
+        <button
+          onClick={() => setActiveMainTab('expenses')}
+          className={`py-3 px-6 border-b-2 font-medium text-sm transition-colors ${
+            activeMainTab === 'expenses'
+              ? 'border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-500'
+              : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+          }`}
+        >
+          {L('المصروفات', 'Expenses')}
+        </button>
+        <button
+          onClick={() => setActiveMainTab('payroll')}
+          className={`py-3 px-6 border-b-2 font-medium text-sm transition-colors ${
+            activeMainTab === 'payroll'
+              ? 'border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-500'
+              : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+          }`}
+        >
+          {L('الرواتب (Payroll)', 'Payroll')}
+        </button>
+      </div>
+
+      {activeMainTab === 'payroll' ? (
+        <PayrollTab />
+      ) : (
+        <>
+          {/* Stats */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard
           title={L('إجمالي المصروفات', 'Total Expenses')}
           value={`${(stats?.totals?.total || 0).toFixed(0)} ${currency}`}
@@ -257,6 +288,8 @@ export default function Expenses() {
           </div>
         )}
       </Card>
+        </>
+      )}
     </div>
   );
 }
@@ -327,7 +360,9 @@ function AddExpenseForm({ onClose, onSuccess }: { onClose: () => void; onSuccess
               className="input"
               required
             >
-              {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+              {Object.entries(CATEGORY_LABELS)
+                .filter(([key]) => key !== 'SALARIES')
+                .map(([key, label]) => (
                 <option key={key} value={key}>
                   {lang === 'ar' ? label.ar : label.en}
                 </option>

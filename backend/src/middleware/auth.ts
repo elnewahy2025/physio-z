@@ -38,6 +38,10 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
   }
 }
 
+export const ANY_MANAGER_OR_OWNER: Role[] = ['OWNER', 'MANAGER_PREMIUM', 'MANAGER_ADVANCED', 'MANAGER_BASIC'];
+export const ADVANCED_MANAGER_OR_OWNER: Role[] = ['OWNER', 'MANAGER_PREMIUM', 'MANAGER_ADVANCED'];
+export const PREMIUM_MANAGER_OR_OWNER: Role[] = ['OWNER', 'MANAGER_PREMIUM'];
+
 export function requireRole(...roles: Role[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.userRole || !roles.includes(req.userRole as Role)) {

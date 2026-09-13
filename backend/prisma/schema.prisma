@@ -1137,6 +1137,9 @@ enum Role {
   THERAPIST
   SECRETARY
   PATIENT
+  MANAGER_BASIC
+  MANAGER_ADVANCED
+  MANAGER_PREMIUM
 }
 
 enum AppointmentStatus {
