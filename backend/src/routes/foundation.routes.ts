@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import { requireAuth, requireRole } from '../middleware/auth.js';
 import * as controller from '../controllers/foundation.controller.js';
+import { getExpenseStats } from '../controllers/phase3.controller.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -24,6 +25,7 @@ router.get('/patients/:patientId/progress', requireRole('OWNER', 'SECRETARY', 'T
 // ─── P&L + Expenses ───
 router.get('/reports/profit-loss', requireRole('OWNER'), controller.getProfitLoss);
 router.post('/expenses', requireRole('OWNER'), controller.createExpense);
+router.get('/expenses/stats', requireRole('OWNER'), getExpenseStats);
 router.get('/expenses', requireRole('OWNER'), controller.listExpenses);
 router.delete('/expenses/:id', requireRole('OWNER'), controller.deleteExpense);
 

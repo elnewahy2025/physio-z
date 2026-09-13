@@ -372,7 +372,7 @@ export async function getTaxReport(startDate: Date, endDate: Date) {
 
   const invoices = await prisma.invoice.findMany({
     where: { createdAt: { gte: startDate, lte: endDate } },
-    select: { amount: true, tax: true, total: true },
+    select: { amount: true, tax: true, total: true, createdAt: true },
   });
 
   const totalRevenue = invoices.reduce((s, inv) => s + Number(inv.total), 0);
@@ -391,10 +391,20 @@ export async function getTaxReport(startDate: Date, endDate: Date) {
     monthlyBreakdown: (() => {
       const byMonth: Record<string, { revenue: number; tax: number; net: number }> = {};
       for (const inv of invoices) {
-        // We need createdAt for month grouping
+        const key = inv.createdAt.toISOString().slice(0, 7); // YYYY-MM
+        if (!byMonth[key]) byMonth[key] = { revenue: 0, tax: 0, net: 0 };
+        byMonth[key].revenue += Number(inv.total);
+        byMonth[key].tax    += Number(inv.tax);
+        byMonth[key].net    += Number(inv.amount);
       }
-      // Simplified — group by invoice date
-      return [];
+      return Object.entries(byMonth)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([month, v]) => ({
+          month,
+          revenue: Math.round(v.revenue),
+          tax:     Math.round(v.tax),
+          net:     Math.round(v.net),
+        }));
     })(),
   };
 }

@@ -1,6 +1,7 @@
 // frontend/src/pages/Reports.tsx
 import { useState, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useReactToPrint } from 'react-to-print';
 import {
   BarChart,
   Bar,
@@ -35,8 +36,6 @@ import {
   Check,
   XCircle,
 } from 'lucide-react';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 import api from '../lib/api';
 import { useI18n } from '../i18n';
 import {
@@ -73,7 +72,6 @@ type ReportTab =
 export default function Reports() {
   const { lang } = useI18n();
   const L = (ar: string, en: string) => (lang === 'ar' ? ar : en);
-  const reportRef = useRef<HTMLDivElement>(null);
 
   const today = new Date();
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -185,37 +183,22 @@ export default function Reports() {
   const currency = settings?.currency || 'EGP';
   const centerName = settings?.centerName || 'Physio Center';
 
-  // ─── Export functions ───
-  const handlePrint = () => {
-    window.print();
-  };
+  // react-to-print: renders only the report content into an isolated iframe for native print/PDF
+  const printRef = useRef<HTMLDivElement>(null);
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: `${activeTab}-report-${endDate}`,
+    pageStyle: `
+      @page { size: A4 portrait; margin: 15mm; }
+      @media print {
+        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .no-print { display: none !important; }
+      }
+    `,
+  });
 
-  const handleExportPDF = async () => {
-    if (!reportRef.current) return;
-
-    const canvas = await html2canvas(reportRef.current, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-    });
-
-    const imgWidth = 210;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    const pdf = new jsPDF('portrait', 'mm', 'a4');
-
-    pdf.addImage(
-      canvas.toDataURL('image/png', 0.95),
-      'PNG',
-      0,
-      0,
-      imgWidth,
-      Math.min(imgHeight, 297),
-    );
-
-    pdf.save(`${activeTab}-report-${endDate}.pdf`);
-  };
+  // PDF export: same as print — native browser dialog has "Save as PDF"
+  const handleExportPDF = () => handlePrint();
 
   const handleExportCSV = () => {
     let data: any[] = [];
@@ -551,8 +534,8 @@ export default function Reports() {
         </div>
       </div>
 
-      {/* ─── Report Content ─── */}
-      <div ref={reportRef} className="report-content">
+      {/* ─── Report Content (isolated for printing) ─── */}
+      <div ref={printRef} className="report-content">
         {isLoading ? (
           <Spinner className="py-24" />
         ) : (

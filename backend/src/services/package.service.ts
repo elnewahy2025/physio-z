@@ -13,6 +13,14 @@ export async function listPackages(includeInactive = false) {
     where,
     include: {
       _count: { select: { patientPackages: true } },
+      patientPackages: {
+        include: {
+          patient: {
+            select: { id: true, name: true, phone: true },
+          },
+        },
+        orderBy: { purchaseDate: 'desc' },
+      },
     },
     orderBy: { createdAt: 'desc' },
   });

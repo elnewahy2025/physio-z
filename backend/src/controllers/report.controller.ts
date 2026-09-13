@@ -22,6 +22,9 @@ function parseDates(query: Record<string, unknown>) {
     throw new HttpError(400, 'startDate must be before endDate');
   }
 
+  // Include the entire end day (midnight → 23:59:59.999)
+  end.setHours(23, 59, 59, 999);
+
   return { start, end };
 }
 

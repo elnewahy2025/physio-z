@@ -142,7 +142,14 @@ export const getExpenseStats = asyncHandler(async (req: Request, res: Response) 
   const { startDate, endDate } = req.query as Record<string, string>;
 
   const start = startDate ? new Date(startDate) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  const end = endDate ? new Date(endDate) : new Date();
+  
+  let end: Date;
+  if (endDate) {
+    end = new Date(endDate);
+    end.setHours(23, 59, 59, 999); // Include the entire end day
+  } else {
+    end = new Date();
+  }
 
   const expenses = await prisma.expense.findMany({
     where: { date: { gte: start, lte: end } },

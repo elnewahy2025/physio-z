@@ -236,7 +236,9 @@ export const listExpenses = asyncHandler(async (req: Request, res: Response) => 
   const { startDate, endDate, category } = req.query as Record<string, string>;
   const where: Record<string, unknown> = {};
   if (startDate && endDate) {
-    where.date = { gte: new Date(startDate), lte: new Date(endDate) };
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+    where.date = { gte: new Date(startDate), lte: end };
   }
   if (category) where.category = category;
 
